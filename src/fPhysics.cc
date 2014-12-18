@@ -5,7 +5,16 @@
 
 Bool_t fPhysics::Start()
 {
+    if(!IsGoATFile())
+    {
+        cout << "ERROR: Input File is not a GoAT file." << endl;
+        return kFALSE;
+    }
+    SetAsPhysicsFile();
 
+    TraverseValidEvents();
+
+    return kTRUE;
 }
 
 void fPhysics::ProcessEvent()
@@ -50,7 +59,7 @@ fGeantTestPlot::fGeantTestPlot()
 
 void fGeantTestPlot::Run(const fPhysics &p)
 {
-    hCBEsum->Fill(p.Geant().GetCBEsum());
+    hCBEsum->Fill(p.Geant().GetCBESum());
 }
 
 void fGeantTestPlot::Display()

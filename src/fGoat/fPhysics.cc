@@ -50,8 +50,8 @@ fPhysics::~fPhysics()
 
 Bool_t fPhysics::Init(const char *configfile)
 {
-    physics.push_back(new fGeantTestPlot);
-    physics.push_back(new fPlutoTestPlot);
+    physics.push_back(new fGeantTestPlot() );
+    physics.push_back(new fPlutoTestPlot() );
     return true;
 }
 

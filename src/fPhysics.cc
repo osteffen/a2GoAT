@@ -12,7 +12,8 @@ Bool_t fPhysics::Start()
     }
     SetAsPhysicsFile();
 
-    TraverseValidEvents();
+    //TraverseValidEvents();
+    TraverseEntries(0,1000);
 
     return kTRUE;
 }

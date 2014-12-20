@@ -9,6 +9,7 @@
 #include "GTreeManager.h"
 #include "GTreeA2Geant.h"
 #include "PPhysics.h"
+#include <list>
 
 class fPhysics;
 
@@ -53,8 +54,8 @@ protected:
     virtual void        ProcessScalerRead();
     virtual Bool_t      Write();
 
-    fGeantTestPlot GeantTestPlot;
-    fPlutoTestPlot PlutoTestPlot;
+    typedef std::list<fPhysicsCode*> PhysicsList;
+    PhysicsList physics;
 
 public:
     fPhysics();

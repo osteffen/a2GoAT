@@ -21,8 +21,9 @@ Bool_t fPhysics::Start()
 
 void fPhysics::ProcessEvent()
 {
-    GeantTestPlot.Run(*this);
-    PlutoTestPlot.Run(*this);
+    PhysicsList::iterator p;
+    for( p = physics.begin(); p!=physics.end(); ++p)
+        (*p)->Run(*this);
 }
 
 void fPhysics::ProcessScalerRead()
@@ -41,20 +42,25 @@ fPhysics::fPhysics()
 
 fPhysics::~fPhysics()
 {
+    PhysicsList::iterator p;
+    for( p = physics.begin(); p!=physics.end(); ++p) {
+        delete (*p);
+    }
 }
 
 Bool_t fPhysics::Init(const char *configfile)
 {
+    physics.push_back(new fGeantTestPlot);
+    physics.push_back(new fPlutoTestPlot);
     return true;
 }
 
 void fPhysics::Display()
 {
-    GeantTestPlot.Display();
-    PlutoTestPlot.Display();
+    PhysicsList::iterator p;
+    for( p = physics.begin(); p!=physics.end(); ++p)
+        (*p)->Display();
 }
-
-
 
 fGeantTestPlot::fGeantTestPlot()
 {

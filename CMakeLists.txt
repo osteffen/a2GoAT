@@ -142,6 +142,8 @@ add_executable(fgoat
    src/fGoat/fPhysics.cc
    inc/fGoat/HistFiller.h
    inc/fGoat/HistFillerPluto.h
+   inc/fGoat/HistogramFactory.h
+   src/fGoat/HistogramFactory.cc
    )
 target_link_libraries(fgoat ${LIBS} ${ROOT_LIBRARIES})
 

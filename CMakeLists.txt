@@ -133,12 +133,13 @@ add_executable(pi0-example
    )
 target_link_libraries(pi0-example ${LIBS} ${ROOT_LIBRARIES})
 
+include_directories(${CMAKE_SOURCE_DIR}/inc/fGoat)
 add_executable(fgoat
    ${GOAT_BASE}
    ${GOAT_GHIST}
-   src/fgoat_main.cc
-   inc/fPhysics.h
-   src/fPhysics.cc
+   src/fGoat/fgoat_main.cc
+   inc/fGoat/fPhysics.h
+   src/fGoat/fPhysics.cc
    )
 target_link_libraries(fgoat ${LIBS} ${ROOT_LIBRARIES})
 

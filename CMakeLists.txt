@@ -140,6 +140,8 @@ add_executable(fgoat
    src/fGoat/fgoat_main.cc
    inc/fGoat/fPhysics.h
    src/fGoat/fPhysics.cc
+   inc/fGoat/HistFiller.h
+   inc/fGoat/HistFillerPluto.h
    )
 target_link_libraries(fgoat ${LIBS} ${ROOT_LIBRARIES})
 

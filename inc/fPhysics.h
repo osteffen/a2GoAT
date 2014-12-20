@@ -32,6 +32,19 @@ public:
 
 };
 
+class fPlutoTestPlot: public fPhysicsCode {
+protected:
+    TH1D* hPIDs;
+
+public:
+    fPlutoTestPlot();
+    virtual ~fPlutoTestPlot() {}
+
+    virtual void Run( const fPhysics& p);
+    virtual void Display();
+
+};
+
 class	fPhysics  : public GTreeManager
 {
 protected:
@@ -41,6 +54,7 @@ protected:
     virtual Bool_t      Write();
 
     fGeantTestPlot GeantTestPlot;
+    fPlutoTestPlot PlutoTestPlot;
 
 public:
     fPhysics();
@@ -48,6 +62,7 @@ public:
     virtual Bool_t  Init(const char* configfile);
 
     const GTreeA2Geant& Geant() const { return *geant; }
+    const GTreePluto& Pluto() const { return *pluto; }
 
     void Display();
 

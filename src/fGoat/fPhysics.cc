@@ -4,6 +4,8 @@
 #include "TH1D.h"
 #include "PParticle.h"
 
+#include "fPlutoGeant.h"
+
 Bool_t fPhysics::Start()
 {
     if(!IsGoATFile())
@@ -52,6 +54,7 @@ Bool_t fPhysics::Init(const char *configfile)
 {
     physics.push_back(new fGeantTestPlot() );
     physics.push_back(new fPlutoTestPlot() );
+    physics.push_back(new fPlutoGeant() );
     return true;
 }
 

@@ -10,6 +10,7 @@
 #include "GTreeA2Geant.h"
 #include "PPhysics.h"
 #include <list>
+#include "GTreeGoatParticle.h"
 
 class fPhysics;
 
@@ -46,6 +47,19 @@ public:
 
 };
 
+class fGoatParticlesTestPlot: public fPhysicsCode {
+protected:
+    TH1D* hPIDs;
+
+public:
+    fGoatParticlesTestPlot();
+    virtual ~fGoatParticlesTestPlot() {}
+
+    virtual void Run( const fPhysics& p);
+    virtual void Display();
+
+};
+
 class	fPhysics  : public GTreeManager
 {
 protected:
@@ -57,6 +71,8 @@ protected:
     typedef std::list<fPhysicsCode*> PhysicsList;
     PhysicsList physics;
 
+    GGoatParticleManager   GoatParticles;
+
 public:
     fPhysics();
     virtual ~fPhysics();
@@ -64,6 +80,7 @@ public:
 
     const GTreeA2Geant& Geant() const { return *geant; }
     const GTreePluto& Pluto() const { return *pluto; }
+    const GGoatParticleManager& Goat() const  { return GoatParticles; }
 
     void Display();
 

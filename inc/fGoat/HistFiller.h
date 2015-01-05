@@ -4,6 +4,7 @@
 #include "TH1D.h"
 #include "TH2D.h"
 #include "TCanvas.h"
+#include "HistogramFactory.h"
 
 #include <map>
 #include <list>
@@ -58,6 +59,8 @@ protected:
 
 public:
     TH2FillerBase( TH2D* hist ): h(hist) {}
+
+
     virtual ~TH2FillerBase() {}
     TH2D* GetHist() { return h; }
     void SetHist( TH2D* hist ) { h = hist; }
@@ -71,6 +74,9 @@ public:
     typedef typename Formula::DataType DataType;
 
     TH1Filler( TH1D* hist ): TH1FillerBase(hist) {}
+    TH1Filler(const std::string& title, const std::string& xlabel, const std::string& ylabel, const UInt_t nxbins, const Double_t xmin=-1, const Double_t xmax=-1):
+        TH1FillerBase( HistogramFactory::GetInstance()->Make1DN(title, xlabel,ylabel,nxbins,xmin, xmax)) {}
+
 
     virtual void Fill( DataType data ) {
         Formula f;
@@ -90,6 +96,8 @@ public:
     typedef typename Formula::DataType DataType;
 
     TH2Filler( TH2D* hist ): TH2FillerBase(hist) {}
+    TH2Filler( const std::string& title, const std::string& xlabel, const std::string& ylabel, const UInt_t nxbins, const Double_t xmin, const Double_t xmax, const UInt_t nybins, const Double_t ymin, const Double_t ymax):
+        TH2FillerBase( HistogramFactory::GetInstance()->Make2DN(title,xlabel,ylabel,nxbins,xmin,xmax,nybins,ymin,ymax)) {}
 
     virtual void Fill( DataType data ) {
         Formula f;

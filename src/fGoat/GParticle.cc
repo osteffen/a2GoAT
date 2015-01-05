@@ -34,3 +34,5 @@ void GParticleDatabase::SetBinNames(TH1* hist) {
         hist->GetXaxis()->SetBinLabel(bin, p->second.printname.c_str());
     }
 }
+
+const GParticle GParticleDatabase::GFail(0.0, 0.0, 0.0, 0, 0.0, 0, 0.0, 0.0,0.0, -1, 0.0, false);

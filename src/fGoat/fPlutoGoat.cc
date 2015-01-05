@@ -104,9 +104,6 @@ void fPlutoGoat::Run(const fPhysics &p)
     const GTreePluto::ParticleList pps = p.Pluto().GetFinalState();
     const GGoatParticleManager::ParticleList& gps= p.Goat().Particles();
 
-    // Pseudo Particle in case not reconstructed.
-    const GParticle GNotReconstr(0.0, 0.0, 0.0, 0, 0.0, 0, 0.0, 0.0,0.0, -1, 0.0, false);
-
     if( pps.size() == 1) {
 
         const PParticle* pp= (pps.front());
@@ -117,7 +114,7 @@ void fPlutoGoat::Run(const fPhysics &p)
            }
 
         } else {
-               root_node->Fill( GoatPlutoPair( &GNotReconstr, pp ));
+               root_node->Fill( GoatPlutoPair( &GParticleDatabase::GFail, pp ));
         }
 
     }

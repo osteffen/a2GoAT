@@ -103,6 +103,8 @@ public:
     static const std::map<int, GParticleDatabaseRecord> GP;
 
     static void SetBinNames(TH1* hist);
+
+    static const GParticle GFail;
 };
 
 

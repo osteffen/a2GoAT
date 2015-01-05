@@ -44,8 +44,8 @@ Bool_t fPhysics::Write()
 fPhysics::fPhysics()
 {
     GoatParticles.AddTree(photons,   1, 0.0,        false);
-    GoatParticles.AddTree(protons,  14, 0.938272,    true);
-    GoatParticles.AddTree(chargedPi, 8, 0.13957018,  true);
+    GoatParticles.AddTree(protons,   4, 0.938272,    true);
+    GoatParticles.AddTree(chargedPi, 3, 0.13957018,  true);
     GoatParticles.AddTree(electrons, 2, 0.000511,    true);
 }
 

@@ -150,6 +150,8 @@ add_executable(fgoat
    src/fGoat/GTreeGoatParticle.cc
    inc/fGoat/fPlutoGoat.h
    src/fGoat/fPlutoGoat.cc
+   inc/fGoat/GParticle.h
+   src/fGoat/GParticle.cc
    )
 target_link_libraries(fgoat ${LIBS} ${ROOT_LIBRARIES})
 

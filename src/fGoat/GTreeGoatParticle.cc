@@ -3,18 +3,6 @@
 #include "TVector3.h"
 
 
-// TODO: Fix all of this
-void GParticle::SetEThetaPhi(const Double_t E, const Double_t theta, const Double_t phi)
-{
-    const Double_t Et = E + mass;
-    const Double_t p = sqrt(Et*Et - mass*mass);
-
-    TVector3 v(p, 0.0, 0.0);
-    v.SetPtThetaPhi(p, theta, phi);
-
-    lv = TLorentzVector(v, Et);
-}
-
 GGoatParticleManager::GGoatParticleManager()
 {
 }

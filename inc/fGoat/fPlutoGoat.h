@@ -6,30 +6,17 @@
 #include "PParticle.h"
 #include "GTreeGoatParticle.h"
 
+
+
+
 class fPlutoGoat: public fPhysicsCode {
 protected:
-
-
-    typedef std::pair<const GParticle&, const PParticle&> GoatPlutoPair;
-
-    struct fGoatID {
-        typedef GoatPlutoPair DataType;
-        Int_t operator() ( DataType data ) {
-            return data.first.ID();
-        }
-    };
-
-    struct fPlutoID {
-        typedef GoatPlutoPair DataType;
-        Int_t operator() ( DataType data ) {
-            return data.second.ID();
-        }
-    };
-
-    typedef TH2Filler< f2D1< fPlutoID, fGoatID > > RootFillNode;
-    RootFillNode* root_node;
+    class ReconstructAs;
+    class RootFillNode;
 
 public:
+    RootFillNode* root_node;
+
     fPlutoGoat();
     virtual ~fPlutoGoat();
 

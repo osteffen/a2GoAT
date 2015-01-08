@@ -9,6 +9,7 @@
 #include <map>
 #include <list>
 #include <stdexcept>
+#include <set>
 
 
 template <typename f1, typename f2>
@@ -39,7 +40,14 @@ class FillNode
 public:
     virtual ~FillNode() {}
     virtual void Fill(DataType data) =0;
-    virtual void Draw() =0;
+    virtual void Draw( TVirtualPad* pad=nullptr ) =0;
+};
+
+template <class DataType>
+class FillLeaf: public FillNode<DataType>
+{
+public:
+    virtual ~FillLeaf() {}
 };
 
 class TH1FillerBase {
@@ -68,7 +76,7 @@ public:
 
 
 template <typename Formula>
-class TH1Filler: public FillNode<typename Formula::DataType>, public TH1FillerBase
+class TH1Filler: public FillLeaf<typename Formula::DataType>, public TH1FillerBase
 {
 public:
     typedef typename Formula::DataType DataType;
@@ -83,15 +91,21 @@ public:
         h->Fill(f(data));
     }
 
-    virtual void Draw() {
-        new TCanvas;
+    virtual void Draw(TVirtualPad* pad=nullptr) {
+        if(!pad) {
+            pad = new TCanvas();
+        }
+        pad->cd();
         h->Draw();
     }
 };
 
 template <typename Formula>
-class TH2Filler: public FillNode<typename Formula::DataType>, public TH2FillerBase
+class TH2Filler: public FillLeaf<typename Formula::DataType>, public TH2FillerBase
 {
+protected:
+    std::string draw_option="colz";
+
 public:
     typedef typename Formula::DataType DataType;
 
@@ -105,9 +119,12 @@ public:
         h->Fill( res.first, res.second);
     }
 
-    virtual void Draw() {
-        new TCanvas;
-        h->Draw("colz");
+    virtual void Draw(TVirtualPad* pad=nullptr) {
+        if(!pad) {
+            pad = new TCanvas();
+        }
+        pad->cd();
+        h->Draw(draw_option.c_str());
     }
 };
 
@@ -141,36 +158,32 @@ public:
     }
 
     virtual void Fill(DataType data) {
-        for( typename ListType::iterator node = nodes.begin(); node != nodes.end(); ++node ) {
-            (*node)->Fill(data);
+        for( auto &node : nodes ) {
+            node->Fill(data);
         }
     }
 
-    virtual void Draw() {
-        TCanvas* c=NULL;
+    virtual void Draw(TVirtualPad* c=nullptr) {
 
         if(grouped) {
-            c = new TCanvas(_name.c_str(), _title.c_str());
+            if(!c)
+                c = new TCanvas(_name.c_str(), _title.c_str());
             const int cols = ceil(sqrt(nodes.size()));
             const int rows = ceil((double)nodes.size()/(double)cols);
             c->Divide(cols,rows);
         }
 
-        int pad=1;
-        for( typename ListType::iterator node = nodes.begin(); node != nodes.end(); ++node ) {
-
-            if( grouped) {
-                if ( TH1FillerBase* h1 = dynamic_cast<TH1FillerBase*> (*node) ) {
-                    c->cd(pad++);
-                    h1->GetHist()->Draw();
-                } else
-                    if(TH2FillerBase* h2 = dynamic_cast<TH2FillerBase*> (*node) ) {
-                        c->cd(pad++);
-                        h2->GetHist()->Draw("colz");
-                    }
-
+        int padnum=1;
+        for( auto &node : nodes ) {
+            if(grouped) {
+                if ( FillLeaf<DataType>* leaf = dynamic_cast<FillLeaf<DataType>*> (node) ) {
+                    TVirtualPad* pad = c->cd(padnum++);
+                    leaf->Draw(pad);
+                } else {
+                    node->Draw();
+                }
             } else
-                (*node)->Draw();
+                node->Draw();
         }
     }
 };
@@ -186,8 +199,13 @@ public:
 
 protected:
     MapType map;
+    bool    grouped;
 
 public:
+    FillDecision():
+        grouped(false) {}
+    virtual ~FillDecision() {}
+
     virtual void Fill(DataType data) {
         decsisionFormula f;
 
@@ -196,15 +214,47 @@ public:
         } catch (const std::out_of_range& ) {}
     }
 
-    virtual void Draw() {
-        for( typename MapType::iterator node = map.begin(); node != map.end(); ++node ) {
-            node->second->Draw();
+    virtual void Draw(TVirtualPad* c=nullptr) {
+
+        std::set< FillLeaf<DataType>* > inCanvas;
+        std::set< FillNode<DataType>* > newCanvas;
+
+        for( auto &node : map) {
+            FillLeaf<DataType>* leaf = nullptr;
+
+            if ( grouped && (leaf = dynamic_cast<FillLeaf<DataType>*> (node.second)) ) {
+                inCanvas.insert( leaf );
+            } else {
+                newCanvas.insert( node.second );
+            }
         }
+
+        if(grouped) {
+            if(!c)
+                c = new TCanvas();
+            const int cols = ceil(sqrt(inCanvas.size()));
+            const int rows = ceil((double)inCanvas.size()/(double)cols);
+            c->Divide(cols,rows);
+
+            int padnum=1;
+            for( auto &leaf : inCanvas ) {
+                TVirtualPad* pad = c->cd(padnum++);
+                leaf->Draw(pad);
+            }
+        }
+
+        for( auto &node : newCanvas ) {
+            node->Draw();
+        }
+
+
     }
 
     virtual void setBranch(int i, FillNode<DataType>* node) {
         map[i] = node;
     }
+
+    virtual void SetGrouped( const bool g = true ) { grouped = g; }
 };
 
 

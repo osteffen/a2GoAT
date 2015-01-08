@@ -83,8 +83,8 @@ public:
         dApp.Fill(data);
     }
 
-    virtual void Draw() {
-        dApp.Draw();
+    virtual void Draw(TVirtualPad* pad=nullptr) {
+        dApp.Draw(pad);
     }
 };
 

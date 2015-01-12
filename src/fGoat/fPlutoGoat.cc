@@ -53,6 +53,7 @@ public:
         PlutoIDDec.setBranch(9,&hPion);
         PlutoIDDec.setBranch(2,&hElectron);
         PlutoIDDec.setBranch(3,&hElectron);
+        PlutoIDDec.SetGrouped(true);
 
         GParticleDatabase::SetBinNames(hGamma.GetHist());
         GParticleDatabase::SetBinNames(hProton.GetHist());

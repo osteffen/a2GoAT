@@ -174,15 +174,19 @@ public:
 
         lproton.add(&protonE);
         lproton.add(&protondEE);
+        lproton.SetGrouped();
 
         lgamma.add(&gammaE);
         lgamma.add(&gammadEE);
+        lgamma.SetGrouped();
 
         lpion.add(&pionE);
         lpion.add(&piondEE);
+        lpion.SetGrouped();
 
         lelectron.add(&electronE);
         lelectron.add(&electrondEE);
+        lelectron.SetGrouped();
 
         branch.setBranch(1, &lgamma);
         branch.setBranch(14, &lproton);

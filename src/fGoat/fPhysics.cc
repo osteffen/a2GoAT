@@ -6,6 +6,7 @@
 
 #include "fPlutoGeant.h"
 #include "fPlutoGoat.h"
+#include "fMeson.h"
 
 Bool_t fPhysics::Start()
 {
@@ -64,6 +65,7 @@ Bool_t fPhysics::Init(const char *configfile)
     physics.push_back(new fPlutoGeant() );
     physics.push_back(new fGoatParticlesTestPlot());
     physics.push_back(new fPlutoGoat());
+    physics.push_back(new fMesonTest());
     return true;
 }
 

@@ -17,7 +17,13 @@ build
 
 # some files usually ignored
 /CMakeLists.txt.user
-*.root
+
+/*.root
 
 # Ignore jobs directory for farming
 jobs
+
+# temp files
+*.autosave
+*~
+*.swp

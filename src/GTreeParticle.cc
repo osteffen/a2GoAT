@@ -29,14 +29,14 @@ GTreeParticle::~GTreeParticle()
 
 void    GTreeParticle::SetBranchAdresses()
 {
-    inputTree->SetBranchAddress("nParticles",&nParticles);
-    inputTree->SetBranchAddress("particles", &particles);
-    inputTree->SetBranchAddress("apparatus", apparatus);
-    inputTree->SetBranchAddress("time", time);
-    inputTree->SetBranchAddress("clusterSize", clusterSize);
-    inputTree->SetBranchAddress("vetoEnergy", vetoEnergy);
-    inputTree->SetBranchAddress("MWPC0Energy", MWPC0Energy);
-    inputTree->SetBranchAddress("MWPC1Energy", MWPC1Energy);
+    SetBranchAddessChecked(inputTree, "nParticles", nParticles);
+    SetBranchAddessChecked(inputTree, "particles", particles);
+    SetBranchAddessChecked(inputTree, "apparatus", apparatus);
+    SetBranchAddessChecked(inputTree, "time", time);
+    SetBranchAddessChecked(inputTree, "clusterSize", clusterSize);
+    SetBranchAddessChecked(inputTree, "vetoEnergy", vetoEnergy);
+    SetBranchAddessChecked(inputTree, "MWPC0Energy", MWPC0Energy);
+    SetBranchAddessChecked(inputTree, "MWPC1Energy", MWPC1Energy);
 }
 
 void    GTreeParticle::SetBranches()

@@ -8,7 +8,7 @@
 #include <TObject.h>
 #include <TFile.h>
 #include <TTree.h>
-
+#include <exception>
 
 
 class   GTreeManager;
@@ -24,6 +24,20 @@ public:
     };
 
     friend  class   GTreeManager;
+
+    class e_brach_not_found: public std::exception {
+    protected:
+        std::string fbranchname;
+    public:
+        e_brach_not_found( const std::string& branchname=""): fbranchname(branchname) {}
+
+        virtual const char* what() const throw()
+          {
+            std::string message = "Can't find branch named ";
+            message + fbranchname;
+            return message.c_str();
+          }
+    };
 
 private:
     TString         name;
@@ -41,6 +55,15 @@ protected:
 
     virtual void    SetBranchAdresses() = 0;
     virtual void    SetBranches() = 0;
+
+    template <class T>
+    void SetBranchAddessChecked( TTree* tree, const std::string& branchname, T& branch, bool required=true) {
+        Int_t result = tree->SetBranchAddress( branchname.c_str(), &branch);
+        if( result != 0 ) {
+            if( required )
+                throw e_brach_not_found(branchname);
+        }
+    }
 
 public:
     GTree(GTreeManager* Manager, const TString& _Name, const Bool_t CorrelatedToScalerRead = kFALSE, const Bool_t SingleRead = kFALSE);

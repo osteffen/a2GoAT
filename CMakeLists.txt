@@ -23,6 +23,7 @@ find_package(ROOT "5.30" REQUIRED)
 
 # since all subprojects need ROOT, set that up here
 include_directories(${ROOT_INCLUDES} ${CMAKE_SOURCE_DIR}/inc)
+include_directories(${CMAKE_SOURCE_DIR}/ant)
 link_directories(${ROOT_LIBRARY_DIR})
 
 include_directories(inc)
@@ -83,6 +84,10 @@ set(GOAT_GHIST
    src/GHistTaggerBinning2.cc
 )
 
+set(ANT_BASE
+    ant/types.h
+)
+
 if( PLUTO )
 
     find_package(Pluto)
@@ -134,6 +139,23 @@ add_executable(pi0-example
    src/pi0_example_main.cc
    )
 target_link_libraries(pi0-example ${LIBS} ${ROOT_LIBRARIES})
+
+add_executable(ant_test
+   ${GOAT_BASE}
+   inc/GDataChecks.h
+   src/GDataChecks.cc
+   inc/GParticleReconstruction.h
+   src/GParticleReconstruction.cc
+   inc/GMesonReconstruction.h
+   src/GMesonReconstruction.cc
+   inc/GSort.h
+   src/GSort.cc
+   inc/GoAT.h
+   src/GoAT.cc
+    ${ANT_BASE}
+   ant/ant_test.cc
+   )
+target_link_libraries(ant_test ${LIBS} ${ROOT_LIBRARIES})
 
 # install some scripts to the bin directory
 # by creating symlinks

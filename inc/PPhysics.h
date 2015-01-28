@@ -75,6 +75,8 @@ public:
 	void	SetTarget(Double_t mass) {target = TLorentzVector(0.,0.,0.,mass);}
 	TLorentzVector GetTarget() {return target;}
 
+    const TLorentzVector& GetBeam() const { return beam; }
+
 	void 	SetTC_cut(Int_t cut_min, Int_t cut_max) { TC_cut_min = cut_min; TC_cut_max = cut_max; }
 	Int_t 	GetTC_cut_min() { return TC_cut_min;}
 	Int_t 	GetTC_cut_max() { return TC_cut_max;}

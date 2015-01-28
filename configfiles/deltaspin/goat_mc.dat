@@ -25,6 +25,8 @@ Cut-IM-Width-Pi0: 20
 #Cut-IM-Width-Eta: 44
 #Cut-IM-Width-Eta-Prime: 60
 
+charge-ignore-MWPC0: 1
+charge-ignore-MWPC1: 1
 
 #-----------------------------------------------------------------------
 # Sorting Preferences
@@ -34,8 +36,8 @@ Cut-IM-Width-Pi0: 20
 
 # Sort on number of raw particle tracks (total, CB, and TAPS)
 #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-#		     Total 	CB		TAPS
-#SortRaw-NTracks:     0+		0+		0+
+#       		     Total 	CB		TAPS
+SortRaw-NTracks:     1+		0+		0=
 
 
 # Sort on Trigger conditions (Crystal Ball Energy Sum)

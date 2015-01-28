@@ -1,4 +1,7 @@
 #include "PDeltaspin.h"
+#include <iostream>
+
+using namespace std;
 
 PDeltaspin::PDeltaspin()
 { 
@@ -15,6 +18,8 @@ PDeltaspin::PDeltaspin()
     MM_2g	= new GH1("MM_2g", 	"MM_2g", 	400,   800, 1200);
 
     TaggerAccScal = new TH1D("TaggerAccScal","TaggerAccScal",16,0,16);
+    h_apparatus = new TH1D("h_apparatus","apparatus",5,0,5);
+    h_ggim = new TH1D("h_ggim","ggim",100,0,300);
 }
 
 PDeltaspin::~PDeltaspin()
@@ -37,13 +42,12 @@ Bool_t	PDeltaspin::Init(const char* configfile)
 
 Bool_t	PDeltaspin::Start()
 {
-    /*
     if(!IsGoATFile())
     {
         cout << "ERROR: Input File is not a GoAT file." << endl;
         return kFALSE;
     }
-    */
+
     SetAsPhysicsFile();
 
     TraverseValidEvents();
@@ -53,7 +57,12 @@ Bool_t	PDeltaspin::Start()
 
 void	PDeltaspin::ProcessEvent()
 {
-	// fill time diff (tagger - pi0), all pi0
+    if( GetPhotons()->GetNParticles() == 2 ) {
+        TLorentzVector gg = GetPhotons()->Particle(0) + GetPhotons()->Particle(1);
+        h_ggim->Fill(gg.M());
+    }
+
+    // fill time diff (tagger - pi0), all pi0
     FillTime(*GetNeutralPions(),time);
     FillTimeCut(*GetNeutralPions(),time_cut);
 	
@@ -94,6 +103,8 @@ Bool_t	PDeltaspin::Write()
 {
 	// Write some TH1s
 	GTreeManager::Write(TaggerAccScal);
+    GTreeManager::Write(h_apparatus);
+    GTreeManager::Write(h_ggim);
 
 	// Write all GH1's easily
 	GTreeManager::Write();

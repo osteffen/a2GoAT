@@ -20,10 +20,10 @@ Cut-dE-E-CB-Proton: 	configfiles/deltaspin/CB_proton_mc.root CUTG
 #Cut-dE-E-TAPS-Proton: 	configfiles/cuts/TAPS_DeltaE-E.root CutProton
 #Cut-dE-E-TAPS-Electron: configfiles/cuts/TAPS_DeltaE-E.root CutElectron
 
-Do-Meson-Reconstruction: 0
+Do-Meson-Reconstruction: 1
 Cut-IM-Width-Pi0: 20
-Cut-IM-Width-Eta: 44
-Cut-IM-Width-Eta-Prime: 60
+#Cut-IM-Width-Eta: 44
+#Cut-IM-Width-Eta-Prime: 60
 
 
 #-----------------------------------------------------------------------

@@ -24,6 +24,8 @@ private:
     GH1*	MM_2g;
 
     TH1*	TaggerAccScal;
+    TH1*    h_apparatus;
+    TH1*    h_ggim;
 
 protected:
     virtual Bool_t  Start();

@@ -11,14 +11,19 @@
 
 namespace ant {
 
+/**
+ * @brief Base particla class
+ */
 class Particle: public TLorentzVector {
 public:
     typedef std::list<const Particle*> ParticleList_t;
 
 protected:
-    ParticleList_t daughters;
-    const Particle* parent;
     const ant::ParticleTypeDatabase::Type* type;
+    const Particle* parent;
+    ParticleList_t daughters;
+
+
 
 public:
 
@@ -31,9 +36,14 @@ public:
 
     virtual ~Particle() {}
 
-    void ChangeType( const ParticleTypeDatabase::Type& type );
+    mev_t Ek() const { return E() - type->Mass(); }
+
 
     const ParticleTypeDatabase::Type& Type() const { return *type; }
+    void ChangeType(const ParticleTypeDatabase::Type& newtype );
+
+    void SetLorentzVector( const TLorentzVector& lv ) { *((TLorentzVector*)this) = lv; }
+
 
     const Particle* Partent()           const { return parent; }
     const ParticleList_t& Daughters()   const { return daughters; }
@@ -44,9 +54,8 @@ public:
     void SetParent(const Particle* particle) { parent = particle; }
     void AddDaughter(const Particle* particle) { daughters.push_back(particle); }
 
-    void SetLorentzVector( const TLorentzVector& lv ) {
-        *((TLorentzVector*)this) = lv;
-    }
+
+
 };
 
 

@@ -21,6 +21,20 @@ Particle::Particle(const ParticleTypeDatabase::Type &_type, mev_t _Ek, radian_t 
     SetLorentzVector(TLorentzVector(pv, E));
 }
 
+void Particle::ChangeType(const ParticleTypeDatabase::Type &newtype)
+{
+    const mev_t newE = Ek() + newtype.Mass();
+    const mev_t newP = sqrt( square(newE) - square(newtype.Mass()) );
+
+    TVector3 pv = Vect();
+    pv.SetMag(newP);
+
+    SetVect(pv);
+    SetE(newE);
+    type = &newtype;
+
+}
+
 
 
 

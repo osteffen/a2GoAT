@@ -4,6 +4,7 @@
 #include "types.h"
 #include "ParticleType.h"
 #include "Track.h"
+#include "Particle.h"
 
 using namespace std;
 using namespace ant;
@@ -25,6 +26,10 @@ int main() {
 
     Track t(100, 2.0, 1.0, 0.324, 4, 402, 503, apparatus_t::CB, 0.4, 0.3, 0.2);
     cout << t << endl;
+
+    RecParticle p(ParticleTypeDatabase::Proton, t);
+
+    cout << p << endl;
 
     return 0;
 

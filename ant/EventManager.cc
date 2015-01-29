@@ -67,6 +67,15 @@ apparatus_t IntToAppatatus_t( const int& a ) {
     }
 }
 
+/**
+ * @brief map the cluster sizes from goat to unisgend ints
+ * negative values mean no hit in the calorimeter
+ * map those to 0
+ */
+clustersize_t MapClusterSize(const int& size) {
+    return size < 0 ? 0 : size;
+}
+
 void EventManager::CopyTracks(GTreeTrack *tree, EventManager::TrackList_t &container)
 {
     for(UInt_t i=0; i<tree->GetNTracks(); ++i) {
@@ -76,7 +85,7 @@ void EventManager::CopyTracks(GTreeTrack *tree, EventManager::TrackList_t &conta
                     tree->GetTheta(i) * TMath::DegToRad(),
                     tree->GetPhi(i) * TMath::DegToRad(),
                     tree->GetTime(i),
-                    tree->GetClusterSize(i),
+                    MapClusterSize(tree->GetClusterSize(i)),
                     tree->GetCentralCrystal(i),
                     tree->GetCentralVeto(i),
                     IntToAppatatus_t(tree->GetApparatus(i)),

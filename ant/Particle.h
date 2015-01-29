@@ -3,6 +3,8 @@
 
 #include "types.h"
 #include "ParticleType.h"
+#include "Track.h"
+
 #include "TLorentzVector.h"
 #include <list>
 #include <ostream>
@@ -20,8 +22,12 @@ protected:
 
 public:
 
-    Particle(const ant::ParticleTypeDatabase::Type& _type, ant::mev_t Ek, ant::radiant_t theta, ant::radiant_t phi);
-    Particle(const ParticleTypeDatabase::Type& _type, const TLorentzVector& _lorentzvector);
+    Particle(const ant::ParticleTypeDatabase::Type& _type, ant::mev_t _Ek, ant::radian_t _theta, ant::radian_t _phi);
+
+    Particle(const ParticleTypeDatabase::Type &_type, const TLorentzVector &_lorentzvector):
+        TLorentzVector(_lorentzvector),
+        type(&_type)
+    {}
 
     virtual ~Particle() {}
 
@@ -37,6 +43,10 @@ public:
 
     void SetParent(const Particle* particle) { parent = particle; }
     void AddDaughter(const Particle* particle) { daughters.push_back(particle); }
+
+    void SetLorentzVector( const TLorentzVector& lv ) {
+        *((TLorentzVector*)this) = lv;
+    }
 };
 
 
@@ -47,31 +57,45 @@ public:
  */
 class MCParticle: public Particle {
 public:
-    MCParticle(const ant::ParticleTypeDatabase::Type& _type, ant::mev_t _Ek, ant::radiant_t _theta, ant::radiant_t _phi):
-        Particle(_type, _Ek, _theta, _phi ) {}
+    MCParticle(const ant::ParticleTypeDatabase::Type& _type, ant::mev_t _Ek, ant::radian_t _theta, ant::radian_t _phi):
+        Particle(_type, _Ek, _theta, _phi )
+    {}
 
     MCParticle(const ParticleTypeDatabase::Type& _type, const TLorentzVector& _lorentzvector):
-        Particle(_type, _lorentzvector) {}
+        Particle(_type, _lorentzvector)
+    {}
 
     virtual ~MCParticle() {}
 };
+
+
 
 /**
  * @brief Particle class for reconstructed particles.
  *
  * Stores additional track and detector inforamtion
  */
+
 class RecParticle: public Particle {
 protected:
-    ant::Track& track;
+    const ant::Track& track;
 
 public:
-    RecParticle(const ant::ParticleTypeDatabase::Type& _type, ant::Track& _track);
+    RecParticle(const ParticleTypeDatabase::Type& _type, const ant::Track& _track):
+        Particle(_type, _track.ClusterEnergy(), _track.Theta(), _track.Phi()),
+        track(_track)
+    {}
+
+    RecParticle(const ant::Particle& _particle, const ant::Track& _track):
+        Particle(_particle),
+        track(_track)
+    {}
 
     const ant::Track& Track() const { return track; }
 
 };
+
 }
 
-std::ostream operator<< (std::ostream& stream, const ant::Particle& particle);
+std::ostream& operator<< (std::ostream& stream, const ant::Particle& particle);
 #endif

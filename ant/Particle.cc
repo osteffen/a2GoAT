@@ -1,36 +1,35 @@
 #include "Particle.h"
 #include "TMath.h"
 
+template <class T>
+T square(const T& a) { return a*a; }
+
 using namespace ant;
 
-Particle::Particle(const ParticleTypeDatabase::Type &_type, mev_t Ek, radiant_t theta, radiant_t phi):
-    type(_type)
+Particle::Particle(const ParticleTypeDatabase::Type &_type, mev_t _Ek, radian_t _theta, radian_t _phi):
+    type(&_type)
 {
-    const mev_t E = Ek + type->Mass();
-    const mev_t p = sqrt( E*E - m*m );
+    const mev_t E = _Ek + type->Mass();
+    const mev_t p = sqrt( square(E) - square(type->Mass()) );
+
+    //TODO: fix. This might be inefficeint...
 
     TVector3 pv(1,0,0);
 
-    pv.SetMagThetaPhi(p,theta,phi);
+    pv.SetMagThetaPhi(p,_theta,_phi);
 
-    TLorentzVector(pv, E);
-}
-
-Particle::Particle(const ParticleTypeDatabase::Type &_type, const TLorentzVector &_lorentzvector):
-    TLorentzVector(_lorentzvector),
-    type(_type)
-{
+    SetLorentzVector(TLorentzVector(pv, E));
 }
 
 
-std::ostream operator<<(std::ostream &stream, const Particle &particle)
+
+
+std::ostream& operator<<(std::ostream &stream, const Particle &particle)
 {
-    stream << "Particle(" << particle.Type().Name() << " IM=" << particle.M() << ")";
+    stream << "Particle" << particle.Type().Name();
+    stream << " IM=" << particle.M();
+    stream << " E=" << particle.E();
+    stream << " Theta=" << particle.Theta();
+    stream << " Phi=" << particle.Phi();
     return stream;
-}
-
-
-RecParticle::RecParticle(const ParticleTypeDatabase::Type &_type, ant::Track &_track)
-{
-
 }

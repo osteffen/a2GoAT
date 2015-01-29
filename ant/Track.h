@@ -14,8 +14,8 @@ private:
     radian_t phi;
     ns_t time;
     clustersize_t clusterSize;
-    index_t centralCrystal;
-    index_t centralVeto;
+    element_index_t centralCrystal;
+    element_index_t centralVeto;
     apparatus_t apparatus;
     mev_t vetoEnergy;
     mev_t _MWPC0Energy;
@@ -27,8 +27,8 @@ public:
           const radian_t& _phi,
           const ns_t& _time,
           const clustersize_t& _clusterSize,
-          const index_t& _centralCrystal,
-          const index_t& _centralVeto,
+          const element_index_t& _centralCrystal,
+          const element_index_t& _centralVeto,
           const apparatus_t& _apparatus,
           const mev_t& _vetoEnergy,
           const mev_t& _MWPC0Energy,
@@ -53,8 +53,8 @@ public:
     radian_t Phi() const { return phi; }
     ns_t Time() const { return time; }
     clustersize_t ClusterSize() const { return clusterSize; }
-    index_t CentralCrystal() const { return centralCrystal; }
-    index_t CentralVeto() const { return centralVeto; }
+    element_index_t CentralCrystal() const { return centralCrystal; }
+    element_index_t CentralVeto() const { return centralVeto; }
     apparatus_t Apparatus() const { return apparatus; }
     mev_t VetoEnergy() const { return vetoEnergy; }
     mev_t MWPC0Energy() const { return _MWPC0Energy; }

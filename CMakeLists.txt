@@ -93,6 +93,12 @@ set(ANT_BASE
     ant/Track.cc
     ant/Particle.h
     ant/Particle.cc
+    ant/Event.h
+    ant/Event.cc
+    ant/EventManager.h
+    ant/EventManager.cc
+    ant/AntPhysics.h
+    ant/AntPhysics.cc
 )
 
 if( PLUTO )

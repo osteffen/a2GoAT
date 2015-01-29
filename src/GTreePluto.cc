@@ -16,12 +16,14 @@ GTreePluto::ParticleList GTreePluto::GetFinalState() const
 {
     ParticleList list;
 
-    for( Long64_t i=0;i<PlutoMCTrue->GetEntries(); ++i) {
+    if(PlutoMCTrue) {
+        for( Long64_t i=0;i<PlutoMCTrue->GetEntries(); ++i) {
 
-        const PParticle* const particle = dynamic_cast<const PParticle*>((*PlutoMCTrue)[i]);
+            const PParticle* const particle = dynamic_cast<const PParticle*>((*PlutoMCTrue)[i]);
 
-        if(particle && particle->GetDaughterIndex() == -1)
-            list.push_back(particle);
+            if(particle && particle->GetDaughterIndex() == -1)
+                list.push_back(particle);
+        }
     }
 
     return list;
@@ -31,12 +33,14 @@ GTreePluto::ParticleList GTreePluto::GetAllParticles() const
 {
     ParticleList list;
 
-    for( Long64_t i=0;i<PlutoMCTrue->GetEntries(); ++i) {
+    if(PlutoMCTrue) {
+        for( Long64_t i=0;i<PlutoMCTrue->GetEntries(); ++i) {
 
-        const PParticle* const particle = dynamic_cast<const PParticle*>((*PlutoMCTrue)[i]);
+            const PParticle* const particle = dynamic_cast<const PParticle*>((*PlutoMCTrue)[i]);
 
-        if(particle)
-            list.push_back(particle);
+            if(particle)
+                list.push_back(particle);
+        }
     }
 
     return list;

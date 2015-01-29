@@ -75,6 +75,14 @@ Bool_t EventManager::Write()
 
 void EventManager::CopyParticles(GTreeParticle *tree, const ParticleTypeDatabase::Type &type, EventManager::ParticleList_t &container)
 {
+    for(UInt_t i=0; i<tree->GetNParticles(); ++i) {
+
+        // goat partile also has track type members.... what to do with them?
+        container.emplace_back(
+                    type,
+                    tree->Particle(i)
+                    );
+    }
 }
 
 

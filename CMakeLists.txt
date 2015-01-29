@@ -170,6 +170,23 @@ add_executable(ant_test
    )
 target_link_libraries(ant_test ${LIBS} ${ROOT_LIBRARIES})
 
+add_executable(ant_with_goat
+   ${GOAT_BASE}
+   inc/GDataChecks.h
+   src/GDataChecks.cc
+   inc/GParticleReconstruction.h
+   src/GParticleReconstruction.cc
+   inc/GMesonReconstruction.h
+   src/GMesonReconstruction.cc
+   inc/GSort.h
+   src/GSort.cc
+   inc/GoAT.h
+   src/GoAT.cc
+    ${ANT_BASE}
+   ant/ant_with_goat.cc
+   )
+target_link_libraries(ant_with_goat ${LIBS} ${ROOT_LIBRARIES})
+
 # install some scripts to the bin directory
 # by creating symlinks
 file(GLOB CORE_EXTRA_SCRIPTS "scripts/*")

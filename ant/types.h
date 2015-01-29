@@ -14,7 +14,8 @@ typedef unsigned int clustersize_t;
 // strongly typed enum, C++11 feature
 enum class apparatus_t {
     CB,
-    TAPS
+    TAPS,
+    CBTAPS
 };
 
 }

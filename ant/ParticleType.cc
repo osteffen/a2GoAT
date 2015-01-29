@@ -2,9 +2,9 @@
 #include <iostream>
 
 using namespace std;
+using namespace ant;
 
-
-std::ostream& operator<<(std::ostream &stream, const ant::ParticleTypeDatabase::Type& particle_type)
+ostream& operator<<(ostream &stream, const ParticleTypeDatabase::Type& particle_type)
 {
     stream << "ParticleType " << particle_type.Name() << ":";
     stream << "\tMass=" << particle_type.Mass();
@@ -13,32 +13,32 @@ std::ostream& operator<<(std::ostream &stream, const ant::ParticleTypeDatabase::
 }
 
 
-ant::ParticleTypeDatabase::Particles_t ant::ParticleTypeDatabase::types;
+ParticleTypeDatabase::Particles_t ParticleTypeDatabase::types;
 
-const ant::ParticleTypeDatabase::Type ant::ParticleTypeDatabase::Proton("Proton",               "p",            938.272046, true);
-const ant::ParticleTypeDatabase::Type ant::ParticleTypeDatabase::Neutron("Neutron",             "n",            939.565378, false);
-const ant::ParticleTypeDatabase::Type ant::ParticleTypeDatabase::Photon("Photon",               "#gamma",       0.0,        false);
+const ParticleTypeDatabase::Type ParticleTypeDatabase::Proton("Proton",               "p",            938.272046, true);
+const ParticleTypeDatabase::Type ParticleTypeDatabase::Neutron("Neutron",             "n",            939.565378, false);
+const ParticleTypeDatabase::Type ParticleTypeDatabase::Photon("Photon",               "#gamma",       0.0,        false);
 
-const ant::ParticleTypeDatabase::Type ant::ParticleTypeDatabase::Pi0("Pi0",                     "#pi^{0}",      134.9766,  false);
-const ant::ParticleTypeDatabase::Type ant::ParticleTypeDatabase::PiCharged("PiCharged",         "#pi^{#pm}",    139.57018, true);
-const ant::ParticleTypeDatabase::Type ant::ParticleTypeDatabase::PiPlus("PiPlus",               "#pi^{+}",      139.57018, true, &ant::ParticleTypeDatabase::PiCharged);
-const ant::ParticleTypeDatabase::Type ant::ParticleTypeDatabase::PiMinus("PiMinus",             "#pi^{-}",      139.57018, true, &ant::ParticleTypeDatabase::PiCharged);
+const ParticleTypeDatabase::Type ParticleTypeDatabase::Pi0("Pi0",                     "#pi^{0}",      134.9766,  false);
+const ParticleTypeDatabase::Type ParticleTypeDatabase::PiCharged("PiCharged",         "#pi^{#pm}",    139.57018, true);
+const ParticleTypeDatabase::Type ParticleTypeDatabase::PiPlus("PiPlus",               "#pi^{+}",      139.57018, true, &ParticleTypeDatabase::PiCharged);
+const ParticleTypeDatabase::Type ParticleTypeDatabase::PiMinus("PiMinus",             "#pi^{-}",      139.57018, true, &ParticleTypeDatabase::PiCharged);
 
-const ant::ParticleTypeDatabase::Type ant::ParticleTypeDatabase::eCharged("eCharged",           "e^{#pm}",      0.510998928, true);
-const ant::ParticleTypeDatabase::Type ant::ParticleTypeDatabase::ePlus("Positron",              "e^{+}",        0.510998928, true, &ant::ParticleTypeDatabase::eCharged);
-const ant::ParticleTypeDatabase::Type ant::ParticleTypeDatabase::eMinus("Electron",             "e^{-}",        0.510998928, true, &ant::ParticleTypeDatabase::eCharged);
+const ParticleTypeDatabase::Type ParticleTypeDatabase::eCharged("eCharged",           "e^{#pm}",      0.510998928, true);
+const ParticleTypeDatabase::Type ParticleTypeDatabase::ePlus("Positron",              "e^{+}",        0.510998928, true, &ParticleTypeDatabase::eCharged);
+const ParticleTypeDatabase::Type ParticleTypeDatabase::eMinus("Electron",             "e^{-}",        0.510998928, true, &ParticleTypeDatabase::eCharged);
 
-ant::ParticleTypeDatabase::Type::Type(const string &_name, const string &_print_name, const ant::mev_t &_mass, const bool &_charged, const ant::ParticleTypeDatabase::Type *_sametype):
+ParticleTypeDatabase::Type::Type(const string &_name, const string &_print_name, const mev_t &_mass, const bool &_charged, const ParticleTypeDatabase::Type *_sametype):
         name(_name),
         print_name(_print_name),
         mass(_mass),
         charged(_charged),
         sametype(_sametype)
     {
-        types.insert( std::pair<std::string, const Type&>(_name,*this) );
+        types.insert( pair<string, const Type&>(_name,*this) );
     }
 
-void ant::ParticleTypeDatabase::Print()
+void ParticleTypeDatabase::Print()
 {
     for(auto& p : types) {
         cout << (p.second) << endl;

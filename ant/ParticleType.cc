@@ -15,17 +15,18 @@ std::ostream& operator<<(std::ostream &stream, const ant::ParticleTypeDatabase::
 
 ant::ParticleTypeDatabase::Particles_t ant::ParticleTypeDatabase::types;
 
-const ant::ParticleTypeDatabase::Type ant::ParticleTypeDatabase::Proton("Proton",               "p",            938.0,  true);
-const ant::ParticleTypeDatabase::Type ant::ParticleTypeDatabase::Photon("Photon",               "#gamma",         0.0,  false);
-const ant::ParticleTypeDatabase::Type ant::ParticleTypeDatabase::Pi0("Pion",                    "#pi^{0}",      135.0,  false);
+const ant::ParticleTypeDatabase::Type ant::ParticleTypeDatabase::Proton("Proton",               "p",            938.272046, true);
+const ant::ParticleTypeDatabase::Type ant::ParticleTypeDatabase::Neutron("Neutron",             "n",            939.565378, false);
+const ant::ParticleTypeDatabase::Type ant::ParticleTypeDatabase::Photon("Photon",               "#gamma",       0.0,        false);
 
-const ant::ParticleTypeDatabase::Type ant::ParticleTypeDatabase::PiCharged("PiCharged",         "#pi^{#pm}",    135.0,  true);
-const ant::ParticleTypeDatabase::Type ant::ParticleTypeDatabase::PiPlus("PiPlus",               "#pi^{+}",      135.0,  true, &ant::ParticleTypeDatabase::PiCharged);
-const ant::ParticleTypeDatabase::Type ant::ParticleTypeDatabase::PiMinus("PiMinus",             "#pi^{-}",      135.0,  true, &ant::ParticleTypeDatabase::PiCharged);
+const ant::ParticleTypeDatabase::Type ant::ParticleTypeDatabase::Pi0("Pi0",                     "#pi^{0}",      134.9766,  false);
+const ant::ParticleTypeDatabase::Type ant::ParticleTypeDatabase::PiCharged("PiCharged",         "#pi^{#pm}",    139.57018, true);
+const ant::ParticleTypeDatabase::Type ant::ParticleTypeDatabase::PiPlus("PiPlus",               "#pi^{+}",      139.57018, true, &ant::ParticleTypeDatabase::PiCharged);
+const ant::ParticleTypeDatabase::Type ant::ParticleTypeDatabase::PiMinus("PiMinus",             "#pi^{-}",      139.57018, true, &ant::ParticleTypeDatabase::PiCharged);
 
-const ant::ParticleTypeDatabase::Type ant::ParticleTypeDatabase::eCharged("eCharged",           "e^{#pm}",      0.511,  true);
-const ant::ParticleTypeDatabase::Type ant::ParticleTypeDatabase::ePlus("Positron",              "e^{+}",        0.511,  true, &ant::ParticleTypeDatabase::eCharged);
-const ant::ParticleTypeDatabase::Type ant::ParticleTypeDatabase::eMinus("Electron",             "e^{-}",        0.511,  true, &ant::ParticleTypeDatabase::eCharged);
+const ant::ParticleTypeDatabase::Type ant::ParticleTypeDatabase::eCharged("eCharged",           "e^{#pm}",      0.510998928, true);
+const ant::ParticleTypeDatabase::Type ant::ParticleTypeDatabase::ePlus("Positron",              "e^{+}",        0.510998928, true, &ant::ParticleTypeDatabase::eCharged);
+const ant::ParticleTypeDatabase::Type ant::ParticleTypeDatabase::eMinus("Electron",             "e^{-}",        0.510998928, true, &ant::ParticleTypeDatabase::eCharged);
 
 ant::ParticleTypeDatabase::Type::Type(const string &_name, const string &_print_name, const ant::mev_t &_mass, const bool &_charged, const ant::ParticleTypeDatabase::Type *_sametype):
         name(_name),

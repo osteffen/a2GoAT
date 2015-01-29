@@ -8,7 +8,7 @@ if(CMAKE_BINARY_DIR STREQUAL CMAKE_SOURCE_DIR AND NOT MSVC_IDE)
     "Also don't forget to delete the created CMakeCache.txt and CMakeFiles dir"
     )
 endif()
-    
+
 include(cmake/settings.cmake)
 include(cmake/doxygen.cmake)
 
@@ -46,7 +46,7 @@ set(GOAT_BASE
    inc/GTreeA2Geant.h
    inc/GHistManager.h
    inc/GTreeManager.h
-   inc/GConfigFile.h   
+   inc/GConfigFile.h
    src/GTree.cc
    src/GTreeTrack.cc
    src/GTreeDetectorHits.cc
@@ -85,9 +85,12 @@ set(GOAT_GHIST
 )
 
 set(ANT_BASE
+    ant/types.cc
     ant/types.h
     ant/ParticleType.h
     ant/ParticleType.cc
+    ant/Track.h
+    ant/Track.cc
     ant/Particle.h
     ant/Particle.cc
 )

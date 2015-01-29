@@ -86,6 +86,8 @@ set(GOAT_GHIST
 
 set(ANT_BASE
     ant/types.h
+    ant/ParticleType.h
+    ant/ParticleType.cc
 )
 
 if( PLUTO )

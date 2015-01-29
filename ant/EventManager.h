@@ -29,6 +29,7 @@ protected:
 
     void CopyParticles(GTreeParticle* tree, const ant::ParticleTypeDatabase::Type& type, ParticleList_t& container);
     void CopyTracks(GTreeTrack* tree, TrackList_t& container);
+    void CopyPlutoParticles(GTreePluto* tree, ParticleList_t &container);
 
 public:
     EventManager();

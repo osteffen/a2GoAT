@@ -2,7 +2,7 @@
 #include <stdexcept>
 #include "TMath.h"
 #include "Rtypes.h"
-
+#include "PParticle.h"
 
 using namespace std;
 using namespace ant;
@@ -17,6 +17,7 @@ EventManager::~EventManager()
 
 Bool_t EventManager::Init(const char *configfile)
 {
+    // nothing to do...
     return true;
 }
 
@@ -25,21 +26,43 @@ Bool_t EventManager::Start()
 {
     SetAsPhysicsFile();
 
-    TraverseValidEvents();
+    //TraverseValidEvents();
+    TraverseEntries(0,10);
 
     return kTRUE;
 }
 
 void EventManager::ProcessEvent()
 {
+    // THIS IS JUST A TEST
     TrackList_t tracks;
 
+    // NOTE: Same tracks appear inside of reconstrucred particles again!
     CopyTracks(GetTracks(), tracks);
 
     cout << "--------------------" << endl;
     for( auto& track : tracks ) {
         cout << track << endl;
     }
+
+    ParticleList_t particles;
+
+    CopyParticles(GetPhotons(), ParticleTypeDatabase::Photon, particles);
+    CopyParticles(GetProtons(), ParticleTypeDatabase::Proton, particles);
+    CopyParticles(GetNeutralPions(), ParticleTypeDatabase::Pi0, particles);
+    //... and all the other trees
+
+    for( auto& praticle : particles ) {
+        cout << praticle << endl;
+    }
+
+    ParticleList_t mcparticles;
+    CopyPlutoParticles(GetPluto(), mcparticles);
+    cout << "MC:" <<endl;
+    for( auto& praticle : mcparticles ) {
+        cout << praticle << endl;
+    }
+
 }
 
 void EventManager::ProcessScalerRead()
@@ -97,6 +120,45 @@ void EventManager::CopyTracks(GTreeTrack *tree, EventManager::TrackList_t &conta
                     tree->GetVetoEnergy(i),
                     tree->GetMWPC0Energy(i),
                     tree->GetMWPC1Energy(i)
+                    );
+    }
+}
+
+void EventManager::CopyPlutoParticles(GTreePluto *tree, ParticleList_t& container)
+{
+    const GTreePluto::ParticleList particles = tree->GetFinalState();
+
+    const ParticleTypeDatabase::Type* type=nullptr;
+    for( auto& p : particles ) {
+        switch(p->ID()) {
+        case 1:
+            type = &ParticleTypeDatabase::Photon;
+            break;
+        case 14:
+            type = &ParticleTypeDatabase::Proton;
+            break;
+        case 2:
+            type = &ParticleTypeDatabase::ePlus;
+            break;
+        case 3:
+            type = &ParticleTypeDatabase::eMinus;
+            break;
+        case 7:
+            type = &ParticleTypeDatabase::Pi0;
+            break;
+        case 8:
+            type = &ParticleTypeDatabase::PiPlus;
+            break;
+        case 9:
+            type = &ParticleTypeDatabase::PiMinus;
+            break;
+        default:
+            continue;
+        }
+
+        container.emplace_back(
+                    *type,
+                    *((TLorentzVector*) p)
                     );
     }
 }

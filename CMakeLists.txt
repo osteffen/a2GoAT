@@ -88,6 +88,8 @@ set(ANT_BASE
     ant/types.h
     ant/ParticleType.h
     ant/ParticleType.cc
+    ant/Particle.h
+    ant/Particle.cc
 )
 
 if( PLUTO )

@@ -54,6 +54,11 @@ void EventManager::CopyParticles(GTreeParticle *tree, const ParticleTypeDatabase
 {
 }
 
+
+/**
+ * @brief map goat apparatus numbers to apparatus_t enum values
+ * in case unknown values show up: -> exception and do not sliently ignore
+ */
 apparatus_t IntToAppatatus_t( const int& a ) {
     switch(a) {
     case 1:

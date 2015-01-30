@@ -2,7 +2,9 @@
 #include <stdexcept>
 #include "TMath.h"
 #include "Rtypes.h"
+#ifdef hasPluto
 #include "PParticle.h"
+#endif
 
 using namespace std;
 using namespace ant;
@@ -56,13 +58,14 @@ void EventManager::ProcessEvent()
         cout << praticle << endl;
     }
 
+#ifdef hasPluto
     ParticleList_t mcparticles;
     CopyPlutoParticles(GetPluto(), mcparticles);
     cout << "MC:" <<endl;
     for( auto& praticle : mcparticles ) {
         cout << praticle << endl;
     }
-
+#endif
 }
 
 void EventManager::ProcessScalerRead()
@@ -132,6 +135,7 @@ void EventManager::CopyTracks(GTreeTrack *tree, EventManager::TrackList_t &conta
     }
 }
 
+#ifdef hasPluto
 void EventManager::CopyPlutoParticles(GTreePluto *tree, ParticleList_t& container)
 {
     const GTreePluto::ParticleList particles = tree->GetFinalState();
@@ -170,3 +174,4 @@ void EventManager::CopyPlutoParticles(GTreePluto *tree, ParticleList_t& containe
                     );
     }
 }
+#endif

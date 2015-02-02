@@ -125,8 +125,6 @@ void EventManager::CopyTracks(GTreeTrack *tree, EventManager::TrackList_t &conta
                     tree->GetPhi(i) * TMath::DegToRad(),
                     tree->GetTime(i),
                     MapClusterSize(tree->GetClusterSize(i)),
-                    tree->GetCentralCrystal(i),
-                    tree->GetCentralVeto(i),
                     IntToAppatatus_t(tree->GetApparatus(i)),
                     tree->GetVetoEnergy(i),
                     tree->GetMWPC0Energy(i),

@@ -24,7 +24,16 @@ int main() {
         }
     }
 
-    Track t(100, 2.0, 1.0, 0.324, 4, 402, 503, apparatus_t::CB, 0.4, 0.3, 0.2);
+    Track t(mev_t(100),
+            radian_t(2.0),
+            radian_t(1.0),
+            time_t(0.324),
+            clustersize_t(4),
+            apparatus_t::CB,
+            mev_t(0.4),
+            mev_t(0.3),
+            mev_t(0.2)
+            );
     cout << t << endl;
 
     RecParticle g(ParticleTypeDatabase::Photon, t);

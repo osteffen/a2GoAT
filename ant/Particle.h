@@ -54,7 +54,7 @@ public:
     void SetParent(const Particle* particle) { parent = particle; }
     void AddDaughter(const Particle* particle) { daughters.push_back(particle); }
 
-
+    virtual std::ostream& streamit (std::ostream& stream) const;
 
 };
 
@@ -102,9 +102,12 @@ public:
 
     const ant::Track& Track() const { return track; }
 
+    virtual std::ostream& streamit (std::ostream& stream) const;
+
 };
 
 }
 
 std::ostream& operator<< (std::ostream& stream, const ant::Particle& particle);
+std::ostream& operator<< (std::ostream& stream, const std::shared_ptr<const ant::Particle>& particle);
 #endif

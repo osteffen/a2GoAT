@@ -23,7 +23,6 @@ Bool_t EventManager::Init(const char *configfile)
     return true;
 }
 
-
 Bool_t EventManager::Start()
 {
     SetAsPhysicsFile();
@@ -36,26 +35,24 @@ Bool_t EventManager::Start()
 
 void EventManager::ProcessEvent()
 {
-    // THIS IS JUST A TEST
-    TrackList_t tracks;
+
+    Event e;
 
     // NOTE: Same tracks appear inside of reconstrucred particles again!
-    CopyTracks(GetTracks(), tracks);
+    CopyTracks(GetTracks(), e.Tracks());
 
     cout << "--------------------" << endl;
-    for( auto& track : tracks ) {
-        cout << track << endl;
+    for( auto& t : e.Tracks() ) {
+        cout << t << endl;
     }
 
-    ParticleList_t particles;
-
-    CopyParticles(GetPhotons(), ParticleTypeDatabase::Photon, particles);
-    CopyParticles(GetProtons(), ParticleTypeDatabase::Proton, particles);
-    CopyParticles(GetNeutralPions(), ParticleTypeDatabase::Pi0, particles);
+    CopyParticles(GetPhotons(), ParticleTypeDatabase::Photon, e);
+    CopyParticles(GetProtons(), ParticleTypeDatabase::Proton, e);
+ //   CopyParticles(GetNeutralPions(), ParticleTypeDatabase::Pi0, e);
     //... and all the other trees
 
-    for( auto& praticle : particles ) {
-        cout << praticle << endl;
+    for( auto& p : e.Particles() ) {
+        cout <<  p << endl;
     }
 
 #ifdef hasPluto
@@ -76,14 +73,18 @@ Bool_t EventManager::Write()
 {
 }
 
-void EventManager::CopyParticles(GTreeParticle *tree, const ParticleTypeDatabase::Type &type, EventManager::ParticleList_t &container)
+void EventManager::CopyParticles(GTreeParticle *tree, const ParticleTypeDatabase::Type &type, Event &target)
 {
     for(UInt_t i=0; i<tree->GetNParticles(); ++i) {
 
-        // goat partile also has track type members.... what to do with them?
-        container.emplace_back(
-                    type,
-                    tree->Particle(i)
+        const TLorentzVector& lv = tree->Particle(i);
+        const Int_t trackIndex = tree->GetTrackIndex(i);
+        const Event::sTrackPtr track = target.Tracks().at(trackIndex);
+
+        target.Particles().emplace_back(
+                    new RecParticle(
+                        Particle(type,lv),
+                        *track.get())
                     );
     }
 }
@@ -115,21 +116,11 @@ clustersize_t MapClusterSize(const int& size) {
     return size < 0 ? 0 : size;
 }
 
-void EventManager::CopyTracks(GTreeTrack *tree, EventManager::TrackList_t &container)
+void EventManager::CopyTracks(GTreeTrack *tree, Event::TrackList_t &container)
 {
     for(UInt_t i=0; i<tree->GetNTracks(); ++i) {
 
-        container.emplace_back(
-                    tree->GetClusterEnergy(i),
-                    tree->GetTheta(i) * TMath::DegToRad(),
-                    tree->GetPhi(i) * TMath::DegToRad(),
-                    tree->GetTime(i),
-                    MapClusterSize(tree->GetClusterSize(i)),
-                    IntToAppatatus_t(tree->GetApparatus(i)),
-                    tree->GetVetoEnergy(i),
-                    tree->GetMWPC0Energy(i),
-                    tree->GetMWPC1Energy(i)
-                    );
+        container.emplace_back( GetTrack(tree, i) );
     }
 }
 
@@ -172,4 +163,25 @@ void EventManager::CopyPlutoParticles(GTreePluto *tree, ParticleList_t& containe
                     );
     }
 }
+
+EventManager::uTrackPtr EventManager::GetTrack(GTreeTrack *tree, const UInt_t n)
+{
+
+    if(n >= tree->GetNTracks() )
+        throw out_of_range("EventManager::GetTrack: Track index out of bounds");
+
+    uTrackPtr track(
+                new Track(                    tree->GetClusterEnergy(n),
+                                              tree->GetTheta(n) * TMath::DegToRad(),
+                                              tree->GetPhi(n) * TMath::DegToRad(),
+                                              tree->GetTime(n),
+                                              MapClusterSize(tree->GetClusterSize(n)),
+                                              IntToAppatatus_t(tree->GetApparatus(n)),
+                                              tree->GetVetoEnergy(n),
+                                              tree->GetMWPC0Energy(n),
+                                              tree->GetMWPC1Energy(n))
+                );
+    return move(track);
+}
+
 #endif

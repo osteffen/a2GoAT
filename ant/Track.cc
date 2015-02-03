@@ -18,3 +18,16 @@ ostream& operator<<(ostream &stream, const Track& t)
            << " MWPC1Energy=" << t.MWPC1Energy();
     return stream;
 }
+
+ostream& operator<<(ostream &stream, const Track* t)
+{
+   stream << *t;
+   return stream;
+}
+
+
+ostream &operator<<(ostream &stream, const std::shared_ptr<const Track> &t)
+{
+    stream << *t;
+    return stream;
+}

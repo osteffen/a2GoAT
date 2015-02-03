@@ -2,6 +2,7 @@
 #define TRACK_H
 
 #include <ostream>
+#include <memory>
 #include "types.h"
 
 namespace ant {
@@ -60,6 +61,10 @@ public:
 
 }
 
-std::ostream& operator<< ( std::ostream& stream, const ant::Track& t );
+std::ostream &operator<< ( std::ostream& stream, const ant::Track& t );
+
+std::ostream &operator<< ( std::ostream& stream, const ant::Track* t );
+
+std::ostream &operator<< ( std::ostream& stream, const std::shared_ptr<const ant::Track>& t);
 
 #endif // TRACK_H

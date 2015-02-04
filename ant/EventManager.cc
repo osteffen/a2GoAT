@@ -125,7 +125,7 @@ void EventManager::CopyTracks(GTreeTrack *tree, Event::TrackList_t &container)
 }
 
 #ifdef hasPluto
-void EventManager::CopyPlutoParticles(GTreePluto *tree, ParticleList_t& container)
+void EventManager::CopyPlutoParticles(GTreePluto *tree, ant::Event::ParticleList_t& container)
 {
     const GTreePluto::ParticleList particles = tree->GetFinalState();
 
@@ -157,9 +157,9 @@ void EventManager::CopyPlutoParticles(GTreePluto *tree, ParticleList_t& containe
             continue;
         }
 
-        container.emplace_back(
+        container.emplace_back( new MCParticle(
                     *type,
-                    *((TLorentzVector*) p)
+                    *((TLorentzVector*) p))
                     );
     }
 }

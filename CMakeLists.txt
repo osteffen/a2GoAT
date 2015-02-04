@@ -183,7 +183,7 @@ add_executable(ant_with_goat
    src/GSort.cc
    inc/GoAT.h
    src/GoAT.cc
-    ${ANT_BASE}
+   ${ANT_BASE}
    ant/ant_with_goat.cc
    )
 target_link_libraries(ant_with_goat ${LIBS} ${ROOT_LIBRARIES})

@@ -1,10 +1,13 @@
 #include <iostream>
 #include <typeinfo>
+#include <vector>
 
 #include "types.h"
 #include "ParticleType.h"
 #include "Track.h"
 #include "Particle.h"
+
+#include "combinatorics.h"
 
 using namespace std;
 using namespace ant;
@@ -42,6 +45,21 @@ int main() {
     cout << g << endl;
     g.ChangeType(ParticleTypeDatabase::PiCharged);
     cout << g << endl;
+
+    cout << "=== combinatorics test ===" <<endl;
+
+    vector<int> numbers = {1,2,3,4,5};
+
+    KofNvector<int> combinations(numbers,4);
+    do {
+
+        for( auto& i: combinations ) {
+            cout << i << " ";
+        }
+
+        cout << endl;
+
+    } while(combinations.next());
 
     return 0;
 

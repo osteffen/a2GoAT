@@ -4,6 +4,7 @@
 #include "EventManager.h"
 #include <time.h>
 #include "AntPhysics.h"
+#include "TestPhysics.h"
 
 using namespace std;
 
@@ -23,9 +24,11 @@ int main(int argc, char *argv[])
 
     // Create instance of analysis class
     ant::EventManager analysis;
-    ant::DebugPhysics debug;
+   // ant::DebugPhysics debug;
+    ant::ParticleCombinatoricsTest ctest;
 
-    analysis.AddPhysics(&debug);
+   // analysis.AddPhysics(&debug);
+    analysis.AddPhysics(&ctest);
 
     // Perform basic configuration
     if(!analysis.BaseConfig(argc, argv, "GoAT", "Physics"))
@@ -52,7 +55,8 @@ int main(int argc, char *argv[])
     << (Double_t)(end-start)/CLOCKS_PER_SEC
     << " seconds." << "\n\n";
 
-    debug.ShowResult();
+   // debug.ShowResult();
+    ctest.ShowResult();
 
     app.Run(kTRUE);
 

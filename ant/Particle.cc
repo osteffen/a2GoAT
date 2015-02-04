@@ -23,6 +23,7 @@ Particle::Particle(const ParticleTypeDatabase::Type &_type, mev_t _Ek, radian_t 
 
 void Particle::ChangeType(const ParticleTypeDatabase::Type &newtype)
 {
+    // recalculate Lorentz vector
     const mev_t newE = Ek() + newtype.Mass();
     const mev_t newP = sqrt( square(newE) - square(newtype.Mass()) );
 

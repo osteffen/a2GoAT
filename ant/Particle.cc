@@ -37,10 +37,11 @@ void Particle::ChangeType(const ParticleTypeDatabase::Type &newtype)
 
 std::ostream &Particle::Print(std::ostream &stream) const
 {
-    stream << "Particle" <<Type().Name();
+    stream << "Particle " <<Type().Name();
     stream << " IM=" << M();
     stream << " E=" << E();
     stream << " Theta=" << Theta();
+    stream << " Phi=" << Phi();
     return stream;
 }
 

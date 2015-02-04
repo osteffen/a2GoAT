@@ -23,6 +23,13 @@ Bool_t EventManager::Init(const char *configfile)
     return true;
 }
 
+void EventManager::Finish()
+{
+    for( auto& p : physics ) {
+        p->Finish();
+    }
+}
+
 Bool_t EventManager::Start()
 {
     SetAsPhysicsFile();
@@ -49,7 +56,7 @@ void EventManager::ProcessEvent()
     CopyPlutoParticles(GetPluto(), e.MCTrue());
 #endif
 
-    cout << e << endl;
+    RunPhysics(e);
 }
 
 void EventManager::ProcessScalerRead()
@@ -58,6 +65,13 @@ void EventManager::ProcessScalerRead()
 
 Bool_t EventManager::Write()
 {
+}
+
+void EventManager::RunPhysics(const Event &event)
+{
+    for( auto& p : physics ) {
+        p->ProcessEvent(event);
+    }
 }
 
 void EventManager::CopyParticles(GTreeParticle *tree, const ParticleTypeDatabase::Type &type, Event &target)

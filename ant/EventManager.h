@@ -16,14 +16,17 @@
 
 #include "ParticleType.h"
 #include "Particle.h"
-
 #include "Event.h"
+
+#include "AntPhysics.h"
 
 namespace ant {
 class EventManager: public GTreeManager {
 public:
     typedef std::unique_ptr<const ant::Particle>    uParticlePtr;
     typedef std::unique_ptr<const ant::Track>       uTrackPtr;
+
+    typedef std::list<ant::Physics*>                PhysicsList;
 
 protected:
 
@@ -34,6 +37,10 @@ protected:
 
     typedef std::list<Particle> ParticleList_t;
     typedef std::list<Track> TrackList_t;
+
+    PhysicsList physics;
+    void RunPhysics(const ant::Event& event);
+
 
     void CopyParticles(GTreeParticle* tree, const ant::ParticleTypeDatabase::Type& type, ant::Event& target);
     void CopyTracks(GTreeTrack* tree, Event::TrackList_t & container);
@@ -47,6 +54,10 @@ public:
     EventManager();
     virtual ~EventManager();
     virtual Bool_t  Init(const char* configfile);
+
+    void AddPhysics(ant::Physics* phys) { physics.push_back(phys); }
+
+    void Finish();
 
 };
 }

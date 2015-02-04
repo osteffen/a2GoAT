@@ -35,7 +35,7 @@ void Particle::ChangeType(const ParticleTypeDatabase::Type &newtype)
 
 }
 
-std::ostream &Particle::streamit(std::ostream &stream) const
+std::ostream &Particle::Print(std::ostream &stream) const
 {
     stream << "Particle" <<Type().Name();
     stream << " IM=" << M();
@@ -44,24 +44,9 @@ std::ostream &Particle::streamit(std::ostream &stream) const
     return stream;
 }
 
-
-std::ostream& operator<<(std::ostream &stream, const Particle &particle)
+std::ostream &RecParticle::Print(std::ostream &stream) const
 {
-    particle.streamit(stream);
-    return stream;
-}
-
-
-std::ostream &operator<<(std::ostream &stream, const std::shared_ptr<const Particle> &particle)
-{
-    stream << *particle;
-    return stream;
-}
-
-
-std::ostream &RecParticle::streamit(std::ostream &stream) const
-{
-    Particle::streamit(stream);
+    Particle::Print(stream);
     stream << "\n\t" << Track();
     return stream;
 }

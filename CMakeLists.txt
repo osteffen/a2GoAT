@@ -99,6 +99,7 @@ set(ANT_BASE
     ant/EventManager.cc
     ant/AntPhysics.h
     ant/AntPhysics.cc
+    ant/printable.h
 )
 
 if( PLUTO )

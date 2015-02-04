@@ -52,7 +52,7 @@ void EventManager::ProcessEvent()
     //... and all the other trees
 
     for( auto& p : e.Particles() ) {
-        cout <<  p << endl;
+        cout <<  *p << endl;
     }
 
 #ifdef hasPluto

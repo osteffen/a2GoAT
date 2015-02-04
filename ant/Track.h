@@ -4,6 +4,7 @@
 #include <ostream>
 #include <memory>
 #include "types.h"
+#include "printable.h"
 
 namespace ant {
 
@@ -12,7 +13,7 @@ namespace ant {
  * Representation of GoAT information, with emphasis on
  * physical particle information, not on detector information!
  */
-class Track
+class Track: public ant::printable_traits
 {
 private:
     apparatus_t apparatus;
@@ -57,14 +58,10 @@ public:
     mev_t MWPC0Energy() const { return _MWPC0Energy; }
     mev_t MWPC1Energy() const { return _MWPC1Energy; }
 
+    virtual std::ostream &Print(std::ostream &stream) const;
+
 };
 
 }
-
-std::ostream &operator<< ( std::ostream& stream, const ant::Track& t );
-
-std::ostream &operator<< ( std::ostream& stream, const ant::Track* t );
-
-std::ostream &operator<< ( std::ostream& stream, const std::shared_ptr<const ant::Track>& t);
 
 #endif // TRACK_H

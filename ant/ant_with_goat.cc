@@ -20,29 +20,29 @@ int main(int argc, char *argv[])
     start = clock();
 
     // Create instance of analysis class
-    ant::EventManager* analysis = new ant::EventManager();
+    ant::EventManager analysis;
     ant::DebugPhysics debug;
 
-    analysis->AddPhysics(&debug);
+    analysis.AddPhysics(&debug);
 
     // Perform basic configuration
-    if(!analysis->BaseConfig(argc, argv, "GoAT", "Physics"))
+    if(!analysis.BaseConfig(argc, argv, "GoAT", "Physics"))
     {
         system("man ./documents/goat.man");
         return 0;
     }
 
     // Perform full initialisation
-    if(!analysis->Init(""))
+    if(!analysis.Init(""))
     {
         cout << "ERROR: Init failed!" << endl;
         return 0;
     }
 
     // Run over files
-    analysis->TraverseFiles();
+    analysis.TraverseFiles();
 
-    analysis->Finish();
+    analysis.Finish();
 
     end = clock();
     cout << endl;
@@ -51,8 +51,6 @@ int main(int argc, char *argv[])
     << " seconds." << "\n\n";
 
     debug.ShowResult();
-
-    if(analysis) delete analysis;
 
     return 0;
 }

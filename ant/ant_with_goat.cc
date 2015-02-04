@@ -1,6 +1,6 @@
 #ifndef __CINT__
 // straight out of pi0_example.cc
-
+#include "TRint.h"
 #include "EventManager.h"
 #include <time.h>
 #include "AntPhysics.h"
@@ -15,6 +15,8 @@ using namespace std;
  */
 int main(int argc, char *argv[])
 {
+    int fake_argc = 0;
+    TRint app("ant_with_goat", &fake_argc, NULL);
 
     clock_t start, end;
     start = clock();
@@ -51,6 +53,8 @@ int main(int argc, char *argv[])
     << " seconds." << "\n\n";
 
     debug.ShowResult();
+
+    app.Run(kTRUE);
 
     return 0;
 }

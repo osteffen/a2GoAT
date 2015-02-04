@@ -38,31 +38,18 @@ void EventManager::ProcessEvent()
 
     Event e;
 
-    // NOTE: Same tracks appear inside of reconstrucred particles again!
     CopyTracks(GetTracks(), e.Tracks());
-
-    cout << "--------------------" << endl;
-    for( auto& t : e.Tracks() ) {
-        cout << t << endl;
-    }
 
     CopyParticles(GetPhotons(), ParticleTypeDatabase::Photon, e);
     CopyParticles(GetProtons(), ParticleTypeDatabase::Proton, e);
- //   CopyParticles(GetNeutralPions(), ParticleTypeDatabase::Pi0, e);
-    //... and all the other trees
-
-    for( auto& p : e.Particles() ) {
-        cout <<  *p << endl;
-    }
+    CopyParticles(GetChargedPions(), ParticleTypeDatabase::PiCharged, e);
+    CopyParticles(GetElectrons(), ParticleTypeDatabase::eCharged, e);
 
 #ifdef hasPluto
-    ParticleList_t mcparticles;
-    CopyPlutoParticles(GetPluto(), mcparticles);
-    cout << "MC:" <<endl;
-    for( auto& praticle : mcparticles ) {
-        cout << praticle << endl;
-    }
+    CopyPlutoParticles(GetPluto(), e.MCTrue());
 #endif
+
+    cout << e << endl;
 }
 
 void EventManager::ProcessScalerRead()

@@ -47,6 +47,7 @@ std::ostream &Particle::Print(std::ostream &stream) const
 
 std::ostream &RecParticle::Print(std::ostream &stream) const
 {
+    stream << "Rec";
     Particle::Print(stream);
     stream << "\n\t" << Track();
     return stream;

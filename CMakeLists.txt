@@ -101,6 +101,8 @@ set(ANT_BASE
     ant/AntPhysics.cc
     ant/printable.h
     ant/combinatorics.h
+    ant/TestPhysics.h
+    ant/TestPhysics.cc
 )
 
 if( PLUTO )

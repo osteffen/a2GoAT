@@ -76,6 +76,8 @@ public:
     {}
 
     virtual ~MCParticle() {}
+
+    virtual std::ostream& Print(std::ostream& stream) const;
 };
 
 

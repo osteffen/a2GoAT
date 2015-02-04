@@ -50,3 +50,10 @@ std::ostream &RecParticle::Print(std::ostream &stream) const
     stream << "\n\t" << Track();
     return stream;
 }
+
+std::ostream &MCParticle::Print(std::ostream &stream) const
+{
+    stream << "MC";
+    Particle::Print(stream);
+    return stream;
+}

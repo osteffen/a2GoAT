@@ -36,7 +36,7 @@ public:
     KofNvector( const std::vector<T>& d, index_type k): data(d) {
 
         if(k>data.size())
-            k=data.size();
+            k=0;
 
         indices.resize(k);
 
@@ -48,6 +48,8 @@ public:
     const T& at( const size_t i ) const { return data.at(indices.at(i)); }
 
     bool next() {
+        if(k()==0)
+            return false;
         return nextlevel(indices.size()-1);
     }
 
@@ -80,7 +82,7 @@ public:
 
     const std::vector<T>& Indices() const { return indices; }
 
-    std::size_t k() const { return k; }
+    std::size_t k() const { return indices.size(); }
     std::size_t n() const { return data.size();}
     std::size_t size() const { }
 

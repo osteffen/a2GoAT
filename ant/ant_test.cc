@@ -61,6 +61,20 @@ int main() {
 
     } while(combinations.next());
 
+    cout << "----" << endl;
+    vector<int> numbers2 = {1};
+
+    KofNvector<int> combinations2(numbers2,2);
+    do {
+
+        for( auto& i: combinations2 ) {
+            cout << i << " ";
+        }
+
+        cout << endl;
+
+    } while(combinations2.next());
+
     return 0;
 
 

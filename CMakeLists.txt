@@ -174,9 +174,6 @@ add_executable(ant_test
    )
 target_link_libraries(ant_test ${LIBS} ${ROOT_LIBRARIES})
 
-get_property(allincdirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    PROPERTY INCLUDE_DIRECTORIES)
-ROOT_GENERATE_DICTIONARY("${CMAKE_CURRENT_SOURCE_DIR}/ant/ant_with_goat.h" "${CMAKE_CURRENT_SOURCE_DIR}/ant/LinkDef.h" "${CMAKE_BINARY_DIR}/Dict.cc" "${allincdirs}")
 add_executable(ant_with_goat
    ${GOAT_BASE}
    inc/GDataChecks.h
@@ -190,9 +187,7 @@ add_executable(ant_with_goat
    inc/GoAT.h
    src/GoAT.cc
    ${ANT_BASE}
-   ant/ant_with_goat.h
    ant/ant_with_goat.cc
-   ${CMAKE_BINARY_DIR}/Dict.cc
    )
 target_link_libraries(ant_with_goat ${LIBS} ${ROOT_LIBRARIES})
 

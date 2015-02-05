@@ -5,12 +5,20 @@
 #include <time.h>
 #include "AntPhysics.h"
 #include "TestPhysics.h"
-#include "ant_with_goat.h"
 
 using namespace std;
 
+/**
+ * @brief the main routine
+ * @param argc number of parameters
+ * @param argv the parameters as strings
+ * @return exit code
+ */
+int main(int argc, char *argv[])
+{
+    int fake_argc = 0;
+    TRint app("ant_with_goat", &fake_argc, NULL);
 
-void RunAnt(std::string config) {
     clock_t start, end;
     start = clock();
 
@@ -23,19 +31,17 @@ void RunAnt(std::string config) {
     analysis.AddPhysics(&ctest);
 
     // Perform basic configuration
-    char** argv = new char*();
-    argv[0] = config.c_str();
-    if(!analysis.BaseConfig(1, argv, "GoAT", "Physics"))
+    if(!analysis.BaseConfig(argc, argv, "GoAT", "Physics"))
     {
         system("man ./documents/goat.man");
-        return;
+        return 0;
     }
 
     // Perform full initialisation
     if(!analysis.Init(""))
     {
         cout << "ERROR: Init failed!" << endl;
-        return;
+        return 0;
     }
 
     // Run over files
@@ -51,21 +57,10 @@ void RunAnt(std::string config) {
 
    // debug.ShowResult();
     ctest.ShowResult();
-}
 
-/**
- * @brief the main routine
- * @param argc number of parameters
- * @param argv the parameters as strings
- * @return exit code
- */
-
-int main(int argc, char *argv[])
-{
-    int fake_argc = 0;
-    TRint app("ant_with_goat", &fake_argc, NULL);
     app.Run(kTRUE);
 
     return 0;
 }
+
 #endif

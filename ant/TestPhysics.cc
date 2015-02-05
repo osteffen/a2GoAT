@@ -19,6 +19,12 @@ ParticleCombinatoricsTest::ParticleCombinatoricsTest()
     gggim = new TH1D("testphysics_gggim","gggim",100,0,250);
     nphotons = new TH1D("testphysics_nphotons","Number of photons",10,0,10);
     nprotons = new TH1D("testphysics_nprotons","Number of protons",10,0,10);
+
+    // Build a map of ParticleType -> Histogram, and fill it
+    for( auto& type : ParticleTypeDatabase() ) {
+        EHists.insert( std::pair<const ParticleTypeDatabase::Type*, TH1*>(&type, new TH1D( (type.Name()+"_energy").c_str(), (type.PrintName()+" Energy").c_str(),100,0,400)) );
+    }
+
 }
 
 
@@ -28,6 +34,12 @@ void ParticleCombinatoricsTest::ProcessEvent(const Event &event)
     Event::ParticleList_t protons;
 
     for( auto& particle : event.Particles() ) {
+
+        // fill the histogram corresponding to the partice type of the current particle
+        try {
+            EHists.at( &(particle->Type()) )->Fill(particle->E());
+        } catch (...) {}
+
         if( particle->Type() ==  ParticleTypeDatabase::Photon )
             photons.emplace_back(particle);
         else if ( particle->Type() == ParticleTypeDatabase::Proton )
@@ -78,4 +90,7 @@ void ParticleCombinatoricsTest::ShowResult()
 
     new TCanvas();
     nprotons->Draw();
+
+    new TCanvas();
+    EHists.at( &ParticleTypeDatabase::Photon )->Draw();
 }

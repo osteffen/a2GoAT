@@ -2,6 +2,7 @@
 #define TESTPHYSICS_H
 
 #include "AntPhysics.h"
+#include <map>
 
 class TH1;
 namespace ant {
@@ -11,6 +12,9 @@ protected:
     TH1*    gggim;
     TH1*    nphotons;
     TH1*    nprotons;
+
+    std::map<const ant::ParticleTypeDatabase::Type*, TH1*> EHists;
+
 public:
     ParticleCombinatoricsTest();
     virtual ~ParticleCombinatoricsTest() {}

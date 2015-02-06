@@ -107,6 +107,11 @@ set(ANT_BASE
     ant/Histogram.cc
 )
 
+set(ANT_PHYSICS
+    ant/DeltaPlusPhysics.h
+    ant/DeltaPlusPhysics.cc
+)
+
 if( PLUTO )
 
     find_package(Pluto)
@@ -189,6 +194,7 @@ add_executable(ant_with_goat
    inc/GoAT.h
    src/GoAT.cc
    ${ANT_BASE}
+   ${ANT_PHYSICS}
    ant/ant_with_goat.cc
    )
 target_link_libraries(ant_with_goat ${LIBS} ${ROOT_LIBRARIES})

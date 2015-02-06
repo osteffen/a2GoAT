@@ -34,8 +34,8 @@ Bool_t EventManager::Start()
 {
     SetAsPhysicsFile();
 
-    //TraverseValidEvents();
-    TraverseEntries(0,10);
+    TraverseValidEvents();
+    //TraverseEntries(0,10);
 
     return kTRUE;
 }

@@ -31,8 +31,8 @@ DeltaPlusPhysics::DeltaPlusPhysics():
 
 void DeltaPlusPhysics::ProcessEvent(const Event &event)
 {
-    Event::ParticleList_t photons;
-    Event::ParticleList_t protons;
+    Event::RecParticleList_t photons;
+    Event::RecParticleList_t protons;
 
     for( auto& particle : event.Particles() ) {
 

@@ -17,19 +17,21 @@ namespace ant {
 class Event: public ant::printable_traits {
 public:
 
-    typedef std::shared_ptr<const ant::Particle>    sParticlePtr;
+    typedef std::shared_ptr<const ant::RecParticle>    sRecParticlePtr;
+    typedef std::shared_ptr<const ant::MCParticle>    sMCParticlePtr;
     typedef std::shared_ptr<const ant::Track>       sTrackPtr;
     typedef std::shared_ptr<const ant::TaggerHit>   sTaggerHitPtr;
 
-    typedef std::vector<sParticlePtr>   ParticleList_t;
+    typedef std::vector<sRecParticlePtr>   RecParticleList_t;
+    typedef std::vector<sMCParticlePtr>   MCParticleList_t;
     typedef std::vector<sTrackPtr>      TrackList_t;
     typedef std::vector<sTaggerHitPtr>     TaggerHitList_t;
 
 protected:
 
     TrackList_t tracks;
-    ParticleList_t particles;
-    ParticleList_t mctrue;
+    RecParticleList_t particles;
+    MCParticleList_t mctrue;
     TaggerHitList_t taggerhits;
 
 
@@ -40,11 +42,11 @@ public:
     const TrackList_t& Tracks() const { return tracks; }
     TrackList_t& Tracks()       { return tracks; }
 
-    const ParticleList_t& Particles() const { return particles; }
-    ParticleList_t& Particles()       { return particles; }
+    const RecParticleList_t& Particles() const { return particles; }
+    RecParticleList_t& Particles()       { return particles; }
 
-    const ParticleList_t& MCTrue() const { return mctrue; }
-    ParticleList_t& MCTrue()       { return mctrue; }
+    const MCParticleList_t& MCTrue() const { return mctrue; }
+    MCParticleList_t& MCTrue()       { return mctrue; }
 
     const TaggerHitList_t& TaggerHits() const { return taggerhits; }
     TaggerHitList_t& TaggerHits()       { return taggerhits; }

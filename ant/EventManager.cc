@@ -127,7 +127,7 @@ void EventManager::CopyTracks(GTreeTrack *tree, Event::TrackList_t &container)
 }
 
 #ifdef hasPluto
-void EventManager::CopyPlutoParticles(GTreePluto *tree, ant::Event::ParticleList_t& container)
+void EventManager::CopyPlutoParticles(GTreePluto *tree, Event::MCParticleList_t &container)
 {
     const GTreePluto::ParticleList particles = tree->GetFinalState();
 

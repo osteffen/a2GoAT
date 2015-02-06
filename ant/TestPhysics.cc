@@ -42,8 +42,8 @@ ParticleCombinatoricsTest::ParticleCombinatoricsTest():
 
 void ParticleCombinatoricsTest::ProcessEvent(const Event &event)
 {
-    Event::ParticleList_t photons;
-    Event::ParticleList_t protons;
+    Event::RecParticleList_t photons;
+    Event::RecParticleList_t protons;
 
     for( auto& particle : event.Particles() ) {
 
@@ -61,7 +61,7 @@ void ParticleCombinatoricsTest::ProcessEvent(const Event &event)
     nphotons->Fill(photons.size());
     nprotons->Fill(protons.size());
 
-    KofNvector< typename Event::sParticlePtr > combinations2(photons,2);
+    KofNvector< typename Event::sRecParticlePtr > combinations2(photons,2);
     do {
         TLorentzVector v;
         for( auto& i: combinations2 ) {
@@ -72,7 +72,7 @@ void ParticleCombinatoricsTest::ProcessEvent(const Event &event)
 
     } while(combinations2.next());
 
-    KofNvector< typename Event::sParticlePtr > combinations3(photons,3);
+    KofNvector< typename Event::sRecParticlePtr > combinations3(photons,3);
     do {
         TLorentzVector v;
         for( auto& i: combinations3 ) {

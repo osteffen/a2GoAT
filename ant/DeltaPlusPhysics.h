@@ -72,6 +72,8 @@ protected:
     Histogm diff;
 
     interval<double> pi0_cut;
+    interval<double> prompt_window;
+    interval<double> random_window;
 
 public:
     DeltaPlusPhysics();

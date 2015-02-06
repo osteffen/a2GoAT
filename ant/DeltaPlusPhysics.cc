@@ -9,6 +9,7 @@
 #include "TH1D.h"
 #include "TH2D.h"
 #include "TCanvas.h"
+#include <iostream>
 
 using namespace ant;
 using namespace ant::analysis;
@@ -18,9 +19,14 @@ DeltaPlusPhysics::DeltaPlusPhysics():
     prompt("DeltaPlus_prompt"),
     random("DeltaPlus_random"),
     diff("DeltaPlus_diff"),
-    pi0_cut(110,150)
+    pi0_cut(110,150),
+    prompt_window(-8,8),
+    random_window(-16,16)
 {
-
+    cout << "DeltaPlusPhysics:\n";
+    cout << "Prompt window: " << prompt_window << " ns\n";
+    cout << "Random window: " << random_window << " ns\n";
+    cout << "Pi0 cut: " << pi0_cut << " MeV\n";
 }
 
 void DeltaPlusPhysics::ProcessEvent(const Event &event)
@@ -36,20 +42,34 @@ void DeltaPlusPhysics::ProcessEvent(const Event &event)
             protons.emplace_back(particle);
     }
 
-    Histogm& h = prompt;
+    for( auto& taggerhit : event.TaggerHits()) {
+        const TaggerHit& th = *taggerhit;
+        bool isPrompt = false;
 
-    if(photons.size() == 2) {
-        const TLorentzVector pi0 = *photons.at(0) + *photons.at(1);
-        h["2gIM"]->Fill(pi0.M());
+        if( prompt_window.Contains(th.Time()) ) {
+            isPrompt = true;
+        } else if( random_window.Contains(th.Time())) {
+            isPrompt = false;
+        } else
+            continue;
 
-        if( pi0_cut.Contains( pi0.M()) ) {
+        Histogm& h = isPrompt ? prompt : random;
 
+        h["tag_energy"]->Fill(th.PhotonEnergy());
+
+        if(photons.size() == 2) {
+            const Particle pi0 ( ParticleTypeDatabase::Pi0, *photons.at(0) + *photons.at(1));
+            h["2gIM"]->Fill(pi0.M());
+
+            if( pi0_cut.Contains( pi0.M()) ) {
+                h["pi0angle_noboost"]->Fill(pi0.Theta());
+            }
         }
-    }
 
-    if(protons.size() == 1) {
+        if(protons.size() == 1) {
 
     }
+}
 }
 
 void DeltaPlusPhysics::Finish()

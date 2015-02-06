@@ -51,6 +51,7 @@ void EventManager::ProcessEvent()
     CopyParticles(GetProtons(), ParticleTypeDatabase::Proton, e);
     CopyParticles(GetChargedPions(), ParticleTypeDatabase::PiCharged, e);
     CopyParticles(GetElectrons(), ParticleTypeDatabase::eCharged, e);
+    CopyTaggerHits(e.TaggerHits());
 
 #ifdef hasPluto
     CopyPlutoParticles(GetPluto(), e.MCTrue());
@@ -161,6 +162,20 @@ void EventManager::CopyPlutoParticles(GTreePluto *tree, ant::Event::ParticleList
         container.emplace_back( new MCParticle(
                     *type,
                     *((TLorentzVector*) p))
+                    );
+    }
+}
+
+void EventManager::CopyTaggerHits(Event::TaggerHitList_t &container)
+{
+    const GTreeTagger& tagger = *GetTagger();
+
+    for( Int_t i=0; i<tagger.GetNTagged(); ++i) {
+        container.emplace_back(
+                    new TaggerHit(
+                    tagger.GetTaggedChannel(i),
+                    tagger.GetTaggedEnergy(i),
+                    tagger.GetTaggedTime(i))
                     );
     }
 }

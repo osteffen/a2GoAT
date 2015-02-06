@@ -6,6 +6,10 @@ std::ostream &ant::Event::Print(std::ostream &stream) const
 
     stream << "------------------------------\n";
 
+    for( auto& taggerhit : taggerhits ) {
+        stream << *taggerhit << '\n';
+    }
+
     for( auto& track : tracks ) {
         stream << *track << '\n';
     }

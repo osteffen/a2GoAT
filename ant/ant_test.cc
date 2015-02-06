@@ -9,6 +9,8 @@
 
 #include "combinatorics.h"
 
+#include "interval.h"
+
 using namespace std;
 using namespace ant;
 
@@ -74,6 +76,17 @@ int main() {
         cout << endl;
 
     } while(combinations2.next());
+
+    interval<double> i;
+    cout << i << endl;
+
+    i.SetWidth(5);
+    cout << i << endl;
+
+    i.SetCenter(2.5);
+    cout << i << endl;
+
+    cout << i.Center() << " " << i.Length() << endl;
 
     return 0;
 

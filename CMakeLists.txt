@@ -105,6 +105,7 @@ set(ANT_BASE
     ant/TestPhysics.cc
     ant/Histogram.h
     ant/Histogram.cc
+    ant/interval.h
 )
 
 set(ANT_PHYSICS

@@ -13,16 +13,28 @@
 using namespace std;
 using namespace ant;
 
-ParticleCombinatoricsTest::ParticleCombinatoricsTest()
+ParticleCombinatoricsTest::ParticleCombinatoricsTest():
+    hf("TestPhysics")
 {
-    ggim = new TH1D("testphysics_ggim","ggim",100,0,250);
-    gggim = new TH1D("testphysics_gggim","gggim",100,0,250);
-    nphotons = new TH1D("testphysics_nphotons","Number of photons",10,0,10);
-    nprotons = new TH1D("testphysics_nprotons","Number of protons",10,0,10);
+
+    const HistogramFactory::BinSettings im_binning(100,0,250);
+    const HistogramFactory::BinSettings energy_binning(100,0,250);
+    const HistogramFactory::BinSettings npart_binning(10,0,10);
+
+    ggim = hf.Make1D("2 #gamma IM", "M_{#gamma #gamma} [MeV]","#", im_binning);
+    gggim = hf.Make1D("3 #gamma im","M_{#gamma #gamma #gamma} [MeV]","#", im_binning);
+    nphotons = hf.Make1D("Number of photons", "N", "", npart_binning);
+    nprotons = hf.Make1D("Number of protons","N","",npart_binning);
 
     // Build a map of ParticleType -> Histogram, and fill it
     for( auto& type : ParticleTypeDatabase() ) {
-        EHists.insert( std::pair<const ParticleTypeDatabase::Type*, TH1*>(&type, new TH1D( (type.Name()+"_energy").c_str(), (type.PrintName()+" Energy").c_str(),100,0,400)) );
+        EHists.insert(
+                    std::pair<const ParticleTypeDatabase::Type*, TH1*>(
+                        &type,
+                        hf.Make1D( type.PrintName()+" Energy", "E [MeV]", "#", energy_binning )
+                        )
+                    );
+
     }
 
 }

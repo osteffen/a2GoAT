@@ -103,6 +103,8 @@ set(ANT_BASE
     ant/combinatorics.h
     ant/TestPhysics.h
     ant/TestPhysics.cc
+    ant/Histogram.h
+    ant/Histogram.cc
 )
 
 if( PLUTO )

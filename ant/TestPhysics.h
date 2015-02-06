@@ -4,6 +4,8 @@
 #include "AntPhysics.h"
 #include <map>
 
+#include "Histogram.h"
+
 class TH1;
 namespace ant {
 class ParticleCombinatoricsTest: public ant::Physics {
@@ -14,6 +16,8 @@ protected:
     TH1*    nprotons;
 
     std::map<const ant::ParticleTypeDatabase::Type*, TH1*> EHists;
+
+    ant::HistogramFactory hf;
 
 public:
     ParticleCombinatoricsTest();

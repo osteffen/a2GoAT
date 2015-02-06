@@ -106,6 +106,8 @@ set(ANT_BASE
     ant/Histogram.h
     ant/Histogram.cc
     ant/interval.h
+    ant/TaggerHit.h
+    ant/TaggerHit.cc
 )
 
 set(ANT_PHYSICS

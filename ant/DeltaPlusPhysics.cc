@@ -17,7 +17,8 @@ using namespace std;
 DeltaPlusPhysics::DeltaPlusPhysics():
     prompt("DeltaPlus_prompt"),
     random("DeltaPlus_random"),
-    diff("DeltaPlus_diff")
+    diff("DeltaPlus_diff"),
+    pi0_cut(110,150)
 {
 
 }
@@ -40,7 +41,8 @@ void DeltaPlusPhysics::ProcessEvent(const Event &event)
     if(photons.size() == 2) {
         const TLorentzVector pi0 = *photons.at(0) + *photons.at(1);
         h["2gIM"]->Fill(pi0.M());
-        if(pi0.M() > 110.0 || pi0.M() < 150.0) {
+
+        if( pi0_cut.Contains( pi0.M()) ) {
 
         }
     }

@@ -3,6 +3,7 @@
 
 #include "AntPhysics.h"
 #include "Histogram.h"
+#include "interval.h"
 #include <map>
 #include <string>
 
@@ -69,6 +70,8 @@ protected:
     Histogm prompt;
     Histogm random;
     Histogm diff;
+
+    interval<double> pi0_cut;
 
 public:
     DeltaPlusPhysics();

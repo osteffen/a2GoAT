@@ -21,3 +21,9 @@ build
 
 # Ignore jobs directory for farming
 jobs
+
+
+# Temp files
+*.swp
+*~
+*.autosave

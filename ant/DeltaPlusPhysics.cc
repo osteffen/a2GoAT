@@ -21,7 +21,8 @@ DeltaPlusPhysics::DeltaPlusPhysics():
     diff("DeltaPlus_diff"),
     pi0_cut(110,150),
     prompt_window(-8,8),
-    random_window(-16,16)
+    random_window(-16,16),
+    target(0,0,0,ParticleTypeDatabase::Proton.Mass())
 {
     cout << "DeltaPlusPhysics:\n";
     cout << "Prompt window: " << prompt_window << " ns\n";
@@ -40,6 +41,11 @@ void DeltaPlusPhysics::ProcessEvent(const Event &event)
             photons.emplace_back(particle);
         else if ( particle->Type() == ParticleTypeDatabase::Proton )
             protons.emplace_back(particle);
+
+    }
+
+    for( auto& track : event.Tracks() ) {
+        prompt["pid"]->Fill(track->ClusterEnergy(), track->VetoEnergy());
     }
 
     for( auto& taggerhit : event.TaggerHits()) {
@@ -55,7 +61,11 @@ void DeltaPlusPhysics::ProcessEvent(const Event &event)
 
         Histogm& h = isPrompt ? prompt : random;
 
+        // some basic histograms
+        h["nPart"]->Fill(event.Particles().size());
         h["tag_energy"]->Fill(th.PhotonEnergy());
+        h["tag_time"]->Fill(th.Time());
+
 
         if(photons.size() == 2) {
             const Particle pi0 ( ParticleTypeDatabase::Pi0, *photons.at(0) + *photons.at(1));
@@ -63,13 +73,40 @@ void DeltaPlusPhysics::ProcessEvent(const Event &event)
 
             if( pi0_cut.Contains( pi0.M()) ) {
                 h["pi0angle_noboost"]->Fill(pi0.Theta());
+
+                // construct beam photon 4-vector and, using this, the delta restframe
+                const TLorentzVector beam(0, 0, th.PhotonEnergy(), th.PhotonEnergy());
+                const TLorentzVector delta_beam(beam + target);
+                const TVector3 boost = -(delta_beam.BoostVector());
+
+                // boost pi0
+                TLorentzVector pi0_ = pi0;
+                pi0_.Boost(boost);
+
+                // missing mass plot (should peak at proton)
+                TLorentzVector mmp = delta_beam - pi0;
+                h["mmp"]->Fill( mmp.M() );
+
+                // plot boosted pi0 angle, our desired plot!
+                h["pi0angle"]->Fill( cos(pi0_.Theta()) );
+                h["pi0angle_noboost"]->Fill( cos(pi0.Theta()));
+                h["pi0angle_tagged"]->Fill( cos(pi0_.Theta()), beam.E());
+
+                // have a look at proton reconstruction quality
+                // by creating a delta
+                if(protons.size()==1) {
+                    TLorentzVector delta = pi0 + *protons.at(0);
+
+                    TLorentzVector delta_ = delta;
+                    delta_.Boost(boost);
+
+                    h["delta_pz"]->Fill(delta_.P());
+                    h["delta_IM"]->Fill(delta_.M());
+                }
             }
         }
 
-        if(protons.size() == 1) {
-
     }
-}
 }
 
 void DeltaPlusPhysics::Finish()

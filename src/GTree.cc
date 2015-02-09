@@ -106,7 +106,7 @@ Bool_t  GTree::OpenForInput()
 
 Bool_t  GTree::OpenForOutput()
 {
-    manager->outputFile->cd();
+    manager->outputFile->cd();  //FFIX: manager's job!
     outputTree    = new TTree(name.Data(), name.Data());
     if(outputTree)
     {
@@ -125,9 +125,9 @@ Bool_t  GTree::OpenForOutput()
 void    GTree::Close()
 {
     status = FLAG_CLOSED;
-    if(manager->writeList.FindObject(this))
-    {
-        manager->writeList.Remove(this);
+    if(manager->writeList.FindObject(this))         // FFIX: Why do we need a manager ptr at all?
+    {                                               // The manager creates and deletes the GTrees. Then it can also manage the lists itself.
+        manager->writeList.Remove(this);            // Proposal: get rid of the manager ptr completely, casue it violates responsibility hieracy
         manager->writeList.Compress();
     }
     if(manager->readList.FindObject(this))
@@ -181,8 +181,8 @@ Bool_t	GTree::Write()
     if(!outputTree)                   return kFALSE;
     if(!IsOpenForOutput())          return kFALSE;
 
-    manager->outputFile->cd();
-    outputTree->Write();
+    manager->outputFile->cd();      // FFIX: This is super inefficeint.. better place the tree directly inside the file
+    outputTree->Write();            // when it is created (open output file, create the tree). Then a simple outputfile->Write() at the end is enough.
     std::cout << "tree " << name << " has been written to disk." << std::endl;
     return kTRUE;
 }

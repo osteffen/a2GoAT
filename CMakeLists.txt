@@ -108,6 +108,7 @@ set(ANT_BASE
     ant/interval.h
     ant/TaggerHit.h
     ant/TaggerHit.cc
+    ant/plotter.h
 )
 
 set(ANT_PHYSICS

@@ -11,6 +11,8 @@
 
 #include "interval.h"
 
+#include "plotter.h"
+
 using namespace std;
 using namespace ant;
 
@@ -87,6 +89,26 @@ int main() {
     cout << i << endl;
 
     cout << i.Center() << " " << i.Length() << endl;
+
+    cout << "========================" << endl;
+
+  //  int x=5;
+
+    auto qq = [] (int i) {return i*i*i;};
+
+   // auto a = AHMake<int>([] (int i) {return i*i-1;});
+
+   // (*a)(3);
+
+
+
+
+    PlotList<int> li;
+    li.AddPlot([] (int i) { return 200+i;});
+    li.AddPlot([] (int i) { return i*i;});
+
+    li(4);
+    li(8);
 
     return 0;
 

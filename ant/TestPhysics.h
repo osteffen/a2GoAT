@@ -3,10 +3,11 @@
 
 #include "AntPhysics.h"
 #include <map>
-
+#include "plotter.h"
 #include "Histogram.h"
 
 class TH1;
+
 namespace ant {
 class ParticleCombinatoricsTest: public ant::Physics {
 protected:
@@ -26,6 +27,22 @@ public:
     virtual void ProcessEvent(const ant::Event& event);
     virtual void Finish();
     virtual void ShowResult();
+};
+
+class PlotterTest: public ant::Physics {
+protected:
+    ant::HistogramFactory hf;
+    ant::PlotList<ant::Track> track_plots;
+    ant::PlotList<ant::Particle> particle_plots;
+
+    // Physics interface
+public:
+    PlotterTest();
+    virtual ~PlotterTest() {}
+
+    void ProcessEvent(const Event &event);
+    void Finish();
+    void ShowResult();
 };
 }
 #endif

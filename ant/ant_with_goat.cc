@@ -26,11 +26,13 @@ int main(int argc, char *argv[])
     ant::EventManager analysis;
    // ant::DebugPhysics debug;
     ant::ParticleCombinatoricsTest ctest;
-    ant::analysis::DeltaPlusPhysics d;
+   // ant::analysis::DeltaPlusPhysics d;
+    ant::PlotterTest plots;
+    analysis.AddPhysics(&plots);
 
    // analysis.AddPhysics(&debug);
     analysis.AddPhysics(&ctest);
-    analysis.AddPhysics(&d);
+   // analysis.AddPhysics(&d);
 
     // Perform basic configuration
     if(!analysis.BaseConfig(argc, argv, "GoAT", "Physics"))
@@ -59,7 +61,7 @@ int main(int argc, char *argv[])
 
    // debug.ShowResult();
     ctest.ShowResult();
-    d.ShowResult();
+    //d.ShowResult();
 
     app.Run(kTRUE);
 

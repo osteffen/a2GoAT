@@ -104,11 +104,12 @@ int main() {
 
 
     PlotList<int> li;
-    li.AddPlot([] (int i) { return 200+i;});
-    li.AddPlot([] (int i) { return i*i;});
+    li.AddPrint([] (int i) { return 200+i;});
+    li.AddPrint([] (int i) { return i*i;});
 
     li(4);
     li(8);
+
 
     return 0;
 

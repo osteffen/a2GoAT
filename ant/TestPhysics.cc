@@ -10,6 +10,8 @@
 
 #include "TCanvas.h"
 
+#include "plotter.h"
+
 using namespace std;
 using namespace ant;
 
@@ -105,4 +107,46 @@ void ParticleCombinatoricsTest::ShowResult()
 
     new TCanvas();
     EHists.at( &ParticleTypeDatabase::Photon )->Draw();
+}
+
+
+PlotterTest::PlotterTest():
+    hf("PlotterTest")
+{
+    const HistogramFactory::BinSettings pidbinnning(100,0,25);
+    const HistogramFactory::BinSettings energy_binning(100,0,250);
+
+    track_plots.AddHist1D(
+                [] (Track p) { return p.ClusterEnergy();},
+                hf.Make1D("plotter test","x","y",energy_binning));
+
+    auto pid_banana_fuction = [] (Track p) { return move( make_tuple(p.ClusterEnergy(), p.VetoEnergy()) );};
+
+    track_plots.AddHist2D(
+                pid_banana_fuction,
+                hf.Make2D("plotter test 2d","x","y",energy_binning,pidbinnning));
+
+}
+
+void PlotterTest::ProcessEvent(const Event &event)
+{
+
+    for (auto& track : event.Tracks() ) {
+        track_plots.Fill(*track);
+    }
+
+    for (auto& particle : event.Particles() ) {
+        particle_plots.Fill(*particle);
+    }
+
+}
+
+void PlotterTest::Finish()
+{
+
+}
+
+void PlotterTest::ShowResult()
+{
+
 }

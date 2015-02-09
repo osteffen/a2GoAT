@@ -110,21 +110,31 @@ void ParticleCombinatoricsTest::ShowResult()
 }
 
 
+double GetEnergyFromTrack(const ant::Track& p ) {
+    return p.ClusterEnergy();
+}
+
 PlotterTest::PlotterTest():
     hf("PlotterTest")
 {
-    const HistogramFactory::BinSettings pidbinnning(100,0,25);
+    const HistogramFactory::BinSettings pid_binnning(100,0,25);
     const HistogramFactory::BinSettings energy_binning(100,0,250);
 
     track_plots.AddHist1D(
-                [] (Track p) { return p.ClusterEnergy();},
-                hf.Make1D("plotter test","x","y",energy_binning));
+                [] (const Track& p) { return p.ClusterEnergy();},
+                hf.Make1D("TrackEnergy","E [MeV]","#", energy_binning));
 
-    auto pid_banana_fuction = [] (Track p) { return move( make_tuple(p.ClusterEnergy(), p.VetoEnergy()) );};
+    track_plots.AddHist1D(
+                GetEnergyFromTrack,
+                hf.Make1D("Track Energy (2)","E [MeV]","#", energy_binning));
+
+    auto pid_banana_fuction = [] (const Track& p) { return move( make_tuple(p.ClusterEnergy(), p.VetoEnergy()) );};
 
     track_plots.AddHist2D(
                 pid_banana_fuction,
-                hf.Make2D("plotter test 2d","x","y",energy_binning,pidbinnning));
+                hf.Make2D("plotter test 2d","x","y",energy_binning,pid_binnning));
+
+
 
 }
 

@@ -34,7 +34,7 @@ ParticleCombinatoricsTest::ParticleCombinatoricsTest():
         EHists.insert(
                     std::pair<const ParticleTypeDatabase::Type*, TH1*>(
                         &type,
-                        hf.Make1D( type.PrintName()+" Energy", "E [MeV]", "#", energy_binning )
+                        hf.Make1D( type.PrintName()+" Energy", "E_{k} [MeV]", "#", energy_binning )
                         )
                     );
 
@@ -44,6 +44,7 @@ ParticleCombinatoricsTest::ParticleCombinatoricsTest():
 
 
 void ParticleCombinatoricsTest::ProcessEvent(const Event &event)
+
 {
     Event::RecParticleList_t photons;
     Event::RecParticleList_t protons;
@@ -52,7 +53,7 @@ void ParticleCombinatoricsTest::ProcessEvent(const Event &event)
 
         // fill the histogram corresponding to the partice type of the current particle
         try {
-            EHists.at( &(particle->Type()) )->Fill(particle->E());
+            EHists.at( &(particle->Type()) )->Fill(particle->Ek());
         } catch (...) {}
 
         if( particle->Type() ==  ParticleTypeDatabase::Photon )

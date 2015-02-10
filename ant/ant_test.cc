@@ -92,23 +92,6 @@ int main() {
 
     cout << "========================" << endl;
 
-  //  int x=5;
-
-    auto qq = [] (int i) {return i*i*i;};
-
-   // auto a = AHMake<int>([] (int i) {return i*i-1;});
-
-   // (*a)(3);
-
-
-
-
-    PlotList<int> li;
-    li.AddPrint([] (int i) { return 200+i;});
-    li.AddPrint([] (int i) { return i*i;});
-
-    li(4);
-    li(8);
 
 
     return 0;

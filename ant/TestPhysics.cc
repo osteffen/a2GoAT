@@ -11,6 +11,7 @@
 #include "TCanvas.h"
 
 #include "plotter.h"
+#include "root_draw.h"
 
 using namespace std;
 using namespace ant;
@@ -93,20 +94,15 @@ void ParticleCombinatoricsTest::Finish()
 
 void ParticleCombinatoricsTest::ShowResult()
 {
-    new TCanvas();
-    ggim->Draw();
+    canvas cc("ParticleCombinatoricsTest");
+    cc << ggim << gggim << nphotons << nprotons << canvas::cend;
 
-    new TCanvas();
-    gggim->Draw();
+    canvas cc2("ParticleCombinatoricsTest2");
+    for( auto& e : EHists) {
+        cc2 << e.second;
+    }
+    cc2 << canvas::cend;
 
-    new TCanvas();
-    nphotons->Draw();
-
-    new TCanvas();
-    nprotons->Draw();
-
-    new TCanvas();
-    EHists.at( &ParticleTypeDatabase::Photon )->Draw();
 }
 
 
@@ -158,5 +154,15 @@ void PlotterTest::Finish()
 
 void PlotterTest::ShowResult()
 {
+    canvas c("Plotter Test");
+    c << canvas::drawoption("colz");
+    for( auto& p : track_plots.Plots() ) {
+        c << *p;
+    }
+
+    for( auto& p : particle_plots.Plots() ) {
+        c << *p;
+    }
+    c << canvas::cend;
 
 }

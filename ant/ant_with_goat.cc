@@ -62,6 +62,7 @@ int main(int argc, char *argv[])
    // debug.ShowResult();
     ctest.ShowResult();
     //d.ShowResult();
+    plots.ShowResult();
 
     app.Run(kTRUE);
 

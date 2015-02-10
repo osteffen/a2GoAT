@@ -109,6 +109,8 @@ set(ANT_BASE
     ant/TaggerHit.h
     ant/TaggerHit.cc
     ant/plotter.h
+    ant/root_draw.h
+    ant/root_draw.cc
 )
 
 set(ANT_PHYSICS

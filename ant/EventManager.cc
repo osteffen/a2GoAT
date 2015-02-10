@@ -159,9 +159,12 @@ void EventManager::CopyPlutoParticles(GTreePluto *tree, Event::MCParticleList_t 
             continue;
         }
 
+        TLorentzVector lv = *p;
+        lv *= 1000.0;   // convert to MeV
+
         container.emplace_back( new MCParticle(
                     *type,
-                    *((TLorentzVector*) p))
+                    lv)
                     );
     }
 }

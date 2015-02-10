@@ -24,6 +24,7 @@ find_package(ROOT "5.30" REQUIRED)
 # since all subprojects need ROOT, set that up here
 include_directories(${ROOT_INCLUDES} ${CMAKE_SOURCE_DIR}/inc)
 include_directories(${CMAKE_SOURCE_DIR}/ant)
+include_directories(${CMAKE_SOURCE_DIR}/ant/analysis)
 link_directories(${ROOT_LIBRARY_DIR})
 
 include_directories(inc)
@@ -116,6 +117,8 @@ set(ANT_BASE
 set(ANT_PHYSICS
     ant/DeltaPlusPhysics.h
     ant/DeltaPlusPhysics.cc
+    ant/analysis/MCOverview.h
+    ant/analysis/MCOverview.cc
 )
 
 if( PLUTO )

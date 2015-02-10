@@ -6,6 +6,7 @@
 #include "AntPhysics.h"
 #include "TestPhysics.h"
 #include "DeltaPlusPhysics.h"
+#include "MCOverview.h"
 using namespace std;
 
 /**
@@ -26,13 +27,17 @@ int main(int argc, char *argv[])
     ant::EventManager analysis;
    // ant::DebugPhysics debug;
     ant::ParticleCombinatoricsTest ctest;
-   // ant::analysis::DeltaPlusPhysics d;
+    ant::analysis::DeltaPlusPhysics d;
+
     ant::PlotterTest plots;
     analysis.AddPhysics(&plots);
 
    // analysis.AddPhysics(&debug);
     analysis.AddPhysics(&ctest);
-   // analysis.AddPhysics(&d);
+    analysis.AddPhysics(&d);
+
+    ant::analysis::MCOverview mcoverview;
+    analysis.AddPhysics(&mcoverview);
 
     // Perform basic configuration
     if(!analysis.BaseConfig(argc, argv, "GoAT", "Physics"))
@@ -61,8 +66,9 @@ int main(int argc, char *argv[])
 
    // debug.ShowResult();
     ctest.ShowResult();
-    //d.ShowResult();
+    d.ShowResult();
     plots.ShowResult();
+    mcoverview.ShowResult();
 
     app.Run(kTRUE);
 

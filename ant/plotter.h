@@ -99,9 +99,9 @@ public:
 
     void AddNode( NodePtr node ) { plots.push_back(node); }
 
-    template <typename ct, class Function>
-    std::shared_ptr< BranchNode<ct, Data, Function>> AddBranchNode(Function f) {
-        std::shared_ptr< BranchNode<ct, Data, Function> > b = std::make_shared<BranchNode<ct, Data, Function>>(f);
+    template <typename compareType, class Function>
+    std::shared_ptr< BranchNode<compareType, Data, Function>> AddBranchNode(Function f) {
+        std::shared_ptr< BranchNode<compareType, Data, Function> > b = std::make_shared<BranchNode<compareType, Data, Function>>(f);
         plots.emplace_back(b);
         return std::move(b);
     }

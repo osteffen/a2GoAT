@@ -8,12 +8,18 @@
 #include <tuple>
 
 using namespace std;
+using namespace ant;
+
+const ant::ParticleTypeDatabase::Type* GetParticleType( const ant::Particle& p )
+{
+    return &p.Type();
+}
 
 ant::analysis::MCOverview::MCOverview(): hf("MCOverview")
 {
     const HistogramFactory::BinSettings energy_bins(100,0,400);
     const HistogramFactory::BinSettings theta_bins(100,0,180);
-/*
+
     mc_particle_stats.AddHist1D(
                 [] (const Particle& p) { return p.Ek();},
                 hf.Make1D("MC Energy","E [MeV]","", energy_bins)
@@ -27,7 +33,27 @@ ant::analysis::MCOverview::MCOverview(): hf("MCOverview")
             "#theta [#circ]",
             energy_bins,
             theta_bins)
-    );*/
+    );
+
+    auto ptype = mc_particle_stats.AddBranchNode<const ParticleTypeDatabase::Type*>(GetParticleType);
+
+    for( auto& pt : ParticleTypeDatabase() ) {
+        auto branch = ptype->AddBranch(&pt);
+        branch->AddHist1D(
+                    [] (const Particle& p) { return p.Ek();},
+                    hf.Make1D("MC Energy " + pt.PrintName(),"E_{k} [MeV]","", energy_bins)
+        );
+        branch->AddHist2D(
+                    [] (const Particle& p) { return make_tuple(p.Ek(), p.Theta()*TMath::RadToDeg());},
+                    hf.Make2D(
+                "MC Energy " + pt.PrintName(),
+                "E_{k} [MeV]",
+                "#theta [#circ]",
+                energy_bins,
+                theta_bins)
+        );
+    }
+
 }
 
 ant::analysis::MCOverview::~MCOverview()

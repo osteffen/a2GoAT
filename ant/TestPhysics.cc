@@ -167,16 +167,4 @@ void PlotterTest::Finish()
 
 void PlotterTest::ShowResult()
 {
-    /*
-    canvas c("Plotter Test");
-    c << canvas::drawoption("colz");
-    for( auto& p : track_plots.Plots() ) {
-        c << *p;
-    }
-
-    for( auto& p : particle_plots.Plots() ) {
-        c << *p;
-    }
-    c << canvas::cend;
-*/
 }

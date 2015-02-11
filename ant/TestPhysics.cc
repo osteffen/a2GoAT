@@ -111,15 +111,17 @@ double GetEnergyFromTrack(const ant::Track& p ) {
     return p.ClusterEnergy();
 }
 
+double GetThetaFromTrack(const ant::Track& p ) {
+    return p.Theta()*TMath::RadToDeg();
+}
+
 PlotterTest::PlotterTest():
     hf("PlotterTest")
 {
     const HistogramFactory::BinSettings pid_binnning(100,0,25);
     const HistogramFactory::BinSettings energy_binning(100,0,250);
+    const HistogramFactory::BinSettings theta_binning(180,0,180);
 
-    track_plots.AddHist1D(
-                [] (const Track& p) { return p.ClusterEnergy();},
-                hf.Make1D("TrackEnergy","E [MeV]","#", energy_binning));
 
     track_plots.AddHist1D(
                 GetEnergyFromTrack,
@@ -131,8 +133,18 @@ PlotterTest::PlotterTest():
                 pid_banana_fuction,
                 hf.Make2D("plotter test 2d","x","y",energy_binning,pid_binnning));
 
+    auto list2 = track_plots.AddList();
+    list2->AddHist1D(
+                GetEnergyFromTrack,
+                hf.Make1D("Track Energy (2) new list","E [MeV]","#", energy_binning));
 
+    auto b = list2->AddBranchNode<apparatus_t>([] (const Track& t) { return t.Apparatus(); });
 
+    auto b_cb = b->AddBranch(apparatus_t::CB);
+    b_cb->AddHist1D(GetEnergyFromTrack, hf.Make1D("CB Theta","#theta [#circ]","",theta_binning));
+
+    auto b_taps = b->AddBranch(apparatus_t::TAPS);
+    b_taps->AddHist1D(GetEnergyFromTrack, hf.Make1D("TAPS Theta","#theta [#circ]","",theta_binning));
 }
 
 void PlotterTest::ProcessEvent(const Event &event)
@@ -155,6 +167,7 @@ void PlotterTest::Finish()
 
 void PlotterTest::ShowResult()
 {
+    /*
     canvas c("Plotter Test");
     c << canvas::drawoption("colz");
     for( auto& p : track_plots.Plots() ) {
@@ -165,5 +178,5 @@ void PlotterTest::ShowResult()
         c << *p;
     }
     c << canvas::cend;
-
+*/
 }

@@ -12,7 +12,7 @@ namespace ant {
 class root_drawable_traits {
 public:
     virtual TObject* GetObject() =0;
-    virtual void Draw() =0;
+    virtual void Draw(const std::string& option) const =0;
 };
 
 class canvas {

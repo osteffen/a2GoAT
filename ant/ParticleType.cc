@@ -44,3 +44,17 @@ void ParticleTypeDatabase::Print()
         cout << (p.second) << endl;
     }
 }
+
+const std::vector<const ParticleTypeDatabase::Type*> ParticleTypeDatabase::detectables = { &ParticleTypeDatabase::Photon,
+                                                                                           &ParticleTypeDatabase::Proton,
+                                                                                           &ParticleTypeDatabase::PiCharged,
+                                                                                           &ParticleTypeDatabase::eCharged
+                                                                                         };
+
+const std::vector<const ParticleTypeDatabase::Type*> ParticleTypeDatabase::mc_finalstate = { &ParticleTypeDatabase::Photon,
+                                                                                             &ParticleTypeDatabase::Proton,
+                                                                                             &ParticleTypeDatabase::PiMinus,
+                                                                                             &ParticleTypeDatabase::PiPlus,
+                                                                                             &ParticleTypeDatabase::eMinus,
+                                                                                             &ParticleTypeDatabase::ePlus
+                                                                                           };

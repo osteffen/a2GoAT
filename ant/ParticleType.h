@@ -7,6 +7,7 @@
 #include <ostream>
 #include <map>
 #include <iterator>
+#include <vector>
 
 namespace ant {
 
@@ -53,6 +54,9 @@ protected:
     typedef std::map<std::string, const Type&> Particles_t;
     static Particles_t types;
 
+    static const std::vector<const Type*> detectables;
+    static const std::vector<const Type*> mc_finalstate;
+
 public:
 
     ParticleTypeDatabase() {}
@@ -86,6 +90,9 @@ public:
 
     static const_iterator begin() { return const_iterator(types.begin()); }
     static const_iterator end()   { return const_iterator(types.end()); }
+
+    static const std::vector<const Type*>& DetectableTypes() { return detectables; }
+    static const std::vector<const Type*>& MCFinalStateTypes() { return mc_finalstate; }
 
 
 };

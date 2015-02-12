@@ -4,6 +4,7 @@
 #include <ostream>
 #include <memory>
 #include "types.h"
+#include "Detector.h"
 #include "printable.h"
 
 namespace ant {

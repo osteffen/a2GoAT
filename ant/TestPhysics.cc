@@ -12,6 +12,7 @@
 
 #include "plotter.h"
 #include "root_draw.h"
+#include "Detector.h"
 
 using namespace std;
 using namespace ant;

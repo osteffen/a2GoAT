@@ -14,10 +14,6 @@ typedef unsigned int index_t;
 typedef unsigned int clustersize_t;
 typedef int element_index_t;
 
-// strongly typed enum, C++11 feature
-// in combination with usual boolean operations
-
-
 class detector_t : public printable_traits {
 private:
     unsigned int v;
@@ -32,17 +28,41 @@ public:
     const static detector_t BaF2;
     const static detector_t PbWO4;
     const static detector_t Veto;
+    const static detector_t anyCB;
+    const static detector_t anyTAPS;
+    const static detector_t anyVeto;
 
-    bool operator==(const detector_t& o) {
+    bool operator==(const detector_t& o) const {
         return v==o.v;
     }
 
-    bool operator&(const detector_t& o) {
+    bool operator!=(const detector_t& o) const {
+        return v!=o.v;
+    }
+
+    operator bool() const {
+        return v;
+    }
+
+    detector_t operator&(const detector_t& o) const {
         return v & o.v;
+    }
+
+    detector_t operator^(const detector_t& o) const {
+        return v ^ o.v;
+    }
+
+    detector_t operator^=(const detector_t&o) {
+        v ^= o.v;
+        return *this;
     }
 
     bool operator<(const detector_t& o) const {
         return v < o.v;
+    }
+
+    bool operator>(const detector_t& o) const {
+        return v > o.v;
     }
 
     detector_t& operator|=(const detector_t& o) {
@@ -50,7 +70,9 @@ public:
         return *this;
     }
 
-
+    detector_t operator|(const detector_t& o) const {
+        return  detector_t(v | o.v);
+    }
 
     std::ostream& Print(std::ostream &stream) const;
 };

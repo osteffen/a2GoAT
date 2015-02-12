@@ -11,7 +11,7 @@ ostream& Track::Print(ostream &stream) const
            << " Phi=" << Phi()
            << " Time=" << Time()
            << " ClusterSize=" << ClusterSize()
-           << " Apparatus=" << Detector()
+           << " Detectors=" << Detector()
            << " VetoEnergy=" << VetoEnergy()
            << " MWPC0Energy=" << MWPC0Energy()
            << " MWPC1Energy=" << MWPC1Energy();

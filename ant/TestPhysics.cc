@@ -143,7 +143,7 @@ PlotterTest::PlotterTest():
     auto b_cb = b->AddBranch(detector_t::NaI);
     b_cb->AddHist1D(GetEnergyFromTrack, hf.Make1D("CB Theta","#theta [#circ]","",theta_binning));
 
-    auto b_taps = b->AddBranch(detector_t::NaI);
+    auto b_taps = b->AddBranch(detector_t::PbWO4);
     b_taps->AddHist1D(GetEnergyFromTrack, hf.Make1D("TAPS Theta","#theta [#circ]","",theta_binning));
 }
 

@@ -92,6 +92,17 @@ int main() {
 
     cout << "========================" << endl;
 
+    detector_t d = detector_t::NaI;
+
+    if( d & detector_t::anyCB )
+        cout << "is in cb";
+    else
+        cout << "NOT" << endl;
+
+    cout << d << endl;
+
+    d ^= detector_t::PbWO4;
+    cout << d << endl;
 
 
     return 0;

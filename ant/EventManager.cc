@@ -96,14 +96,14 @@ void EventManager::CopyParticles(GTreeParticle *tree, const ParticleTypeDatabase
  * @brief map goat apparatus numbers to apparatus_t enum values
  * in case unknown values show up: -> exception and do not sliently ignore
  */
-apparatus_t IntToAppatatus_t( const int& a ) {
+detector_t IntToAppatatus_t( const int& a ) {
     switch(a) {
     case 1:
-        return apparatus_t::CB;
+        return detector_t::CB;
     case 2:
-        return apparatus_t::TAPS;
+        return detector_t::TAPS;
     case 3:
-        return apparatus_t::CBTAPS;
+        return detector_t::CBTAPS;
     default:
         throw std::logic_error("Encountered Unknown Apparatus Type.");
     }
@@ -183,19 +183,19 @@ void EventManager::CopyTaggerHits(Event::TaggerHitList_t &container)
     }
 }
 
-EventManager::uTrackPtr EventManager::GetTrack(GTreeTrack *tree, const UInt_t n)
+Event::sTrackPtr EventManager::GetTrack(GTreeTrack *tree, const UInt_t n)
 {
 
     if(n >= tree->GetNTracks() )
         throw out_of_range("EventManager::GetTrack: Track index out of bounds");
 
-    uTrackPtr track(
+    Event::sTrackPtr track(
                 new Track(                    tree->GetClusterEnergy(n),
                                               tree->GetTheta(n) * TMath::DegToRad(),
                                               tree->GetPhi(n) * TMath::DegToRad(),
                                               tree->GetTime(n),
                                               MapClusterSize(tree->GetClusterSize(n)),
-                                              IntToAppatatus_t(tree->GetApparatus(n)),
+                                              IntToAppatatus_t(0),
                                               tree->GetVetoEnergy(n),
                                               tree->GetMWPC0Energy(n),
                                               tree->GetMWPC1Energy(n))

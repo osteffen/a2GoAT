@@ -13,7 +13,10 @@ typedef unsigned int clustersize_t;
 typedef int element_index_t;
 
 // strongly typed enum, C++11 feature
-enum class apparatus_t {
+// in combination with usual boolean operations
+
+
+enum class detector_t {
     CB,
     TAPS,
     CBTAPS
@@ -21,6 +24,6 @@ enum class apparatus_t {
 
 }
 
-std::ostream& operator<<(std::ostream &stream, const ant::apparatus_t& app);
+std::ostream& operator<<(std::ostream &stream, const ant::detector_t& app);
 
 #endif

@@ -3,12 +3,12 @@
 using namespace std;
 using namespace ant;
 
-ostream& operator<<(ostream &stream, const apparatus_t& app)
+ostream& operator<<(ostream &stream, const detector_t& app)
 {
    switch(app) {
-   case apparatus_t::CB:
+   case detector_t::CB:
        stream << "CB"; break;
-   case apparatus_t::TAPS:
+   case detector_t::TAPS:
        stream << "TAPS"; break;
    default:
        stream << "No string representation"; break;

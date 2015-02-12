@@ -36,7 +36,7 @@ int main() {
             radian_t(1.0),
             time_t(0.324),
             clustersize_t(4),
-            apparatus_t::CB,
+            detector_t::CB,
             mev_t(0.4),
             mev_t(0.3),
             mev_t(0.2)

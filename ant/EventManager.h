@@ -47,7 +47,7 @@ protected:
     void CopyPlutoParticles(GTreePluto* tree, ant::Event::MCParticleList_t& container);
     void CopyTaggerHits(ant::Event::TaggerHitList_t& container);
 
-    uTrackPtr GetTrack(GTreeTrack* tree, const UInt_t n);
+    Event::sTrackPtr GetTrack(GTreeTrack* tree, const UInt_t n);
 
     uTrackPtr GetPlutoParticle(GTreePluto* tree, const UInt_t n);
 

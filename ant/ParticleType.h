@@ -69,7 +69,6 @@ public:
     static const Type Neutron;
     static const Type Photon;
     static const Type Pi0;
-    static const Type Electron;
     static const Type PiPlus;
     static const Type PiMinus;
     static const Type PiCharged;

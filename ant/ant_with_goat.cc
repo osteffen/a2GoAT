@@ -7,6 +7,7 @@
 #include "TestPhysics.h"
 #include "DeltaPlusPhysics.h"
 #include "MCOverview.h"
+#include "MCSingleParticles.h"
 using namespace std;
 
 /**
@@ -38,6 +39,9 @@ int main(int argc, char *argv[])
 
     ant::analysis::MCOverview mcoverview;
     analysis.AddPhysics(&mcoverview);
+
+    ant::analysis::MCSingleParticles single;
+    analysis.AddPhysics(&single);
 
     // Perform basic configuration
     if(!analysis.BaseConfig(argc, argv, "GoAT", "Physics"))

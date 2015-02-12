@@ -119,6 +119,8 @@ set(ANT_PHYSICS
     ant/DeltaPlusPhysics.cc
     ant/analysis/MCOverview.h
     ant/analysis/MCOverview.cc
+    ant/analysis/MCSingleParticles.h
+    ant/analysis/MCSingleParticles.cc
 )
 
 if( PLUTO )

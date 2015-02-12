@@ -2,7 +2,6 @@
 #define PRINTABLE_H
 
 #include <ostream>
-#include <memory>
 
 namespace ant {
 

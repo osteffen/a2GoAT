@@ -138,12 +138,12 @@ PlotterTest::PlotterTest():
                 GetEnergyFromTrack,
                 hf.Make1D("Track Energy (2) new list","E [MeV]","#", energy_binning));
 
-    auto b = list2->AddBranchNode<detector_t>([] (const Track& t) { return t.Apparatus(); });
+    auto b = list2->AddBranchNode<detector_t>([] (const Track& t) { return t.Detector(); });
 
-    auto b_cb = b->AddBranch(detector_t::CB);
+    auto b_cb = b->AddBranch(detector_t::NaI);
     b_cb->AddHist1D(GetEnergyFromTrack, hf.Make1D("CB Theta","#theta [#circ]","",theta_binning));
 
-    auto b_taps = b->AddBranch(detector_t::TAPS);
+    auto b_taps = b->AddBranch(detector_t::NaI);
     b_taps->AddHist1D(GetEnergyFromTrack, hf.Make1D("TAPS Theta","#theta [#circ]","",theta_binning));
 }
 

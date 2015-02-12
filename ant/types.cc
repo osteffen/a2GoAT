@@ -3,15 +3,16 @@
 using namespace std;
 using namespace ant;
 
-ostream& operator<<(ostream &stream, const detector_t& app)
+const detector_t detector_t::None;
+const detector_t detector_t::NaI(1);
+const detector_t detector_t::PID(2);
+const detector_t detector_t::MWPC(4);
+const detector_t detector_t::BaF2(8);
+const detector_t detector_t::PbWO4(16);
+const detector_t detector_t::Veto(32);
+
+ostream& detector_t::Print(ostream& stream) const
 {
-   switch(app) {
-   case detector_t::CB:
-       stream << "CB"; break;
-   case detector_t::TAPS:
-       stream << "TAPS"; break;
-   default:
-       stream << "No string representation"; break;
-   }
-   return stream;
+    stream << "not implemented";
+    return stream;
 }

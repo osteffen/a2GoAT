@@ -16,7 +16,7 @@ namespace ant {
 class Track: public ant::printable_traits
 {
 private:
-    detector_t apparatus;
+    detector_t detector;
     radian_t theta;
     radian_t phi;
     ns_t time;
@@ -41,7 +41,7 @@ public:
         phi(_phi),
         time(_time),
         clusterSize(_clusterSize),
-        apparatus(_apparatus),
+        detector(_apparatus),
         vetoEnergy(_vetoEnergy),
         _MWPC0Energy(_MWPC0Energy),
         _MWPC1Energy(_MWPC1Energy)
@@ -53,7 +53,7 @@ public:
     radian_t Phi() const { return phi; }
     ns_t Time() const { return time; }
     clustersize_t ClusterSize() const { return clusterSize; }
-    detector_t Apparatus() const { return apparatus; }
+    detector_t Detector() const { return detector; }
     mev_t VetoEnergy() const { return vetoEnergy; }
     mev_t MWPC0Energy() const { return _MWPC0Energy; }
     mev_t MWPC1Energy() const { return _MWPC1Energy; }

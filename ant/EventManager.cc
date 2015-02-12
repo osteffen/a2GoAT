@@ -6,6 +6,8 @@
 #include "PParticle.h"
 #endif
 
+#include "GTreeTrack.h"
+
 using namespace std;
 using namespace ant;
 
@@ -96,17 +98,27 @@ void EventManager::CopyParticles(GTreeParticle *tree, const ParticleTypeDatabase
  * @brief map goat apparatus numbers to apparatus_t enum values
  * in case unknown values show up: -> exception and do not sliently ignore
  */
-detector_t IntToAppatatus_t( const int& a ) {
-    switch(a) {
-    case 1:
-        return detector_t::CB;
-    case 2:
-        return detector_t::TAPS;
-    case 3:
-        return detector_t::CBTAPS;
-    default:
-        throw std::logic_error("Encountered Unknown Apparatus Type.");
+detector_t IntToDetector_t( const int& a ) {
+    detector_t d = detector_t::None;
+    if(a & GTreeTrack::DETECTOR_NaI) {
+        d |= detector_t::NaI;
     }
+    if(a & GTreeTrack::DETECTOR_PID) {
+        d |= detector_t::PID;
+    }
+    if(a & GTreeTrack::DETECTOR_MWPC) {
+        d |= detector_t::MWPC;
+    }
+    if(a & GTreeTrack::DETECTOR_BaF2) {
+        d |= detector_t::BaF2;
+    }
+    if(a & GTreeTrack::DETECTOR_PbWO4) {
+        d |= detector_t::PbWO4;
+    }
+    if(a & GTreeTrack::DETECTOR_Veto) {
+        d |= detector_t::Veto;
+    }
+    return d;
 }
 
 /**
@@ -195,7 +207,7 @@ Event::sTrackPtr EventManager::GetTrack(GTreeTrack *tree, const UInt_t n)
                                               tree->GetPhi(n) * TMath::DegToRad(),
                                               tree->GetTime(n),
                                               MapClusterSize(tree->GetClusterSize(n)),
-                                              IntToAppatatus_t(0),
+                                              IntToDetector_t(tree->GetDetectors(n)),
                                               tree->GetVetoEnergy(n),
                                               tree->GetMWPC0Energy(n),
                                               tree->GetMWPC1Energy(n))

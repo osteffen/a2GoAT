@@ -6,11 +6,11 @@
 #include "Event.h"
 #include "TMath.h"
 #include <tuple>
-
+#include "TVector3.h"
 using namespace std;
 using namespace ant;
 
-const ant::ParticleTypeDatabase::Type* GetMCType( const analysis::MCSingleParticles::MC_track_pair& p )
+const ant::ParticleTypeDatabase::Type* GetMCType( const analysis::MCSingleParticles::Track_MC_pair& p )
 {
     return &(p.second.Type());
 }
@@ -21,6 +21,8 @@ ant::analysis::MCSingleParticles::MCSingleParticles(): hf("MCSingleParticles")
     const HistogramFactory::BinSettings energy_bins(100,0,400);
     const HistogramFactory::BinSettings veto_bins(100,0,20);
     const HistogramFactory::BinSettings theta_bins(100,0,180);
+    const HistogramFactory::BinSettings theta_diff_bins(100,-20,20);
+    const HistogramFactory::BinSettings angle_diff_bins(100,0,20);
 
     const HistogramFactory::BinSettings ntrack_bins(10,0,10);
 
@@ -32,21 +34,61 @@ ant::analysis::MCSingleParticles::MCSingleParticles(): hf("MCSingleParticles")
         auto branch = ptype->AddBranch(pt);
 
         branch->AddHist2D(
-                    [] ( const MC_track_pair& pair ) { return  make_tuple( pair.first.ClusterEnergy(), pair.first.VetoEnergy()); },
+                    [] ( const Track_MC_pair& pair ) { return  make_tuple( pair.first.ClusterEnergy(), pair.first.VetoEnergy()); },
                     hf.Make2D("PID Banana for true " + pt->PrintName(),
                               "Cluster Energy [MeV]",
                               "Veto Energy [MeV]",
                               energy_bins,
-                              veto_bins)
+                              veto_bins,
+                              pt->Name() + "-banana"
+                              )
                     );
 
         branch->AddHist2D(
-                    [] ( const MC_track_pair& pair ) { return  make_tuple( pair.second.Ek(), pair.first.ClusterEnergy()); },
+                    [] ( const Track_MC_pair& pair ) { return  make_tuple( pair.second.Ek(), pair.first.ClusterEnergy()); },
                     hf.Make2D("Energy Reconstruction " + pt->PrintName(),
                               "MC true E_{k} [MeV]",
                               "Cluster Energy [MeV]",
                               energy_bins,
-                              energy_bins)
+                              energy_bins,
+                              pt->Name() + "-energy"
+                              )
+        );
+
+        branch->AddHist2D(
+                    [] ( const Track_MC_pair& pair ) { return  make_tuple( pair.second.Theta()*TMath::RadToDeg(), (pair.first.Theta() - pair.second.Theta())*TMath::RadToDeg()); },
+                    hf.Make2D("#theta Difference " + pt->PrintName(),
+                              "true #theta [#circ]",
+                              "rec #theta [#circ]",
+                              theta_bins,
+                              theta_diff_bins,
+                              pt->Name() + "-theta_diff"
+                              )
+        );
+
+        branch->AddHist2D(
+                    [] ( const Track_MC_pair& pair ) {
+                            TVector3 v(1,0,0); v.SetPtThetaPhi(1,pair.first.Theta(), pair.first.Phi());
+                            return make_tuple( pair.second.Theta()*TMath::RadToDeg(), v.Angle(pair.second.Vect())*TMath::RadToDeg()); },
+                    hf.Make2D("Angle between true/rec " + pt->PrintName(),
+                              "true #theta [#circ]",
+                              "angle [#circ]",
+                              theta_bins,
+                              angle_diff_bins,
+                              pt->Name() + "-angle_diff"
+                              )
+        );
+
+        branch->AddHist2D(
+                    [] ( const Track_MC_pair& pair ) {
+                            return make_tuple( pair.second.Theta()*TMath::RadToDeg(), pair.first.Theta()*TMath::RadToDeg()); },
+                    hf.Make2D("rec/true #theta " + pt->PrintName(),
+                              "true #theta [#circ]",
+                              "angle [#circ]",
+                              theta_bins,
+                              theta_bins,
+                              pt->Name() + "-theta-theta"
+                              )
         );
 
     }
@@ -62,7 +104,9 @@ ant::analysis::MCSingleParticles::MCSingleParticles(): hf("MCSingleParticles")
                     hf.Make1D("Number of Tracks " + pt->PrintName(),
                               "# tracks",
                               "# events",
-                              ntrack_bins)
+                              ntrack_bins,
+                              pt->Name() + "-nTracks"
+                              )
                     );
     }
 

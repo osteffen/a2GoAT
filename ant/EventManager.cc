@@ -46,21 +46,22 @@ Bool_t EventManager::Start()
 void EventManager::ProcessEvent()
 {
 
-    Event e;
+    Event event;
 
-    CopyTracks(GetTracks(), e.Tracks());
+    CopyTracks(GetTracks(), event.Tracks());
 
-    CopyParticles(GetPhotons(), ParticleTypeDatabase::Photon, e);
-    CopyParticles(GetProtons(), ParticleTypeDatabase::Proton, e);
-    CopyParticles(GetChargedPions(), ParticleTypeDatabase::PiCharged, e);
-    CopyParticles(GetElectrons(), ParticleTypeDatabase::eCharged, e);
-    CopyTaggerHits(e.TaggerHits());
+    CopyParticles(GetPhotons(),         ParticleTypeDatabase::Photon,       event);
+    CopyParticles(GetProtons(),         ParticleTypeDatabase::Proton,       event);
+    CopyParticles(GetChargedPions(),    ParticleTypeDatabase::PiCharged,    event);
+    CopyParticles(GetElectrons(),       ParticleTypeDatabase::eCharged,     event);
+
+    CopyTaggerHits(event.TaggerHits());
 
 #ifdef hasPluto
-    CopyPlutoParticles(GetPluto(), e.MCTrue());
+    CopyPlutoParticles(GetPluto(), event.MCTrue());
 #endif
 
-    RunPhysics(e);
+    RunPhysics(event);
 }
 
 void EventManager::ProcessScalerRead()

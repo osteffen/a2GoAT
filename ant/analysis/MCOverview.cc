@@ -15,9 +15,9 @@ const ant::ParticleTypeDatabase::Type* GetParticleType( const ant::Particle& p )
     return &p.Type();
 }
 
-ant::analysis::MCOverview::MCOverview(): hf("MCOverview")
+ant::analysis::MCOverview::MCOverview(const mev_t energy_scale): hf("MCOverview")
 {
-    const HistogramFactory::BinSettings energy_bins(100,0,400);
+    const HistogramFactory::BinSettings energy_bins(100,0,energy_scale);
     const HistogramFactory::BinSettings theta_bins(100,0,180);
 
     mc_particle_stats.AddHist1D(

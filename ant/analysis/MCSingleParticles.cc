@@ -16,9 +16,9 @@ const ant::ParticleTypeDatabase::Type* GetMCType( const analysis::MCSinglePartic
 }
 
 
-ant::analysis::MCSingleParticles::MCSingleParticles(): hf("MCSingleParticles")
+ant::analysis::MCSingleParticles::MCSingleParticles(const mev_t energy_scale): hf("MCSingleParticles")
 {
-    const HistogramFactory::BinSettings energy_bins(100,0,400);
+    const HistogramFactory::BinSettings energy_bins(100,0,energy_scale);
     const HistogramFactory::BinSettings veto_bins(100,0,20);
     const HistogramFactory::BinSettings theta_bins(100,0,180);
     const HistogramFactory::BinSettings theta_diff_bins(100,-20,20);

@@ -24,7 +24,7 @@ private:
 
     // Physics interface
 public:
-    MCSingleParticles();
+    MCSingleParticles(const mev_t energy_scale=1000.0);
     virtual ~MCSingleParticles();
     void ProcessEvent(const Event &event);
     void Finish();

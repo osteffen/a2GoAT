@@ -18,7 +18,7 @@ class MCOverview: public ant::Physics {
 
     // Physics interface
 public:
-    MCOverview();
+    MCOverview(const mev_t energy_scale=1000.0);
     virtual ~MCOverview();
     void ProcessEvent(const Event &event);
     void Finish();

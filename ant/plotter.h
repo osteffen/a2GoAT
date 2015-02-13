@@ -38,7 +38,7 @@ public:
     Hist1D( Function _f, TH1D* h): f(_f), hist(h) {}
     virtual ~Hist1D() {}
     virtual void operator () (const Data& data) {
-        hist->Fill( f(data) );
+        hist->Fill( f(data), 1 );
     }
     virtual TObject* GetObject() { return hist; }
     virtual TH1D* GetHistogram() { return hist; }

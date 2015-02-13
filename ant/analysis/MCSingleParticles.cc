@@ -41,7 +41,7 @@ ant::analysis::MCSingleParticles::MCSingleParticles(const mev_t energy_scale): h
                               "Veto Energy [MeV]",
                               energy_bins,
                               veto_bins,
-                              pt->Name() + "-banana"
+                              pt->Name() + "_banana"
                               )
                     );
 
@@ -52,7 +52,7 @@ ant::analysis::MCSingleParticles::MCSingleParticles(const mev_t energy_scale): h
                               "Cluster Energy [MeV]",
                               energy_bins,
                               energy_bins,
-                              pt->Name() + "-energy"
+                              pt->Name() + "_energy"
                               )
         );
 
@@ -63,7 +63,7 @@ ant::analysis::MCSingleParticles::MCSingleParticles(const mev_t energy_scale): h
                               "rec #theta [#circ]",
                               theta_bins,
                               theta_diff_bins,
-                              pt->Name() + "-theta_diff"
+                              pt->Name() + "_theta_diff"
                               )
         );
 
@@ -76,7 +76,7 @@ ant::analysis::MCSingleParticles::MCSingleParticles(const mev_t energy_scale): h
                               "angle [#circ]",
                               theta_bins,
                               angle_diff_bins,
-                              pt->Name() + "-angle_diff"
+                              pt->Name() + "_angle_diff"
                               )
         );
 
@@ -88,7 +88,7 @@ ant::analysis::MCSingleParticles::MCSingleParticles(const mev_t energy_scale): h
                               "angle [#circ]",
                               theta_bins,
                               theta_bins,
-                              pt->Name() + "-theta-theta"
+                              pt->Name() + "_theta-theta"
                               )
         );
 
@@ -107,10 +107,10 @@ ant::analysis::MCSingleParticles::MCSingleParticles(const mev_t energy_scale): h
                               "# tracks",
                               "# events",
                               ntrack_bins,
-                              pt->Name() + "-nTracks"
+                              pt->Name() + "_nTracks"
                               )
                     );
-    }
+
         auto branch2 = b->AddBranch(pt);
         branch2->AddHist1D(
                     [] ( const Rec_MC_pair& pair ) { return  pair.first.Type().PrintName().c_str(); },

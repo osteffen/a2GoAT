@@ -25,6 +25,7 @@ ant::analysis::MCSingleParticles::MCSingleParticles(const mev_t energy_scale): h
     const HistogramFactory::BinSettings angle_diff_bins(100,0,20);
 
     const HistogramFactory::BinSettings ntrack_bins(10,0,10);
+    const HistogramFactory::BinSettings RecParticleBins(0, 0, 0);
 
 
     auto ptype = MC_track_pair_stats.AddBranchNode<const ParticleTypeDatabase::Type*>(GetMCType);
@@ -94,6 +95,7 @@ ant::analysis::MCSingleParticles::MCSingleParticles(const mev_t energy_scale): h
     }
 
     auto ptype2 = MC_tracklist_pair_stats.AddBranchNode<const ParticleTypeDatabase::Type*>( [] (const MC_tracklist_pair& p) { return &p.second.Type();});
+    auto b = Rec_MC_stats.AddBranchNode<const ParticleTypeDatabase::Type*>( [] (const Rec_MC_pair& p) { return &p.second.Type();});
 
     for( auto& pt : ParticleTypeDatabase::MCFinalStateTypes() ) {
 
@@ -109,6 +111,17 @@ ant::analysis::MCSingleParticles::MCSingleParticles(const mev_t energy_scale): h
                               )
                     );
     }
+        auto branch2 = b->AddBranch(pt);
+        branch2->AddHist1D(
+                    [] ( const Rec_MC_pair& pair ) { return  pair.first.Type().PrintName().c_str(); },
+                    hf.Make1D("Reconstruction of " + pt->PrintName(),
+                              "as patricle type",
+                              "#",
+                              RecParticleBins,
+                              pt->Name() + "_rec_as"
+                              )
+                    );
+   }
 
 }
 
@@ -121,6 +134,7 @@ void ant::analysis::MCSingleParticles::ProcessEvent(const ant::Event &event)
 {
     const Event::MCParticleList_t& mc_particles = event.MCTrue();
     const Event::TrackList_t& tracks = event.Tracks();
+    const Event::RecParticleList_t& rec_particles = event.Particles();
 
     if( mc_particles.size() ==1 ) {
 
@@ -130,6 +144,10 @@ void ant::analysis::MCSingleParticles::ProcessEvent(const ant::Event &event)
 
         for( auto& track : tracks ) {
             MC_track_pair_stats.Fill( make_pair(*track.get(), mc) );
+        }
+
+        for( auto& rp : rec_particles ) {
+            Rec_MC_stats.Fill( make_pair( *rp.get(), mc));
         }
     }
 }

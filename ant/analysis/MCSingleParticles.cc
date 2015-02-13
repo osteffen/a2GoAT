@@ -138,16 +138,16 @@ void ant::analysis::MCSingleParticles::ProcessEvent(const ant::Event &event)
 
     if( mc_particles.size() ==1 ) {
 
-        const MCParticle& mc = *mc_particles.front().get();
+        const MCParticle& mc = mc_particles.front();
 
         MC_tracklist_pair_stats.Fill( make_pair(tracks, mc));
 
         for( auto& track : tracks ) {
-            MC_track_pair_stats.Fill( make_pair(*track.get(), mc) );
+            MC_track_pair_stats.Fill( make_pair(track, mc) );
         }
 
         for( auto& rp : rec_particles ) {
-            Rec_MC_stats.Fill( make_pair( *rp.get(), mc));
+            Rec_MC_stats.Fill( make_pair( rp, mc));
         }
     }
 }

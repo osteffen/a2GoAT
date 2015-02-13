@@ -7,23 +7,23 @@ std::ostream &ant::Event::Print(std::ostream &stream) const
     stream << "------------------------------\n";
 
     for( auto& taggerhit : taggerhits ) {
-        stream << *taggerhit << '\n';
+        stream << taggerhit << '\n';
     }
 
     for( auto& track : tracks ) {
-        stream << *track << '\n';
+        stream << track << '\n';
     }
 
     stream << '\n';
 
     for( auto& rec : particles ) {
-        stream << *rec << '\n';
+        stream << rec << '\n';
     }
 
     stream << '\n';
 
     for( auto& mc : mctrue ) {
-        stream << *mc << '\n';
+        stream << mc << '\n';
     }
     stream << "------------------------------\n";
 

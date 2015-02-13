@@ -54,34 +54,34 @@ void ParticleCombinatoricsTest::ProcessEvent(const Event &event)
 
         // fill the histogram corresponding to the partice type of the current particle
         try {
-            EHists.at( &(particle->Type()) )->Fill(particle->Ek());
+            EHists.at( &(particle.Type()) )->Fill(particle.Ek());
         } catch (...) {}
 
-        if( particle->Type() ==  ParticleTypeDatabase::Photon )
+        if( particle.Type() ==  ParticleTypeDatabase::Photon )
             photons.emplace_back(particle);
-        else if ( particle->Type() == ParticleTypeDatabase::Proton )
+        else if ( particle.Type() == ParticleTypeDatabase::Proton )
             protons.emplace_back(particle);
     }
 
     nphotons->Fill(photons.size());
     nprotons->Fill(protons.size());
 
-    KofNvector< typename Event::sRecParticlePtr > combinations2(photons,2);
+    KofNvector< ant::RecParticle > combinations2(photons,2);
     do {
         TLorentzVector v;
         for( auto& i: combinations2 ) {
-            v += *i;
+            v += i;
         }
 
         ggim->Fill(v.M());
 
     } while(combinations2.next());
 
-    KofNvector< typename Event::sRecParticlePtr > combinations3(photons,3);
+    KofNvector< ant::RecParticle > combinations3(photons,3);
     do {
         TLorentzVector v;
         for( auto& i: combinations3 ) {
-            v += *i;
+            v += i;
         }
 
         gggim->Fill(v.M());
@@ -152,11 +152,11 @@ void PlotterTest::ProcessEvent(const Event &event)
 {
 
     for (auto& track : event.Tracks() ) {
-        track_plots.Fill(*track);
+        track_plots.Fill(track);
     }
 
     for (auto& particle : event.Particles() ) {
-        particle_plots.Fill(*particle);
+        particle_plots.Fill(particle);
     }
 
 }

@@ -66,7 +66,7 @@ void ant::analysis::MCOverview::ProcessEvent(const ant::Event &event)
     const Event::MCParticleList_t& mc_particles = event.MCTrue();
 
     for( auto& mcp : mc_particles ) {
-        mc_particle_stats.Fill(*mcp);
+        mc_particle_stats.Fill(mcp);
     }
 }
 

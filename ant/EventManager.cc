@@ -84,12 +84,12 @@ void EventManager::CopyParticles(GTreeParticle *tree, const ParticleTypeDatabase
 
         const TLorentzVector& lv = tree->Particle(i);
         const Int_t trackIndex = tree->GetTrackIndex(i);
-        const Event::sTrackPtr track = target.Tracks().at(trackIndex);
+        const ant::Track& track = target.Tracks().at(trackIndex);
 
         target.Particles().emplace_back(
-                    new RecParticle(
+                   RecParticle(
                         Particle(type,lv),
-                        *track.get())
+                        track)
                     );
     }
 }
@@ -135,7 +135,17 @@ void EventManager::CopyTracks(GTreeTrack *tree, Event::TrackList_t &container)
 {
     for(UInt_t i=0; i<tree->GetNTracks(); ++i) {
 
-        container.emplace_back( GetTrack(tree, i) );
+        container.emplace_back(
+                    tree->GetClusterEnergy(i),
+                    tree->GetTheta(i) * TMath::DegToRad(),
+                    tree->GetPhi(i) * TMath::DegToRad(),
+                    tree->GetTime(i),
+                    MapClusterSize(tree->GetClusterSize(i)),
+                    IntToDetector_t(tree->GetDetectors(i)),
+                    tree->GetVetoEnergy(i),
+                    tree->GetMWPC0Energy(i),
+                    tree->GetMWPC1Energy(i)
+                    );
     }
 }
 
@@ -175,7 +185,7 @@ void EventManager::CopyPlutoParticles(GTreePluto *tree, Event::MCParticleList_t 
         TLorentzVector lv = *p;
         lv *= 1000.0;   // convert to MeV
 
-        container.emplace_back( new MCParticle(
+        container.emplace_back( MCParticle(
                     *type,
                     lv)
                     );
@@ -188,32 +198,12 @@ void EventManager::CopyTaggerHits(Event::TaggerHitList_t &container)
 
     for( Int_t i=0; i<tagger.GetNTagged(); ++i) {
         container.emplace_back(
-                    new TaggerHit(
+                    TaggerHit(
                     tagger.GetTaggedChannel(i),
                     tagger.GetTaggedEnergy(i),
                     tagger.GetTaggedTime(i))
                     );
     }
-}
-
-Event::sTrackPtr EventManager::GetTrack(GTreeTrack *tree, const UInt_t n)
-{
-
-    if(n >= tree->GetNTracks() )
-        throw out_of_range("EventManager::GetTrack: Track index out of bounds");
-
-    Event::sTrackPtr track(
-                new Track(                    tree->GetClusterEnergy(n),
-                                              tree->GetTheta(n) * TMath::DegToRad(),
-                                              tree->GetPhi(n) * TMath::DegToRad(),
-                                              tree->GetTime(n),
-                                              MapClusterSize(tree->GetClusterSize(n)),
-                                              IntToDetector_t(tree->GetDetectors(n)),
-                                              tree->GetVetoEnergy(n),
-                                              tree->GetMWPC0Energy(n),
-                                              tree->GetMWPC1Energy(n))
-                );
-    return move(track);
 }
 
 #endif

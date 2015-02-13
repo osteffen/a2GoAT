@@ -37,24 +37,23 @@ void DeltaPlusPhysics::ProcessEvent(const Event &event)
 
     for( auto& particle : event.Particles() ) {
 
-        if( particle->Type() ==  ParticleTypeDatabase::Photon )
+        if( particle.Type() ==  ParticleTypeDatabase::Photon )
             photons.emplace_back(particle);
-        else if ( particle->Type() == ParticleTypeDatabase::Proton )
+        else if ( particle.Type() == ParticleTypeDatabase::Proton )
             protons.emplace_back(particle);
 
     }
 
     for( auto& track : event.Tracks() ) {
-        prompt["pid"]->Fill(track->ClusterEnergy(), track->VetoEnergy());
+        prompt["pid"]->Fill(track.ClusterEnergy(), track.VetoEnergy());
     }
 
     for( auto& taggerhit : event.TaggerHits()) {
-        const TaggerHit& th = *taggerhit;
         bool isPrompt = false;
 
-        if( prompt_window.Contains(th.Time()) ) {
+        if( prompt_window.Contains(taggerhit.Time()) ) {
             isPrompt = true;
-        } else if( random_window.Contains(th.Time())) {
+        } else if( random_window.Contains(taggerhit.Time())) {
             isPrompt = false;
         } else
             continue;
@@ -63,19 +62,19 @@ void DeltaPlusPhysics::ProcessEvent(const Event &event)
 
         // some basic histograms
         h["nPart"]->Fill(event.Particles().size());
-        h["tag_energy"]->Fill(th.PhotonEnergy());
-        h["tag_time"]->Fill(th.Time());
+        h["tag_energy"]->Fill(taggerhit.PhotonEnergy());
+        h["tag_time"]->Fill(taggerhit.Time());
 
 
         if(photons.size() == 2) {
-            const Particle pi0 ( ParticleTypeDatabase::Pi0, *photons.at(0) + *photons.at(1));
+            const Particle pi0 ( ParticleTypeDatabase::Pi0, photons.at(0) + photons.at(1));
             h["2gIM"]->Fill(pi0.M());
 
             if( pi0_cut.Contains( pi0.M()) ) {
                 h["pi0angle_noboost"]->Fill(pi0.Theta());
 
                 // construct beam photon 4-vector and, using this, the delta restframe
-                const TLorentzVector beam(0, 0, th.PhotonEnergy(), th.PhotonEnergy());
+                const TLorentzVector beam(0, 0, taggerhit.PhotonEnergy(), taggerhit.PhotonEnergy());
                 const TLorentzVector delta_beam(beam + target);
                 const TVector3 boost = -(delta_beam.BoostVector());
 
@@ -95,7 +94,7 @@ void DeltaPlusPhysics::ProcessEvent(const Event &event)
                 // have a look at proton reconstruction quality
                 // by creating a delta
                 if(protons.size()==1) {
-                    TLorentzVector delta = pi0 + *protons.at(0);
+                    TLorentzVector delta = pi0 + protons.at(0);
 
                     TLorentzVector delta_ = delta;
                     delta_.Boost(boost);

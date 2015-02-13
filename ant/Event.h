@@ -17,15 +17,10 @@ namespace ant {
 class Event: public ant::printable_traits {
 public:
 
-    typedef std::shared_ptr<const ant::RecParticle>    sRecParticlePtr;
-    typedef std::shared_ptr<const ant::MCParticle>    sMCParticlePtr;
-    typedef std::shared_ptr<const ant::Track>       sTrackPtr;
-    typedef std::shared_ptr<const ant::TaggerHit>   sTaggerHitPtr;
-
-    typedef std::vector<sRecParticlePtr>   RecParticleList_t;
-    typedef std::vector<sMCParticlePtr>   MCParticleList_t;
-    typedef std::vector<sTrackPtr>      TrackList_t;
-    typedef std::vector<sTaggerHitPtr>     TaggerHitList_t;
+    typedef std::vector<ant::RecParticle>   RecParticleList_t;
+    typedef std::vector<ant::MCParticle>    MCParticleList_t;
+    typedef std::vector<ant::Track>         TrackList_t;
+    typedef std::vector<ant::TaggerHit>     TaggerHitList_t;
 
 protected:
 

@@ -8,6 +8,7 @@
 #include "DeltaPlusPhysics.h"
 #include "MCOverview.h"
 #include "MCSingleParticles.h"
+#include "Basic.h"
 using namespace std;
 
 /**
@@ -27,21 +28,24 @@ int main(int argc, char *argv[])
     // Create instance of analysis class
     ant::EventManager analysis;
    // ant::DebugPhysics debug;
-    ant::ParticleCombinatoricsTest ctest;
-    ant::analysis::DeltaPlusPhysics d;
+    //ant::ParticleCombinatoricsTest ctest;
+    //ant::analysis::DeltaPlusPhysics d;
 
-    ant::PlotterTest plots;
-    analysis.AddPhysics(&plots);
+    //ant::PlotterTest plots;
+    //analysis.AddPhysics(&plots);
 
    // analysis.AddPhysics(&debug);
-    analysis.AddPhysics(&ctest);
-    analysis.AddPhysics(&d);
+    //analysis.AddPhysics(&ctest);
+    //analysis.AddPhysics(&d);
 
     ant::analysis::MCOverview mcoverview;
     analysis.AddPhysics(&mcoverview);
 
     ant::analysis::MCSingleParticles single;
     analysis.AddPhysics(&single);
+
+    ant::analysis::Basic basic;
+    analysis.AddPhysics(&basic);
 
     // Perform basic configuration
     if(!analysis.BaseConfig(argc, argv, "GoAT", "Physics"))
@@ -68,11 +72,7 @@ int main(int argc, char *argv[])
     << (Double_t)(end-start)/CLOCKS_PER_SEC
     << " seconds." << "\n\n";
 
-   // debug.ShowResult();
-    ctest.ShowResult();
-    d.ShowResult();
-    plots.ShowResult();
-    mcoverview.ShowResult();
+    basic.ShowResult();
 
     app.Run(kTRUE);
 

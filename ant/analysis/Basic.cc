@@ -1,0 +1,57 @@
+#include "Basic.h"
+#include "Particle.h"
+#include "Track.h"
+#include "plotter.h"
+#include "Histogram.h"
+#include "Track.h"
+#include "root_draw.h"
+
+ant::analysis::Basic::Basic(const mev_t energy_scale)
+{
+    HistogramFactory hf("Basic");
+
+    const HistogramFactory::BinSettings energy_bins(100,0,energy_scale);
+    const HistogramFactory::BinSettings veto_bins(100,0,10.0);
+    const HistogramFactory::BinSettings particle_bins(10,0,10);
+
+    banana = hf.Make2D(
+                "PID Bananas",
+                "Cluster Energy [MeV]",
+                "Veto Energy [MeV]",
+                energy_bins,
+                veto_bins,
+                "pid"
+                );
+
+    particles = hf.Make1D(
+                "Identified particles",
+                "Particle Type",
+                "#",
+                particle_bins,
+                "ParticleTypes"
+                );
+
+}
+
+void ant::analysis::Basic::ProcessEvent(const ant::Event &event)
+{
+    for(auto& track : event.Tracks()) {
+        banana->Fill(track.ClusterEnergy(), track.VetoEnergy());
+    }
+
+    for(auto& particle : event.Particles()) {
+        particles->Fill(particle.Type().PrintName().c_str(), 1);
+    }
+
+}
+
+void ant::analysis::Basic::Finish()
+{
+
+}
+
+void ant::analysis::Basic::ShowResult()
+{
+    canvas c("Basic");
+    c << banana << canvas::drawoption("colz") << particles << canvas::cend;
+}

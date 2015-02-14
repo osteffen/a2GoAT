@@ -123,6 +123,8 @@ set(ANT_PHYSICS
     ant/analysis/MCOverview.cc
     ant/analysis/MCSingleParticles.h
     ant/analysis/MCSingleParticles.cc
+    ant/analysis/Basic.h
+    ant/analysis/Basic.cc
 )
 
 if( PLUTO )

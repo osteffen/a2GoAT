@@ -192,6 +192,7 @@ void EventManager::CopyPlutoParticles(GTreePluto *tree, Event::MCParticleList_t 
                     );
     }
 }
+#endif
 
 void EventManager::CopyTaggerHits(Event::TaggerHitList_t &container)
 {
@@ -206,5 +207,3 @@ void EventManager::CopyTaggerHits(Event::TaggerHitList_t &container)
                     );
     }
 }
-
-#endif

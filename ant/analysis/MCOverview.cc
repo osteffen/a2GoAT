@@ -15,14 +15,28 @@ const ant::ParticleTypeDatabase::Type* GetParticleType( const ant::Particle& p )
     return &p.Type();
 }
 
-ant::analysis::MCOverview::MCOverview(const mev_t energy_scale): hf("MCOverview")
+ant::analysis::MCOverview::MCOverview(const mev_t energy_scale)
 {
+    HistogramFactory hf("MCOverview");
+
     const HistogramFactory::BinSettings energy_bins(100,0,energy_scale);
     const HistogramFactory::BinSettings theta_bins(100,0,180);
+    const HistogramFactory::BinSettings particle_type_bins(10,0,10);
 
     mc_particle_stats.AddHist1D(
                 [] (const Particle& p) { return p.Ek();},
                 hf.Make1D("MC Energy","E [MeV]","", energy_bins)
+    );
+
+    mc_particle_stats.AddHist1D(
+                [] (const Particle& p) { return p.Type().PrintName().c_str();},
+                hf.Make1D(
+                    "Generated Particles",
+                    "Particle Type",
+                    "#",
+                    particle_type_bins,
+                    "ParticleTypes"
+                    )
     );
 
     mc_particle_stats.AddHist2D(
@@ -53,7 +67,6 @@ ant::analysis::MCOverview::MCOverview(const mev_t energy_scale): hf("MCOverview"
                 theta_bins)
         );
     }
-
 }
 
 ant::analysis::MCOverview::~MCOverview()
@@ -67,6 +80,7 @@ void ant::analysis::MCOverview::ProcessEvent(const ant::Event &event)
 
     for( auto& mcp : mc_particles ) {
         mc_particle_stats.Fill(mcp);
+
     }
 }
 

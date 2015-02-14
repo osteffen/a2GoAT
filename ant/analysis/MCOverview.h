@@ -5,6 +5,8 @@
 #include "plotter.h"
 #include "Histogram.h"
 
+class TH1D;
+class TH2D;
 
 namespace ant {
 namespace analysis {
@@ -12,9 +14,6 @@ namespace analysis {
 class MCOverview: public ant::Physics {
 
     PlotList<Particle> mc_particle_stats;
-
-    HistogramFactory hf;
-
 
     // Physics interface
 public:

@@ -24,6 +24,8 @@ protected:
     typedef std::vector<index_type> index_list;
     index_list indices;
 
+    bool done;
+
 
     bool nextlevel( index_type i ) {
 
@@ -47,7 +49,7 @@ public:
      * @param _data The std::vector to draw from
      * @param k number of elemets to draw each time
      */
-    KofNvector( const std::vector<T>& _data, index_type k): data(_data) {
+    KofNvector( const std::vector<T>& _data, index_type k): data(_data), done(false) {
 
         if(k>data.size())
             k=0;
@@ -58,6 +60,8 @@ public:
             indices.at(i) = i;
         }
     }
+
+    //TODO: make a move constructor
 
     /**
      * @brief Access the ith element of the currently drawn combination
@@ -72,9 +76,13 @@ public:
      * @return false if no more combinations to do.
      */
     bool next() {
-        if(k()==0)
+        if(k()==0) {
+            done = true;
             return false;
-        return nextlevel(indices.size()-1);
+        }
+        bool res = nextlevel(indices.size()-1);
+        done = !res;
+        return res;
     }
 
 
@@ -102,11 +110,15 @@ public:
         typedef T data_type;
     };
 
-    const_iterator begin() const { return const_iterator(*this, indices.begin()); }
+    const_iterator begin() const { return !done ? const_iterator(*this, indices.begin()): end(); }
     const_iterator end() const { return const_iterator(*this, indices.end()); }
 
 
     const std::vector<T>& Indices() const { return indices; }
+
+    KofNvector<T>& operator++ () { next(); return *this;}
+
+    bool Done() const { return done; }
 
     /**
      * @brief k
@@ -120,6 +132,11 @@ public:
      */
     std::size_t n() const { return data.size();}
 };
+
+template <typename T>
+KofNvector<T> makeCombination( const std::vector<T>& data, const unsigned int k) {
+    return std::move(KofNvector<T>(data,k));
+}
 
 }
 

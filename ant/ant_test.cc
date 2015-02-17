@@ -66,6 +66,15 @@ int main() {
 
     } while(combinations.next());
 
+    cout << " as for loop " << endl;
+    for(KofNvector<int> ddd(numbers,4); !ddd.Done(); ++ddd ) {
+
+        for( auto& i: ddd ) {
+            cout << i << " ";
+        }
+        cout << endl;
+    }
+
     cout << "----" << endl;
     vector<int> numbers2 = {1};
 

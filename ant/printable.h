@@ -16,4 +16,7 @@ static std::ostream& operator<< (std::ostream& stream, const ant::printable_trai
     return printable.Print(stream);
 }
 
+static std::ostream& operator<< (std::ostream& stream, const ant::printable_traits* printable) {
+    return printable->Print(stream);
+}
 #endif

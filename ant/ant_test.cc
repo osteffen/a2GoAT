@@ -44,7 +44,7 @@ int main() {
             );
     cout << t << endl;
 
-    RecParticle g(ParticleTypeDatabase::Photon, t);
+    RecParticle g(ParticleTypeDatabase::Photon, &t);
     cout << g << endl;
     g.ChangeType(ParticleTypeDatabase::Proton);
     cout << g << endl;
@@ -67,7 +67,7 @@ int main() {
     } while(combinations.next());
 
     cout << " as for loop " << endl;
-    for(KofNvector<int> ddd(numbers,4); !ddd.Done(); ++ddd ) {
+    for(auto ddd = makeCombination(numbers,4); !ddd.Done(); ++ddd ) {
 
         for( auto& i: ddd ) {
             cout << i << " ";

@@ -9,7 +9,6 @@
 #include "combinatorics.h"
 #include <vector>
 #include <numeric>
-#include <sstream>
 #include <functional>
 
 using namespace std;
@@ -44,14 +43,13 @@ ant::analysis::Basic::Basic(const mev_t energy_scale)
     ngammaim.reserve(max_gammas_im);
 
     for(int i=2;i<=max_gammas_im;++i) {
-        stringstream titles;
-        titles << i << ParticleTypeDatabase::Photon.PrintName() << " IM";
+
         ngammaim.push_back(
-                    hf.Make1D( titles.str(),
+                    hf.Make1D( to_string(i) + " #gamma IM",
                               "M [MeV]",
                               "#",
                               energy_bins,
-                               "gamma_IM_"+i)
+                               to_string(i)+"_photon_IM")
                     );
     }
 

@@ -47,41 +47,41 @@ ParticleCombinatoricsTest::ParticleCombinatoricsTest():
 void ParticleCombinatoricsTest::ProcessEvent(const Event &event)
 
 {
-    Event::RecParticleList_t photons;
-    Event::RecParticleList_t protons;
+    refRecParticleList_t photons;
+    refRecParticleList_t protons;
 
     for( auto& particle : event.Particles() ) {
 
         // fill the histogram corresponding to the partice type of the current particle
         try {
-            EHists.at( &(particle.Type()) )->Fill(particle.Ek());
+            EHists.at( &(particle->Type()) )->Fill(particle->Ek());
         } catch (...) {}
 
-        if( particle.Type() ==  ParticleTypeDatabase::Photon )
+        if( particle->Type() ==  ParticleTypeDatabase::Photon )
             photons.emplace_back(particle);
-        else if ( particle.Type() == ParticleTypeDatabase::Proton )
+        else if ( particle->Type() == ParticleTypeDatabase::Proton )
             protons.emplace_back(particle);
     }
 
     nphotons->Fill(photons.size());
     nprotons->Fill(protons.size());
 
-    KofNvector< ant::RecParticle > combinations2(photons,2);
+    auto combinations2 = makeCombination(photons,2);
     do {
         TLorentzVector v;
         for( auto& i: combinations2 ) {
-            v += i;
+            v += *i;
         }
 
         ggim->Fill(v.M());
 
     } while(combinations2.next());
 
-    KofNvector< ant::RecParticle > combinations3(photons,3);
+    auto combinations3 = makeCombination(photons,3);
     do {
         TLorentzVector v;
         for( auto& i: combinations3 ) {
-            v += i;
+            v += *i;
         }
 
         gggim->Fill(v.M());
@@ -108,12 +108,12 @@ void ParticleCombinatoricsTest::ShowResult()
 }
 
 
-double GetEnergyFromTrack(const ant::Track& p ) {
-    return p.ClusterEnergy();
+double GetEnergyFromTrack(const ant::Track* p ) {
+    return p->ClusterEnergy();
 }
 
-double GetThetaFromTrack(const ant::Track& p ) {
-    return p.Theta()*TMath::RadToDeg();
+double GetThetaFromTrack(const ant::Track* p ) {
+    return p->Theta()*TMath::RadToDeg();
 }
 
 PlotterTest::PlotterTest():
@@ -128,7 +128,7 @@ PlotterTest::PlotterTest():
                 GetEnergyFromTrack,
                 hf.Make1D("Track Energy (2)","E [MeV]","#", energy_binning));
 
-    auto pid_banana_fuction = [] (const Track& p) { return move( make_tuple(p.ClusterEnergy(), p.VetoEnergy()) );};
+    auto pid_banana_fuction = [] (const Track* p) { return move( make_tuple(p->ClusterEnergy(), p->VetoEnergy()) );};
 
     track_plots.AddHist2D(
                 pid_banana_fuction,
@@ -139,7 +139,7 @@ PlotterTest::PlotterTest():
                 GetEnergyFromTrack,
                 hf.Make1D("Track Energy (2) new list","E [MeV]","#", energy_binning));
 
-    auto b = list2->AddBranchNode<detector_t>([] (const Track& t) { return t.Detector(); });
+    auto b = list2->AddBranchNode<detector_t>([] (const Track* t) { return t->Detector(); });
 
     auto b_cb = b->AddBranch(detector_t::NaI);
     b_cb->AddHist1D(GetEnergyFromTrack, hf.Make1D("CB Theta","#theta [#circ]","",theta_binning));

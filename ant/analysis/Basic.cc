@@ -61,25 +61,23 @@ ant::analysis::Basic::Basic(const mev_t energy_scale)
 void ant::analysis::Basic::ProcessEvent(const ant::Event &event)
 {
     for(auto& track : event.Tracks()) {
-        banana->Fill(track.ClusterEnergy(), track.VetoEnergy());
+        banana->Fill(track->ClusterEnergy(), track->VetoEnergy());
     }
 
     for(auto& particle : event.Particles()) {
-        particles->Fill(particle.Type().PrintName().c_str(), 1);
+        particles->Fill(particle->Type().PrintName().c_str(), 1);
     }
 
-    vector< reference_wrapper<const Particle> > gammas;
-    for( auto& particle : event.Particles() ) {
-        if( particle.Type() == ParticleTypeDatabase::Photon )
-            gammas.push_back(particle);
-    }
-
-    gammas.reserve(10);
+    const refRecParticleList_t gammas = event.ParticleType(ParticleTypeDatabase::Photon);
 
     for(int ngammas=2; ngammas <= min((size_t)8, gammas.size()); ++ngammas ) {
 
-        for( auto c = makeCombination(gammas,ngammas); !c.Done(); ++c) {
-            TLorentzVector m = accumulate(c.begin(), c.end(), TLorentzVector());
+        for( auto c = makeCombination(gammas, ngammas); !c.Done(); ++c) {
+            TLorentzVector m;
+            for( auto& g : c) {
+                m+= *g;
+            }
+
             ngammaim.at(ngammas-2)->Fill(m.M());
         };
     }

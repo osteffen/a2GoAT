@@ -48,18 +48,20 @@ void EventManager::ProcessEvent()
 
     Event event;
 
-    CopyTracks(GetTracks(), event.Tracks());
+    CopyTracks(GetTracks(), event.TrackStorage());
 
     CopyParticles(GetPhotons(),         ParticleTypeDatabase::Photon,       event);
     CopyParticles(GetProtons(),         ParticleTypeDatabase::Proton,       event);
     CopyParticles(GetChargedPions(),    ParticleTypeDatabase::PiCharged,    event);
     CopyParticles(GetElectrons(),       ParticleTypeDatabase::eCharged,     event);
 
-    CopyTaggerHits(event.TaggerHits());
+    CopyTaggerHits(event.TaggerHitStorage());
 
 #ifdef hasPluto
-    CopyPlutoParticles(GetPluto(), event.MCTrue());
+    CopyPlutoParticles(GetPluto(), event.MCTrueStorage());
 #endif
+
+    event.Finalize();
 
     RunPhysics(event);
 }
@@ -85,9 +87,9 @@ void EventManager::CopyParticles(GTreeParticle *tree, const ParticleTypeDatabase
 
         const TLorentzVector& lv = tree->Particle(i);
         const Int_t trackIndex = tree->GetTrackIndex(i);
-        const ant::Track& track = target.Tracks().at(trackIndex);
+        const ant::Track* track = &target.TrackStorage().at(trackIndex);
 
-        target.Particles().emplace_back(
+        target.ParticleStorage().emplace_back(
                    RecParticle(
                         Particle(type,lv),
                         track)

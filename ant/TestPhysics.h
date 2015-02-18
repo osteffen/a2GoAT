@@ -32,8 +32,8 @@ public:
 class PlotterTest: public ant::Physics {
 protected:
     ant::HistogramFactory hf;
-    ant::PlotList<ant::Track> track_plots;
-    ant::PlotList<ant::Particle> particle_plots;
+    ant::PlotList<const ant::Track*> track_plots;
+    ant::PlotList<const ant::Particle*> particle_plots;
 
     // Physics interface
 public:

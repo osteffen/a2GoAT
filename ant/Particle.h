@@ -90,20 +90,20 @@ public:
 
 class RecParticle: public Particle {
 protected:
-    const ant::Track& track;
+    const ant::Track* track;
 
 public:
-    RecParticle(const ParticleTypeDatabase::Type& _type, const ant::Track& _track):
-        Particle(_type, _track.ClusterEnergy(), _track.Theta(), _track.Phi()),
+    RecParticle(const ParticleTypeDatabase::Type& _type, const ant::Track* _track):
+        Particle(_type, _track->ClusterEnergy(), _track->Theta(), _track->Phi()),
         track(_track)
     {}
 
-    RecParticle(const ant::Particle& _particle, const ant::Track& _track):
+    RecParticle(const ant::Particle& _particle, const ant::Track* _track):
         Particle(_particle),
         track(_track)
     {}
 
-    const ant::Track& Track() const { return track; }
+    const ant::Track* Track() const { return track; }
 
     virtual std::ostream& Print(std::ostream& stream) const;
 

@@ -113,7 +113,7 @@ ant::analysis::MCSingleParticles::MCSingleParticles(const mev_t energy_scale): h
 
         auto branch2 = b->AddBranch(pt);
         branch2->AddHist1D(
-                    [] ( const Rec_MC_pair& pair ) { return  pair.first.Type().PrintName().c_str(); },
+                    [] ( const Rec_MC_pair& pair ) { return  pair.first->Type().PrintName().c_str(); },
                     hf.Make1D("Reconstruction of " + pt->PrintName(),
                               "as patricle type",
                               "#",
@@ -132,22 +132,22 @@ ant::analysis::MCSingleParticles::~MCSingleParticles()
 
 void ant::analysis::MCSingleParticles::ProcessEvent(const ant::Event &event)
 {
-    const Event::MCParticleList_t& mc_particles = event.MCTrue();
-    const Event::TrackList_t& tracks = event.Tracks();
-    const Event::RecParticleList_t& rec_particles = event.Particles();
+    const refMCParticleList_t& mc_particles = event.MCTrue();
+    const refTrackList_t& tracks = event.Tracks();
+    const refRecParticleList_t& rec_particles = event.Particles();
 
     if( mc_particles.size() ==1 ) {
 
-        const MCParticle& mc = mc_particles.front();
+        const MCParticle* mc = mc_particles.front();
 
-        MC_tracklist_pair_stats.Fill( make_pair(tracks, mc));
+        MC_tracklist_pair_stats.Fill( make_pair(tracks, *mc));
 
         for( auto& track : tracks ) {
-            MC_track_pair_stats.Fill( make_pair(track, mc) );
+            MC_track_pair_stats.Fill( make_pair(*track, *mc) );
         }
 
         for( auto& rp : rec_particles ) {
-            Rec_MC_stats.Fill( make_pair( rp, mc));
+            Rec_MC_stats.Fill( make_pair( rp, *mc));
         }
     }
 }

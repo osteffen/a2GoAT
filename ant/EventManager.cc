@@ -12,7 +12,7 @@
 using namespace std;
 using namespace ant;
 
-EventManager::EventManager()
+EventManager::EventManager(): maxevents(0)
 {
 }
 
@@ -37,8 +37,10 @@ Bool_t EventManager::Start()
 {
     SetAsPhysicsFile();
 
-    //TraverseValidEvents();
-    TraverseEntries(0,1000);
+    if(maxevents==0)
+        TraverseValidEvents();
+    else
+        TraverseEntries(0,maxevents);
 
     return kTRUE;
 }

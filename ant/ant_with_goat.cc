@@ -28,6 +28,7 @@ int main(int argc, char *argv[])
 
     // Create instance of analysis class
     ant::EventManager analysis;
+    analysis.SetMaxEvents(0);
    // ant::DebugPhysics debug;
     //ant::ParticleCombinatoricsTest ctest;
     //ant::analysis::DeltaPlusPhysics d;

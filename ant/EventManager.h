@@ -30,6 +30,8 @@ public:
 
 protected:
 
+    unsigned int maxevents;
+
     virtual Bool_t  Start();
     virtual void    ProcessEvent();
     virtual void	ProcessScalerRead();
@@ -55,6 +57,7 @@ public:
     virtual Bool_t  Init(const char* configfile);
 
     void AddPhysics(ant::Physics* phys) { physics.push_back(phys); }
+    void SetMaxEvents(unsigned int max) { maxevents = max; }
 
     void Finish();
 

@@ -3,6 +3,7 @@
 
 #include "types.h"
 #include "printable.h"
+#include "TLorentzVector.h"
 
 namespace ant {
 
@@ -28,6 +29,8 @@ public:
 
     ns_t& Time() { return time; }
     const ns_t& Time() const { return time; }
+
+    TLorentzVector PhotonBeam() const { return std::move(TLorentzVector(0.0, 0.0, PhotonEnergy(), PhotonEnergy())); }
 
 
     std::ostream &Print(std::ostream &stream) const;

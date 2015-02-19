@@ -125,6 +125,8 @@ set(ANT_PHYSICS
     ant/analysis/MCSingleParticles.cc
     ant/analysis/Basic.h
     ant/analysis/Basic.cc
+    ant/analysis/omega.h
+    ant/analysis/omega.cc
 )
 
 if( PLUTO )

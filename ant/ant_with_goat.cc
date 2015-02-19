@@ -9,6 +9,7 @@
 #include "MCOverview.h"
 #include "MCSingleParticles.h"
 #include "Basic.h"
+#include "omega.h"
 using namespace std;
 
 /**
@@ -47,6 +48,10 @@ int main(int argc, char *argv[])
     ant::analysis::Basic basic;
     analysis.AddPhysics(&basic);
 
+    ant::analysis::Omega omega;
+    analysis.AddPhysics(&omega);
+
+
     // Perform basic configuration
     if(!analysis.BaseConfig(argc, argv, "GoAT", "Physics"))
     {
@@ -73,6 +78,7 @@ int main(int argc, char *argv[])
     << " seconds." << "\n\n";
 
     basic.ShowResult();
+    omega.ShowResult();
 
     app.Run(kTRUE);
 

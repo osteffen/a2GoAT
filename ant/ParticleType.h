@@ -76,6 +76,10 @@ public:
     static const Type eMinus;
     static const Type eCharged;
 
+    static const Type Eta;
+    static const Type Omega;
+    static const Type EtaPrime;
+
     static const Particles_t& GetParticles() { return types; }
 
     class const_iterator : public Particles_t::const_iterator {

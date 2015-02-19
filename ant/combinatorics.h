@@ -42,7 +42,7 @@ protected:
     }
 
 public:
-    typedef T data_type;
+    typedef T value_type;
 
     /**
      * @brief KofNvector
@@ -51,8 +51,10 @@ public:
      */
     KofNvector( const std::vector<T>& _data, index_type k): data(_data), done(false) {
 
-        if(k>data.size())
+        if(k>data.size()) {
             k=0;
+            done=true;
+        }
 
         indices.resize(k);
 
@@ -107,7 +109,7 @@ public:
 
         const T& operator*() const { return v.data.at(*index); }
 
-        typedef T data_type;
+        typedef T value_type;
     };
 
     const_iterator begin() const { return !done ? const_iterator(*this, indices.begin()): end(); }

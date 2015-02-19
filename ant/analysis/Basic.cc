@@ -18,9 +18,11 @@ ant::analysis::Basic::Basic(const mev_t energy_scale)
 {
     HistogramFactory hf("Basic");
 
-    const HistogramFactory::BinSettings energy_bins(100,0,energy_scale);
-    const HistogramFactory::BinSettings veto_bins(100,0,10.0);
+    const HistogramFactory::BinSettings energy_bins(1000,0,energy_scale);
+    const HistogramFactory::BinSettings tagger_bins(2000,0.0,2000);
+    const HistogramFactory::BinSettings veto_bins(1000,0,10.0);
     const HistogramFactory::BinSettings particle_bins(10,0,10);
+    const HistogramFactory::BinSettings particlecount_bins(16,0,16);
 
     banana = hf.Make2D(
                 "PID Bananas",
@@ -38,19 +40,32 @@ ant::analysis::Basic::Basic(const mev_t energy_scale)
                 particle_bins,
                 "ParticleTypes"
                 );
+    tagger = hf.Make1D(
+                "Tagger Spectrum",
+                "Photon Beam Energy",
+                "#",
+                tagger_bins,
+                "TaggerSpectrum"
+                );
 
-    const int max_gammas_im=8;
+    const int max_gammas_im=10;
     ngammaim.reserve(max_gammas_im);
 
     for(int i=2;i<=max_gammas_im;++i) {
 
         ngammaim.push_back(
+                    make_pair(
                     hf.Make1D( to_string(i) + " #gamma IM",
                               "M [MeV]",
                               "#",
                               energy_bins,
                                to_string(i)+"_photon_IM")
-                    );
+                        ,i
+                    ));
+    }
+
+    for( auto& t : ParticleTypeDatabase::DetectableTypes() ) {
+        numParticleType[t]= hf.Make1D("Number of "+t->PrintName(),"number of "+t->PrintName()+"/ event","",particlecount_bins);
     }
 
 }
@@ -68,16 +83,25 @@ void ant::analysis::Basic::ProcessEvent(const ant::Event &event)
 
     const refRecParticleList_t gammas = event.ParticleType(ParticleTypeDatabase::Photon);
 
-    for(int ngammas=2; ngammas <= min((size_t)8, gammas.size()); ++ngammas ) {
+    for( auto& implot : ngammaim ) {
 
-        for( auto c = makeCombination(gammas, ngammas); !c.Done(); ++c) {
+        for( auto c = makeCombination(gammas, implot.second); !c.Done(); ++c) {
             TLorentzVector m;
             for( auto& g : c) {
                 m+= *g;
             }
-
-            ngammaim.at(ngammas-2)->Fill(m.M());
+            implot.first->Fill(m.M());
         };
+    }
+
+    for( auto& taggerhit : event.TaggerHits()) {
+        tagger->Fill(taggerhit->PhotonEnergy());
+    }
+
+    for( auto& t : ParticleTypeDatabase::DetectableTypes() ) {
+        try {
+            numParticleType.at(t)->Fill(event.ParticleType(*t).size());
+        } catch (...) {}
     }
 
 }
@@ -90,12 +114,19 @@ void ant::analysis::Basic::Finish()
 void ant::analysis::Basic::ShowResult()
 {
     canvas c("Basic");
-    c  << canvas::drawoption("colz") << banana << particles << canvas::cend;
+    c  << canvas::drawoption("colz") << banana << particles << tagger << canvas::cend;
 
     canvas ngim("Basic - Inv. Masses");
     for( auto& hist : ngammaim ) {
-        ngim << hist;
+        ngim << hist.first;
     }
     ngim << canvas::cend;
+
+    canvas types("Basic: Particle Types per Event");
+    for( auto& t : numParticleType ) {
+        types << t.second;
+    }
+    types << canvas::cend;
+
 
 }

@@ -19,6 +19,10 @@ protected:
 public:
     interval( const T start=0.0, const T stop=0.0 ): _start(start), _stop(stop) {}
 
+    static interval CenterWidth( const T center, const T width) {
+        return std::move( interval(center - width/2.0, center + width/2.0));
+    }
+
     virtual ~interval() {}
 
     /**

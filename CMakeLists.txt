@@ -114,6 +114,8 @@ set(ANT_BASE
     ant/root_draw.cc
     ant/Detector.h
     ant/Detector.cc
+    ant/counter.h
+    ant/counter.cc
 )
 
 set(ANT_PHYSICS

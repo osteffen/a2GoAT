@@ -59,13 +59,16 @@ public:
     const refRecParticleList_t& Particles()  const { return ref_particles; }
     const refMCParticleList_t&  MCTrue()     const { return ref_mctrue; }
     const refTaggerHitList_t&   TaggerHits() const { return ref_taggerhits; }
-    const refRecParticleList_t& ParticleType( const ParticleTypeDatabase::Type& type) const {
-        try {
-            return particles_by_type.at(&type);
-        } catch(...) {
+
+    const refRecParticleList_t ParticleType( const ParticleTypeDatabase::Type& type) const {
+        auto entry = particles_by_type.find(&type);
+        if(entry!=particles_by_type.cend()) {
+            return entry->second;
+        } else {
             return std::move(refRecParticleList_t());
         }
-        }
+
+    }
 
     TrackList_t&        TrackStorage()      { return tracks; }
     RecParticleList_t&  ParticleStorage()   { return particles; }

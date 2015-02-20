@@ -3,6 +3,7 @@
 
 #include "AntPhysics.h"
 #include "interval.h"
+#include "counter.h"
 
 class TH1D;
 class TH2D;
@@ -16,6 +17,7 @@ protected:
     TH1D* eta_IM;
     TH1D* p_MM;
     TH1D* omega_rec_multi;
+    TH1D* eta_copl;
 
     TH1D* nr_ngamma;
     TH1D* nr_3gim;
@@ -26,6 +28,13 @@ protected:
     interval<mev_t> tagger_energy_cut;
 
     TLorentzVector target;
+
+    counter c_events_L0;
+    counter c_events_L1;
+    counter c_events_L2;
+    counter c_events_L3;
+
+    TH1D* step_levels;
 
 public:
     Omega(const mev_t energy_scale=1000.0);

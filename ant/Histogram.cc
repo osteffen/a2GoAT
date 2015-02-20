@@ -33,7 +33,7 @@ HistogramFactory::HistogramFactory(const std::string& prefix):
 
 TH1D *HistogramFactory::Make1D(const string &title, const string &xlabel, const string &ylabel, const BinSettings& bins, const string &name)
 {
-    TH1D* h = new TH1D( GetNextHistName(name).c_str(), title.c_str(), bins.Bins(), bins.Minimum(), bins.Maximum());
+    TH1D* h = new TH1D( GetNextHistName(name).c_str(), title.c_str(), bins.Bins(), bins.Start(), bins.Stop());
     h->SetXTitle(xlabel.c_str());
     h->SetYTitle(ylabel.c_str());
     h->SetLineColor(GetNextColor());
@@ -42,7 +42,7 @@ TH1D *HistogramFactory::Make1D(const string &title, const string &xlabel, const 
 
 TH2D *HistogramFactory::Make2D(const std::string& title, const std::string& xlabel, const std::string& ylabel, const BinSettings& xbins, const BinSettings& ybins, const string &name)
 {
-    TH2D* h = new TH2D( GetNextHistName(name).c_str(), title.c_str(), xbins.Bins(), xbins.Minimum(), xbins.Maximum(), ybins.Bins(), ybins.Minimum(), ybins.Maximum());
+    TH2D* h = new TH2D( GetNextHistName(name).c_str(), title.c_str(), xbins.Bins(), xbins.Start(), xbins.Stop(), ybins.Bins(), ybins.Start(), ybins.Stop());
     h->SetXTitle(xlabel.c_str());
     h->SetYTitle(ylabel.c_str());
     return h;

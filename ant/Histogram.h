@@ -5,6 +5,7 @@
 
 #include <vector>
 #include <string>
+#include "interval.h"
 
 class TH1D;
 class TH2D;
@@ -16,24 +17,19 @@ namespace ant {
 class HistogramFactory {
 public:
 
-    class BinSettings {
+    class BinSettings: public interval<double>  {
     protected:
         unsigned int bins;
-        double min;
-        double max;
     public:
-        BinSettings(unsigned int number_of_bins, double minimum, double maximum):
-            bins(number_of_bins),
-            min(minimum),
-            max(maximum) {}
+        BinSettings(unsigned int number_of_bins, double minimum, double maximum): interval<double>(minimum,maximum),
+            bins(number_of_bins) {}
+        BinSettings(unsigned int number_of_bins, const interval<double>& i): interval<double>(i), bins(number_of_bins) {}
+
+        virtual ~BinSettings() {}
+
         const unsigned int& Bins()    const { return bins; }
-        const double&      Minimum() const { return min; }
-        const double&      Maximum() const { return max; }
-
         unsigned int& Bins()   { return bins; }
-        double&      Minimum() { return min; }
-        double&      Maximum() { return max; }
-
+        double BinWidth() const { return Length() / bins; }
     };
 
 private:

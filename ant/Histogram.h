@@ -23,6 +23,10 @@ public:
     public:
         BinSettings(unsigned int number_of_bins, double minimum, double maximum): interval<double>(minimum,maximum),
             bins(number_of_bins) {}
+
+        BinSettings(unsigned int number_of_bins): interval<double>(0,number_of_bins),
+            bins(number_of_bins) {}
+
         BinSettings(unsigned int number_of_bins, const interval<double>& i): interval<double>(i), bins(number_of_bins) {}
 
         virtual ~BinSettings() {}

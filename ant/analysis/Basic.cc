@@ -20,6 +20,7 @@ ant::analysis::Basic::Basic(const mev_t energy_scale)
 
     const HistogramFactory::BinSettings energy_bins(1000,0,energy_scale);
     const HistogramFactory::BinSettings tagger_bins(2000,0.0,2000);
+    const HistogramFactory::BinSettings ntaggerhits_bins(100);
     const HistogramFactory::BinSettings veto_bins(1000,0,10.0);
     const HistogramFactory::BinSettings particle_bins(10,0,10);
     const HistogramFactory::BinSettings particlecount_bins(16,0,16);
@@ -46,6 +47,14 @@ ant::analysis::Basic::Basic(const mev_t energy_scale)
                 "#",
                 tagger_bins,
                 "TaggerSpectrum"
+                );
+
+    ntagged = hf.Make1D(
+                "Tagger Hits",
+                "Tagger Hits / event",
+                "#",
+                ntaggerhits_bins,
+                "nTagged"
                 );
 
     const int max_gammas_im=10;
@@ -98,6 +107,8 @@ void ant::analysis::Basic::ProcessEvent(const ant::Event &event)
         tagger->Fill(taggerhit->PhotonEnergy());
     }
 
+    ntagged->Fill(event.TaggerHits().size());
+
     for( auto& t : ParticleTypeDatabase::DetectableTypes() ) {
         try {
             numParticleType.at(t)->Fill(event.ParticleType(*t).size());
@@ -114,7 +125,7 @@ void ant::analysis::Basic::Finish()
 void ant::analysis::Basic::ShowResult()
 {
     canvas c("Basic");
-    c  << canvas::drawoption("colz") << banana << particles << tagger << canvas::cend;
+    c  << canvas::drawoption("colz") << banana << particles << tagger << ntagged << canvas::cend;
 
     canvas ngim("Basic - Inv. Masses");
     for( auto& hist : ngammaim ) {

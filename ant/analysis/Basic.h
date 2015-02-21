@@ -16,6 +16,7 @@ protected:
     TH2D* banana;
     TH1D* particles;
     TH1D* tagger;
+    TH1D* ntagged;
 
     typedef std::vector<std::pair<TH1D*, int>> Hist1DList;
 

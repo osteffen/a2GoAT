@@ -19,8 +19,20 @@
 #include "Event.h"
 
 #include "AntPhysics.h"
+#include <stdexcept>
 
 namespace ant {
+
+class data_check_exception : public std::exception {
+protected:
+    std::string msg;
+
+public:
+    data_check_exception(const std::string& message): msg(message) {}
+    const char *what() const throw() { return msg.c_str(); }
+};
+
+
 class EventManager: public GTreeManager {
 public:
     typedef std::unique_ptr<const ant::Particle>    uParticlePtr;
@@ -48,6 +60,8 @@ protected:
     void CopyTracks(GTreeTrack* tree, Event::TrackList_t & container);
     void CopyPlutoParticles(GTreePluto* tree, ant::Event::MCParticleList_t& container);
     void CopyTaggerHits(ant::Event::TaggerHitList_t& container);
+
+    void checkMCIDs();
 
     ant::MCParticle& GetPlutoParticle(GTreePluto* tree, const UInt_t n);
 

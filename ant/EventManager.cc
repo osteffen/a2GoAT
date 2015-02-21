@@ -8,6 +8,10 @@
 
 #include "GTreeTrack.h"
 #include "Detector.h"
+#include "GTreeTagger.h"
+#include "GTreePluto.h"
+
+#include <string>
 
 using namespace std;
 using namespace ant;
@@ -47,6 +51,7 @@ Bool_t EventManager::Start()
 
 void EventManager::ProcessEvent()
 {
+    checkMCIDs();
 
     Event event;
 
@@ -210,4 +215,20 @@ void EventManager::CopyTaggerHits(Event::TaggerHitList_t &container)
                     tagger.GetTaggedTime(i))
                     );
     }
+}
+
+void EventManager::checkMCIDs() {
+#ifdef hasPluto
+    const bool eventIDmatch = ( GetTrigger()->GetMCTrueEventID() == GetPluto()->GetPlutoID()) || (GetPluto()->GetPlutoID() == -1);
+    const bool randomIDmatch = ( GetTrigger()->GetMCRandomID() == GetPluto()->GetPlutoRandomID()) || (GetPluto()->GetPlutoRandomID() == -1);
+
+    if(! (eventIDmatch && randomIDmatch) )
+        throw data_check_exception(
+                "MC Event ID does not match! Acqu:" +
+                to_string(GetTrigger()->GetMCTrueEventID()) + "/" + to_string(GetTrigger()->GetMCRandomID())
+                + "vs Pluto:"
+                + to_string(GetPluto()->GetPlutoID()) + "/" + to_string(GetPluto()->GetPlutoRandomID()));
+#else
+    return;
+#endif
 }

@@ -46,6 +46,8 @@ public:
     const   Int_t*		GetErrorCode()          const {return errorCode;}
             Bool_t 	    GetHelicity()    	    const {return helicity;}
             Bool_t 	    HasHelicity()    	    const {return hasHelicity;}
+            Long64_t    GetMCTrueEventID()      const {return MC_evt_id;}
+            Long64_t    GetMCRandomID()         const {return MC_rnd_id;}
 
 };
 

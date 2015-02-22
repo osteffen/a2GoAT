@@ -116,6 +116,7 @@ set(ANT_BASE
     ant/Detector.cc
     ant/counter.h
     ant/counter.cc
+    ant/matcher.h
 )
 
 set(ANT_PHYSICS

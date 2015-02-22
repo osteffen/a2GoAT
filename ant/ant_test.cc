@@ -13,6 +13,7 @@
 
 #include "plotter.h"
 #include "Detector.h"
+#include "matcher.h"
 
 using namespace std;
 using namespace ant;
@@ -114,6 +115,75 @@ int main() {
     d ^= detector_t::PbWO4;
     cout << d << endl;
 
+    cout << "---------------------" <<endl;
+
+    std::vector<const MCParticle*> mctrue;
+    mctrue.push_back( new MCParticle( ParticleTypeDatabase::Photon, 100, 1,2));
+    mctrue.push_back( new MCParticle( ParticleTypeDatabase::Photon, 200, .2 ,.4));
+
+    std::vector<const RecParticle*> rec;
+
+    Track r1(mev_t(100),
+            radian_t(1.01),
+            radian_t(2.01),
+            time_t(0.324),
+            clustersize_t(4),
+            detector_t::NaI,
+            mev_t(0.4),
+            mev_t(0.3),
+            mev_t(0.2)
+            );
+    rec.push_back( new RecParticle(ParticleTypeDatabase::Photon, &r1));
+
+    Track r2(mev_t(210),
+            radian_t(.19),
+            radian_t(.41),
+            time_t(0.323),
+            clustersize_t(5),
+            detector_t::NaI,
+            mev_t(0.4),
+            mev_t(0.3),
+            mev_t(0.2)
+            );
+
+    rec.push_back( new RecParticle(ParticleTypeDatabase::Photon, &r2));
+
+    Track r3(mev_t(210),
+            radian_t(1.19),
+            radian_t(.41),
+            time_t(0.323),
+            clustersize_t(5),
+            detector_t::NaI,
+            mev_t(0.4),
+            mev_t(0.3),
+            mev_t(0.2)
+            );
+
+    rec.push_back( new RecParticle(ParticleTypeDatabase::Photon, &r3));
+
+    // match by angle
+    //auto matched = Match(mctrue,rec, matchAngle);
+
+    // match by energy using labda function
+    auto matched = Match(mctrue,rec, [] (const TLorentzVector* a, const TLorentzVector* b) {return abs(a->E() - b->E());});
+
+    cout << "matches: " << matched.size() << endl;
+
+    for( auto& match : matched) {
+        cout << "\n" << match.first << "\n" << match.second << endl;
+    }
+
+    cout << " or with numbers " << endl;
+
+    std::vector<int> n1 = { 1, 10 , 20 };
+    std::vector<int> n2 = { 15, 30 , 8, 5, 99 };
+
+   // auto imatched = Match(n1,n2, [] (int a, int b) {return abs(a - b);});
+     auto imatched = Match(n1,n2, matchDistance<int>);
+
+    for( auto& match : imatched) {
+        cout << "\n" << match.first << "\n" << match.second << endl;
+    }
 
     return 0;
 

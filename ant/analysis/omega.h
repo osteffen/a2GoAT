@@ -18,6 +18,7 @@ protected:
     TH1D* p_MM;
     TH1D* omega_rec_multi;
     TH1D* eta_copl;
+    TH1D* eta_cand_copl;
 
     TH1D* nr_ngamma;
     TH1D* nr_3gim;

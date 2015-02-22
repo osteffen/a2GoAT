@@ -49,6 +49,12 @@ ant::analysis::Omega::Omega(const ant::mev_t energy_scale):
                          angle_bins,
                          ParticleTypeDatabase::Eta.Name()+"_gg_angle"
                          );
+    eta_cand_copl = hf.Make1D(ParticleTypeDatabase::Eta.PrintName()+" candidate gg angle",
+                         "angle_{#gamma #gamma} [#circ]",
+                         "# / " + to_string(angle_bins.BinWidth())+" #circ",
+                         angle_bins,
+                         ParticleTypeDatabase::Eta.Name()+"_cand_gg_angle"
+                         );
 
     nr_ngamma = hf.Make1D("Not reconstructed: number of photons",
                           "number of photons/event","",HistogramFactory::BinSettings(16,0,16));
@@ -101,14 +107,21 @@ void ant::analysis::Omega::ProcessEvent(const ant::Event &event)
             step_levels->Fill("2_#omega IM cut passed",1);
 
             for( auto gcomb = makeCombination(ggg,2); !gcomb.Done(); ++gcomb) {
-                TLorentzVector eta = *gcomb.at(0) + *gcomb.at(1);
+
+                TLorentzVector g1(*gcomb.at(0));
+                TLorentzVector g2(*gcomb.at(1));
+                TLorentzVector eta = g1 + g2;
+
+                eta_cand_copl->Fill(g1.Angle(g2.Vect()) * TMath::RadToDeg() );
+
                 eta_IM->Fill(eta.M());
+
                 if(eta_im_cut.Contains(eta.M())) {
+
                     step_levels->Fill("3_#eta IM cut passed",1);
                     omega_IM->Fill(omega.M());
                     n_omega_found++;
-                    TLorentzVector g1(*gcomb.at(0));
-                    TLorentzVector g2(*gcomb.at(1));
+
                     TVector3 boostv = eta.BoostVector();
                     g1.Boost(-boostv);
                     g2.Boost(-boostv);
@@ -153,7 +166,7 @@ void ant::analysis::Omega::Finish()
 
 void ant::analysis::Omega::ShowResult()
 {
-    canvas("Omega (Reconstructed)") << eta_IM << omega_IM << p_MM << omega_rec_multi << eta_copl << step_levels << canvas::cend;
+    canvas("Omega (Reconstructed)") << eta_IM << omega_IM << p_MM << omega_rec_multi << eta_copl << eta_cand_copl << step_levels << canvas::cend;
     canvas("Omega (Not Reconstructed)") << nr_ngamma << nr_2gim << nr_3gim << canvas::cend;
 
 }

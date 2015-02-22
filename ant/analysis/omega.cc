@@ -15,12 +15,7 @@ ant::analysis::Omega::Omega(const ant::mev_t energy_scale):
     eta_im_cut(   interval<mev_t>::CenterWidth( ParticleTypeDatabase::Eta.Mass(), 50.0)),
     omega_im_cut( interval<mev_t>::CenterWidth( ParticleTypeDatabase::Omega.Mass(), 80.0)),
     tagger_energy_cut(1420,1575),
-    target(0.0, 0.0, 0.0, ParticleTypeDatabase::Proton.Mass()),
-    c_events_L0("Events seen"),
-    c_events_L1("Events 3+ gammas"),
-    c_events_L2("Events omega IM cut OK"),
-    c_events_L3("Events eta IM cut OK")
-
+    target(0.0, 0.0, 0.0, ParticleTypeDatabase::Proton.Mass())
 {
     const HistogramFactory::BinSettings energy_bins(1000, 0.0, energy_scale);
     const HistogramFactory::BinSettings p_MM_bins(1000, 500.0, 1500.0);

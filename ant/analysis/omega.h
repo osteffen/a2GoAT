@@ -29,11 +29,6 @@ protected:
 
     TLorentzVector target;
 
-    counter c_events_L0;
-    counter c_events_L1;
-    counter c_events_L2;
-    counter c_events_L3;
-
     TH1D* step_levels;
 
 public:

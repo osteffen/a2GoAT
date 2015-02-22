@@ -50,7 +50,11 @@ std::ostream &RecParticle::Print(std::ostream &stream) const
 {
     stream << "Rec";
     Particle::Print(stream);
-    stream << "\n\t" << Track();
+    if(Track())
+        stream << "\n\t" << Track();
+    else
+        stream << "\n\t" << " - No Tack - ";
+
     return stream;
 }
 

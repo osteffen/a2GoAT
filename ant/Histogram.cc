@@ -10,12 +10,17 @@ using namespace ant;
 using namespace std;
 
 
-const EColor &HistogramFactory::GetNextColor()
+EColor HistogramFactory::GetNextColor()
 {
-    ++color;
-    if( color == colors.end() )
-        color = colors.begin();
-    return *color;
+    EColor c=kBlack;
+
+    if(loopColors) {
+        ++color;
+        if( color == colors.end() )
+            color = colors.begin();
+        c=*color;
+    }
+    return c;
 }
 
 const UInt_t HistogramFactory::GetNextHistnum()
@@ -26,7 +31,8 @@ const UInt_t HistogramFactory::GetNextHistnum()
 HistogramFactory::HistogramFactory(const std::string& prefix):
     color(colors.begin()),
     histnum(0),
-    name_prefix(prefix)
+    name_prefix(prefix),
+    loopColors(false)
 {
 }
 

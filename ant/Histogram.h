@@ -44,7 +44,8 @@ private:
 
     std::string name_prefix;                    // prefix for the histogram names
 
-    const EColor& GetNextColor();
+    EColor GetNextColor();
+    bool loopColors;
     const unsigned int GetNextHistnum();
     virtual std::string GetNextHistName(const std::string &name="");
 
@@ -82,6 +83,9 @@ public:
 
     virtual void ApplySettings(TH1D* hist, const std::string& title="", const std::string& xlabel="", const std::string& ylabel="");
     virtual void ApplySettings(TH2D* hist, const std::string& title="", const std::string& xlabel="", const std::string& ylabel="");
+
+    void SetLoopColors( bool onoff ) { loopColors=onoff; }
+    bool GetLoopColors() const { return loopColors; }
 
     virtual void ResetColors();
 

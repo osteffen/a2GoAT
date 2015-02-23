@@ -10,6 +10,7 @@
 #include "MCSingleParticles.h"
 #include "Basic.h"
 #include "omega.h"
+#include "RecoCheck.h"
 using namespace std;
 
 /**
@@ -52,6 +53,9 @@ int main(int argc, char *argv[])
     ant::analysis::Omega omega;
     analysis.AddPhysics(&omega);
 
+    ant::analysis::RecoCheck recocheck;
+    analysis.AddPhysics(&recocheck);
+
 
     // Perform basic configuration
     if(!analysis.BaseConfig(argc, argv, "GoAT", "Physics"))
@@ -80,6 +84,7 @@ int main(int argc, char *argv[])
 
     basic.ShowResult();
     omega.ShowResult();
+    recocheck.ShowResult();
 
     app.Run(kTRUE);
 

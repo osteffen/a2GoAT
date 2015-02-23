@@ -130,6 +130,8 @@ set(ANT_PHYSICS
     ant/analysis/Basic.cc
     ant/analysis/omega.h
     ant/analysis/omega.cc
+    ant/analysis/RecoCheck.h
+    ant/analysis/RecoCheck.cc
 )
 
 if( PLUTO )

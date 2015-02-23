@@ -19,7 +19,7 @@ static double matchDistance( const T& a, const T& b ) {
 }
 
 template <class MatchFunction, typename T1, typename T2=T1>
-std::list<std::pair<T1,T2>> Match( const std::vector<T1>& list1, std::vector<T2>& list2, MatchFunction f) {
+std::list<std::pair<T1,T2>> Match( const std::vector<T1>& list1, const std::vector<T2>& list2, MatchFunction f) {
 
     typedef std::pair<T1,T2> match;
     typedef std::list<match> matchlist;

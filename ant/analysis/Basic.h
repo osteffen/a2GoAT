@@ -13,6 +13,7 @@ namespace analysis {
 
 class Basic: public Physics {
 protected:
+    mev_t energy_scale;
     TH2D* banana;
     TH1D* particles;
     TH1D* tagger;
@@ -25,8 +26,9 @@ protected:
     std::map<const ParticleTypeDatabase::Type*, TH1D*> numParticleType;
 
 public:
-    Basic(const mev_t energy_scale=1000.0);
+    Basic(const mev_t _energy_scale=1000.0);
     virtual ~Basic() {}
+    void Init();
     void ProcessEvent(const Event &event);
     void Finish();
     void ShowResult();

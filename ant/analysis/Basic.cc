@@ -14,69 +14,8 @@
 using namespace std;
 using namespace ant;
 
-ant::analysis::Basic::Basic(const mev_t energy_scale)
+ant::analysis::Basic::Basic(const mev_t _energy_scale): energy_scale(_energy_scale)
 {
-    HistogramFactory hf("Basic");
-
-    const HistogramFactory::BinSettings energy_bins(1000,0,energy_scale);
-    const HistogramFactory::BinSettings tagger_bins(2000,0.0,2000);
-    const HistogramFactory::BinSettings ntaggerhits_bins(100);
-    const HistogramFactory::BinSettings veto_bins(1000,0,10.0);
-    const HistogramFactory::BinSettings particle_bins(10,0,10);
-    const HistogramFactory::BinSettings particlecount_bins(16,0,16);
-
-    banana = hf.Make2D(
-                "PID Bananas",
-                "Cluster Energy [MeV]",
-                "Veto Energy [MeV]",
-                energy_bins,
-                veto_bins,
-                "pid"
-                );
-
-    particles = hf.Make1D(
-                "Identified particles",
-                "Particle Type",
-                "#",
-                particle_bins,
-                "ParticleTypes"
-                );
-    tagger = hf.Make1D(
-                "Tagger Spectrum",
-                "Photon Beam Energy",
-                "#",
-                tagger_bins,
-                "TaggerSpectrum"
-                );
-
-    ntagged = hf.Make1D(
-                "Tagger Hits",
-                "Tagger Hits / event",
-                "#",
-                ntaggerhits_bins,
-                "nTagged"
-                );
-
-    const int max_gammas_im=10;
-    ngammaim.reserve(max_gammas_im);
-
-    for(int i=2;i<=max_gammas_im;++i) {
-
-        ngammaim.push_back(
-                    make_pair(
-                    hf.Make1D( to_string(i) + " #gamma IM",
-                              "M [MeV]",
-                              "#",
-                              energy_bins,
-                               to_string(i)+"_photon_IM")
-                        ,i
-                    ));
-    }
-
-    for( auto& t : ParticleTypeDatabase::DetectableTypes() ) {
-        numParticleType[t]= hf.Make1D("Number of "+t->PrintName(),"number of "+t->PrintName()+"/ event","",particlecount_bins);
-    }
-
 }
 
 
@@ -139,5 +78,71 @@ void ant::analysis::Basic::ShowResult()
     }
     types << canvas::cend;
 
+
+}
+
+
+void ant::analysis::Basic::Init()
+{
+    HistogramFactory hf("Basic");
+
+    const HistogramFactory::BinSettings energy_bins(1000,0,energy_scale);
+    const HistogramFactory::BinSettings tagger_bins(2000,0.0,2000);
+    const HistogramFactory::BinSettings ntaggerhits_bins(100);
+    const HistogramFactory::BinSettings veto_bins(1000,0,10.0);
+    const HistogramFactory::BinSettings particle_bins(10,0,10);
+    const HistogramFactory::BinSettings particlecount_bins(16,0,16);
+
+    banana = hf.Make2D(
+                "PID Bananas",
+                "Cluster Energy [MeV]",
+                "Veto Energy [MeV]",
+                energy_bins,
+                veto_bins,
+                "pid"
+                );
+
+    particles = hf.Make1D(
+                "Identified particles",
+                "Particle Type",
+                "#",
+                particle_bins,
+                "ParticleTypes"
+                );
+    tagger = hf.Make1D(
+                "Tagger Spectrum",
+                "Photon Beam Energy",
+                "#",
+                tagger_bins,
+                "TaggerSpectrum"
+                );
+
+    ntagged = hf.Make1D(
+                "Tagger Hits",
+                "Tagger Hits / event",
+                "#",
+                ntaggerhits_bins,
+                "nTagged"
+                );
+
+    const int max_gammas_im=10;
+    ngammaim.reserve(max_gammas_im);
+
+    for(int i=2;i<=max_gammas_im;++i) {
+
+        ngammaim.push_back(
+                    make_pair(
+                    hf.Make1D( to_string(i) + " #gamma IM",
+                              "M [MeV]",
+                              "#",
+                              energy_bins,
+                               to_string(i)+"_photon_IM")
+                        ,i
+                    ));
+    }
+
+    for( auto& t : ParticleTypeDatabase::DetectableTypes() ) {
+        numParticleType[t]= hf.Make1D("Number of "+t->PrintName(),"number of "+t->PrintName()+"/ event","",particlecount_bins);
+    }
 
 }

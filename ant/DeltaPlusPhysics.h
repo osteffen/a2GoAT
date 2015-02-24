@@ -84,6 +84,7 @@ public:
 
     // Physics interface
 public:
+    void Init();
     void ProcessEvent(const ant::Event &event);
     void Finish();
     void ShowResult();

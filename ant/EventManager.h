@@ -21,6 +21,8 @@
 #include "AntPhysics.h"
 #include <stdexcept>
 
+class TFile;
+
 namespace ant {
 
 class data_check_exception : public std::exception {
@@ -39,6 +41,8 @@ public:
     typedef std::unique_ptr<const ant::Track>       uTrackPtr;
 
     typedef std::list<ant::Physics*>                PhysicsList;
+
+    TFile* outf;
 
 protected:
 
@@ -64,6 +68,8 @@ protected:
     void checkMCIDs();
 
     ant::MCParticle& GetPlutoParticle(GTreePluto* tree, const UInt_t n);
+
+
 
 public:
     EventManager();

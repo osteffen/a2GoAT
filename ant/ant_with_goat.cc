@@ -30,16 +30,20 @@ int main(int argc, char *argv[])
     // Create instance of analysis class
     ant::EventManager analysis;
     analysis.SetMaxEvents(0);
-   // ant::DebugPhysics debug;
-    //ant::ParticleCombinatoricsTest ctest;
-    //ant::analysis::DeltaPlusPhysics d;
 
-    //ant::PlotterTest plots;
-    //analysis.AddPhysics(&plots);
+    // Perform basic configuration
+    if(!analysis.BaseConfig(argc, argv, "GoAT", "Physics"))
+    {
+        system("man ./documents/goat.man");
+        return 0;
+    }
 
-   // analysis.AddPhysics(&debug);
-    //analysis.AddPhysics(&ctest);
-    //analysis.AddPhysics(&d);
+    // Perform full initialisation
+    if(!analysis.Init(""))
+    {
+        cout << "ERROR: Init failed!" << endl;
+        return 0;
+    }
 
     ant::analysis::MCOverview mcoverview;
     analysis.AddPhysics(&mcoverview);
@@ -55,21 +59,6 @@ int main(int argc, char *argv[])
 
     ant::analysis::RecoCheck recocheck;
     analysis.AddPhysics(&recocheck);
-
-
-    // Perform basic configuration
-    if(!analysis.BaseConfig(argc, argv, "GoAT", "Physics"))
-    {
-        system("man ./documents/goat.man");
-        return 0;
-    }
-
-    // Perform full initialisation
-    if(!analysis.Init(""))
-    {
-        cout << "ERROR: Init failed!" << endl;
-        return 0;
-    }
 
     // Run over files
     analysis.TraverseFiles();

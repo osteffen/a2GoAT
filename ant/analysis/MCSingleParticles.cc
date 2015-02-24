@@ -16,7 +16,48 @@ const ant::ParticleTypeDatabase::Type* GetMCType( const analysis::MCSinglePartic
 }
 
 
-ant::analysis::MCSingleParticles::MCSingleParticles(const mev_t energy_scale): hf("MCSingleParticles")
+ant::analysis::MCSingleParticles::MCSingleParticles(const mev_t _energy_scale): energy_scale(_energy_scale), hf("MCSingleParticles")
+{
+}
+
+ant::analysis::MCSingleParticles::~MCSingleParticles()
+{
+
+}
+
+void ant::analysis::MCSingleParticles::ProcessEvent(const ant::Event &event)
+{
+    const refMCParticleList_t& mc_particles = event.MCTrue();
+    const refTrackList_t& tracks = event.Tracks();
+    const refRecParticleList_t& rec_particles = event.Particles();
+
+    if( mc_particles.size() ==1 ) {
+
+        const MCParticle* mc = mc_particles.front();
+
+        MC_tracklist_pair_stats.Fill( make_pair(tracks, *mc));
+
+        for( auto& track : tracks ) {
+            MC_track_pair_stats.Fill( make_pair(*track, *mc) );
+        }
+
+        for( auto& rp : rec_particles ) {
+            Rec_MC_stats.Fill( make_pair( rp, *mc));
+        }
+    }
+}
+
+void ant::analysis::MCSingleParticles::Finish()
+{
+
+}
+
+void ant::analysis::MCSingleParticles::ShowResult()
+{
+}
+
+
+void ant::analysis::MCSingleParticles::Init()
 {
     const HistogramFactory::BinSettings energy_bins(100,0,energy_scale);
     const HistogramFactory::BinSettings veto_bins(100,0,20);
@@ -123,40 +164,4 @@ ant::analysis::MCSingleParticles::MCSingleParticles(const mev_t energy_scale): h
                     );
    }
 
-}
-
-ant::analysis::MCSingleParticles::~MCSingleParticles()
-{
-
-}
-
-void ant::analysis::MCSingleParticles::ProcessEvent(const ant::Event &event)
-{
-    const refMCParticleList_t& mc_particles = event.MCTrue();
-    const refTrackList_t& tracks = event.Tracks();
-    const refRecParticleList_t& rec_particles = event.Particles();
-
-    if( mc_particles.size() ==1 ) {
-
-        const MCParticle* mc = mc_particles.front();
-
-        MC_tracklist_pair_stats.Fill( make_pair(tracks, *mc));
-
-        for( auto& track : tracks ) {
-            MC_track_pair_stats.Fill( make_pair(*track, *mc) );
-        }
-
-        for( auto& rp : rec_particles ) {
-            Rec_MC_stats.Fill( make_pair( rp, *mc));
-        }
-    }
-}
-
-void ant::analysis::MCSingleParticles::Finish()
-{
-
-}
-
-void ant::analysis::MCSingleParticles::ShowResult()
-{
 }

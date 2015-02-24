@@ -18,3 +18,8 @@ void ant::DebugPhysics::ShowResult()
 {
     cout << "DebugPhysics ShowResults." << endl;
 }
+
+
+void ant::DebugPhysics::Init()
+{
+}

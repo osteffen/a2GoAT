@@ -20,6 +20,7 @@ protected:
 public:
     RecoCheck();
     virtual ~RecoCheck() {}
+    void Init();
     void ProcessEvent(const Event &event);
     void Finish();
     void ShowResult();

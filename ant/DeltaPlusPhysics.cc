@@ -247,3 +247,9 @@ void DeltaPlusPhysics::Histogm::AddScaled(const DeltaPlusPhysics::Histogm &h2, c
         i->second->Add(h2.h.at(i->first),f);
     }
 }
+
+
+void ant::analysis::DeltaPlusPhysics::Init()
+{
+
+}

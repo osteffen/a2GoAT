@@ -41,6 +41,11 @@ Bool_t EventManager::Start()
 {
     SetAsPhysicsFile();
 
+    outputFile->cd();
+
+    for( auto& p : physics ) {
+        p->Init();
+    }
     if(maxevents==0)
         TraverseValidEvents();
     else
@@ -79,6 +84,7 @@ void EventManager::ProcessScalerRead()
 
 Bool_t EventManager::Write()
 {
+    GTreeManager::Write();
 }
 
 void EventManager::RunPhysics(const Event &event)

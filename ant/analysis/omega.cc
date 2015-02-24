@@ -11,12 +11,15 @@
 
 using namespace std;
 
-ant::analysis::Omega::Omega(const ant::mev_t energy_scale):
+ant::analysis::Omega::Omega(const ant::mev_t _energy_scale): energy_scale(_energy_scale),
     eta_im_cut(   interval<mev_t>::CenterWidth( ParticleTypeDatabase::Eta.Mass(), 50.0)),
     omega_im_cut( interval<mev_t>::CenterWidth( ParticleTypeDatabase::Omega.Mass(), 80.0)),
     tagger_energy_cut(1420,1575),
     target(0.0, 0.0, 0.0, ParticleTypeDatabase::Proton.Mass())
 {
+}
+
+void ant::analysis::Omega::Init() {
     const HistogramFactory::BinSettings energy_bins(1000, 0.0, energy_scale);
     const HistogramFactory::BinSettings p_MM_bins(1000, 500.0, 1500.0);
     const HistogramFactory::BinSettings angle_bins(200,170.0,190.0);

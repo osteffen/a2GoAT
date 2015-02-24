@@ -15,7 +15,44 @@ const ant::ParticleTypeDatabase::Type* GetParticleType( const ant::Particle& p )
     return &p.Type();
 }
 
-ant::analysis::MCOverview::MCOverview(const mev_t energy_scale)
+ant::analysis::MCOverview::MCOverview(const mev_t _energy_scale): energy_scale(_energy_scale)
+{}
+
+ant::analysis::MCOverview::~MCOverview()
+{
+
+}
+
+void ant::analysis::MCOverview::ProcessEvent(const ant::Event &event)
+{
+    const refMCParticleList_t& mc_particles = event.MCTrue();
+
+    for( auto& mcp : mc_particles ) {
+        mc_particle_stats.Fill(*mcp);
+
+    }
+}
+
+void ant::analysis::MCOverview::Finish()
+{
+
+}
+
+void ant::analysis::MCOverview::ShowResult()
+{
+ /*
+    canvas c("MC Overview");
+    c << canvas::drawoption("colz");
+    for(auto& plot : mc_particle_stats.Nodes()) {
+        if( auto p = dynamic_pointer_cast<root_drawable_traits>(plot) ) {
+            c << *p;
+        }
+    }
+    c << canvas::cend;*/
+}
+
+
+void ant::analysis::MCOverview::Init()
 {
     HistogramFactory hf("MCOverview");
 
@@ -67,37 +104,4 @@ ant::analysis::MCOverview::MCOverview(const mev_t energy_scale)
                 theta_bins)
         );
     }
-}
-
-ant::analysis::MCOverview::~MCOverview()
-{
-
-}
-
-void ant::analysis::MCOverview::ProcessEvent(const ant::Event &event)
-{
-    const refMCParticleList_t& mc_particles = event.MCTrue();
-
-    for( auto& mcp : mc_particles ) {
-        mc_particle_stats.Fill(*mcp);
-
-    }
-}
-
-void ant::analysis::MCOverview::Finish()
-{
-
-}
-
-void ant::analysis::MCOverview::ShowResult()
-{
- /*
-    canvas c("MC Overview");
-    c << canvas::drawoption("colz");
-    for(auto& plot : mc_particle_stats.Nodes()) {
-        if( auto p = dynamic_pointer_cast<root_drawable_traits>(plot) ) {
-            c << *p;
-        }
-    }
-    c << canvas::cend;*/
 }

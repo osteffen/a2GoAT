@@ -194,7 +194,10 @@ Bool_t  GTreeManager::StartFile(const char* inputFileName, const char* outputFil
 
 
     if(inputFile)     inputFile->Close();
-    if(outputFile)    outputFile->Close();
+    if(outputFile)    {
+        outputFile->Write();
+        outputFile->Close();
+    }
     //delete  cache;
 
     return kTRUE;

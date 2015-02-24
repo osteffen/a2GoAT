@@ -13,6 +13,7 @@ namespace analysis {
 
 class Omega: public Physics {
 protected:
+    mev_t energy_scale;
     TH1D* omega_IM;
     TH1D* eta_IM;
     TH1D* p_MM;
@@ -33,8 +34,9 @@ protected:
     TH1D* step_levels;
 
 public:
-    Omega(const mev_t energy_scale=1000.0);
+    Omega(const mev_t _energy_scale=1000.0);
     virtual ~Omega() {}
+    void Init();
     void ProcessEvent(const Event &event);
     void Finish();
     void ShowResult();

@@ -13,15 +13,13 @@ LINE=`grep -n pi0-example ${GOATDIR}/CMakeLists.txt | tail -1 | sed 's/:/ /' | a
 head -n $LINE ${GOATDIR}/CMakeLists.txt > ${GOATDIR}/CMakeLists.new
 
 echo "add_executable(${NAME}" >> ${GOATDIR}/CMakeLists.new
-echo "   \${GOAT_BASE}" >> ${GOATDIR}/CMakeLists.new
-echo "   \${GOAT_GHIST}" >> ${GOATDIR}/CMakeLists.new
 echo "   inc/PPhysics.h" >> ${GOATDIR}/CMakeLists.new
 echo "   src/PPhysics.cc" >> ${GOATDIR}/CMakeLists.new
 echo "   inc/P${CODE}.h" >> ${GOATDIR}/CMakeLists.new
 echo "   src/P${CODE}.cc" >> ${GOATDIR}/CMakeLists.new
 echo "   src/${MAIN}_main.cc" >> ${GOATDIR}/CMakeLists.new
 echo "   )" >> ${GOATDIR}/CMakeLists.new
-echo "target_link_libraries(${NAME} \${LIBS} \${ROOT_LIBRARIES})" >> ${GOATDIR}/CMakeLists.new
+echo "target_link_libraries(${NAME} goatbase ghist \${LIBS} \${ROOT_LIBRARIES})" >> ${GOATDIR}/CMakeLists.new
 
 tail -n +$LINE ${GOATDIR}/CMakeLists.txt >> ${GOATDIR}/CMakeLists.new
 

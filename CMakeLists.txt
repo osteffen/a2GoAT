@@ -107,9 +107,10 @@ else()
     message(STATUS "Pluto disabled")
 endif()
 
+add_library(goatbase STATIC ${GOAT_BASE})
+add_library(ghist STATIC ${GOAT_GHIST})
 
 add_executable(goat
-   ${GOAT_BASE}
    inc/GDataChecks.h
    src/GDataChecks.cc
    inc/GParticleReconstruction.h
@@ -122,18 +123,16 @@ add_executable(goat
    src/GoAT.cc
    src/goat_main.cc
    )
-target_link_libraries(goat ${LIBS} ${ROOT_LIBRARIES})
+target_link_libraries(goat goatbase ${LIBS} ${ROOT_LIBRARIES})
 
 add_executable(pi0-example
-   ${GOAT_BASE}
-   ${GOAT_GHIST}
    inc/PPhysics.h
    src/PPhysics.cc
    inc/PPi0Example.h
    src/PPi0Example.cc
    src/pi0_example_main.cc
    )
-target_link_libraries(pi0-example ${LIBS} ${ROOT_LIBRARIES})
+target_link_libraries(pi0-example goatbase ghist ${LIBS} ${ROOT_LIBRARIES})
 
 # install some scripts to the bin directory
 # by creating symlinks

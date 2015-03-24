@@ -1,0 +1,91 @@
+set(ANT_BASE
+    base/types.cc
+    base/types.h
+    ParticleType.h
+    ParticleType.cc
+    Track.h
+    Track.cc
+    Particle.h
+    Particle.cc
+    Event.h
+    Event.cc
+    EventManager.h
+    EventManager.cc
+    AntPhysics.h
+    AntPhysics.cc
+    base/printable.h
+    base/printable.cc
+    utils/combinatorics.h
+    plot/Histogram.h
+    plot/Histogram.cc
+    base/interval.h
+    TaggerHit.h
+    TaggerHit.cc
+    plot/plotter.h
+    plot/root_draw.h
+    plot/root_draw.cc
+    Detector.h
+    Detector.cc
+    utils/matcher.h
+    TriggerInfo.h
+    TriggerInfo.cc
+    )
+
+set(ANT_PHYSICS
+    analysis/TestPhysics.h
+    analysis/TestPhysics.cc
+    analysis/DeltaPlusPhysics.h
+    analysis/DeltaPlusPhysics.cc
+    analysis/MCOverview.h
+    analysis/MCOverview.cc
+    analysis/MCSingleParticles.h
+    analysis/MCSingleParticles.cc
+    analysis/Basic.h
+    analysis/Basic.cc
+    analysis/omega.h
+    analysis/omega.cc
+    analysis/RecoCheck.h
+    analysis/RecoCheck.cc
+    analysis/SplitCheck.h
+    analysis/SplitCheck.cc
+    analysis/GeoAcceptance.h
+    analysis/GeoAcceptance.cc
+    )
+
+
+
+set(GOAT_EXTRA
+    inc/GDataChecks.h
+    src/GDataChecks.cc
+    inc/GParticleReconstruction.h
+    src/GParticleReconstruction.cc
+    inc/GMesonReconstruction.h
+    src/GMesonReconstruction.cc
+    inc/GSort.h
+    src/GSort.cc
+    inc/GoAT.h
+    src/GoAT.cc
+    )
+
+foreach(f ${GOAT_BASE} ${GOAT_EXTRA})
+    list(APPEND ANT_GOAT_BASE ../${f})
+endforeach()
+
+add_library(goatlib STATIC ${ANT_GOAT_BASE})
+add_library(antlib STATIC ${ANT_BASE} ${ANT_PHYSICS})
+
+aux_source_directory("progs" ANT_PROGS)
+
+foreach(PROG_SRC ${ANT_PROGS})
+
+    get_filename_component(name ${PROG_SRC} NAME_WE)
+
+    message(STATUS "Adding ant executable: ${name}")
+
+    add_executable(${name}
+        ${PROG_SRC}
+        )
+
+    target_link_libraries(${name} antlib ${LIBS} ${ROOT_LIBRARIES} goatlib)
+
+endforeach(PROG_SRC)

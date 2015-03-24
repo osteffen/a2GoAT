@@ -8,7 +8,7 @@ if(CMAKE_BINARY_DIR STREQUAL CMAKE_SOURCE_DIR AND NOT MSVC_IDE)
     "Also don't forget to delete the created CMakeCache.txt and CMakeFiles dir"
     )
 endif()
-    
+
 include(cmake/settings.cmake)
 include(cmake/doxygen.cmake)
 
@@ -23,6 +23,8 @@ find_package(ROOT "5.30" REQUIRED)
 
 # since all subprojects need ROOT, set that up here
 include_directories(${ROOT_INCLUDES} ${CMAKE_SOURCE_DIR}/inc)
+include_directories(${CMAKE_SOURCE_DIR}/ant)
+include_directories(${CMAKE_SOURCE_DIR}/ant/analysis)
 link_directories(${ROOT_LIBRARY_DIR})
 
 include_directories(inc)
@@ -45,7 +47,8 @@ set(GOAT_BASE
    inc/GTreeA2Geant.h
    inc/GHistManager.h
    inc/GTreeManager.h
-   inc/GConfigFile.h   
+   inc/GConfigFile.h
+   inc/GoatExceptions.h
    src/GTree.cc
    src/GTreeTrack.cc
    src/GTreeDetectorHits.cc
@@ -143,3 +146,5 @@ foreach(f ${CORE_EXTRA_SCRIPTS})
   add_custom_target(link_${f_name} ALL
     COMMAND ${CMAKE_COMMAND} -E create_symlink "${f}" "${EXECUTABLE_OUTPUT_PATH}/${f_name}")
 endforeach()
+
+add_subdirectory(ant)

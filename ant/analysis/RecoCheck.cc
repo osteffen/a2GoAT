@@ -47,7 +47,7 @@ void analysis::RecoCheck::ProcessEvent(const Event &event)
 
     // cacluate angles for all matches
     for( auto& match : matched ) {
-        const double a = match.first->Angle(match.second->Vect()) * TMath::RadToDeg();
+        const double a = match.score * TMath::RadToDeg();
         angle_diff->Fill(a);
     }
 

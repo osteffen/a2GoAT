@@ -82,8 +82,9 @@ void ant::analysis::SplitCheck::ProcessEvent(const ant::Event &event)
         auto matches = utils::match1to1(large_gammas, small_gammas, utils::matchAngle);
 
         for(auto& big_small : matches) {
-            big_small_angle->Fill(big_small.first->Angle(big_small.second->Vect())*TMath::RadToDeg());
+            big_small_angle->Fill(big_small.score*TMath::RadToDeg());
         }
+
     }
 
     for( auto c = makeCombination(gammas, 2); !c.Done(); ++c) {

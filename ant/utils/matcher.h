@@ -35,6 +35,17 @@ static double matchDistance( const T& a, const T& b ) {
     return fabs( double(a - b) );
 }
 
+template <typename T1, typename T2>
+struct scored_match {
+    double score;
+    T1 a;
+    T2 b;
+
+    bool operator< (const scored_match<T1,T2>& rhs ) const { return score < rhs.score; }
+
+    std::pair<T1,T2> getPair() const { return std::pair<T1,T2>(a,b); }
+};
+
 /**
  * @brief Particle Matcher
  * @param list1 vector of elements 1
@@ -49,13 +60,9 @@ static double matchDistance( const T& a, const T& b ) {
  * @todo add a cutoff/max score for pairs
  */
 template <class MatchFunction, typename T1, typename T2=T1>
-std::list<std::pair<T1,T2>> match1to1( const std::vector<T1>& list1, const std::vector<T2>& list2, MatchFunction f, const ant::IntervalD& score_window=ant::IntervalD(-std::numeric_limits<double>::infinity(),std::numeric_limits<double>::infinity()) ) {
+std::list<scored_match<T1,T2>> match1to1( const std::vector<T1>& list1, const std::vector<T2>& list2, MatchFunction f, const ant::IntervalD& score_window=ant::IntervalD(-std::numeric_limits<double>::infinity(),std::numeric_limits<double>::infinity()) ) {
 
-    typedef std::pair<T1,T2> match;
-    typedef std::list<match> matchlist;
-
-    typedef std::pair<match, double> scored_match;
-    typedef std::list<scored_match> scorelist;
+    typedef std::list<scored_match<T1,T2>> scorelist;
 
 
     scorelist scores;
@@ -64,25 +71,27 @@ std::list<std::pair<T1,T2>> match1to1( const std::vector<T1>& list1, const std::
         for( const auto& j : list2 ) {
             const double score = f(i,j);
             if( score_window.Contains(score)) {
-                scores.emplace_back( scored_match( match(i, j), score ));
+                scored_match<T1,T2> s = {score,i,j};
+                scores.emplace_back(s);
             }
         }
 
-    scores.sort( [] (const scored_match& a, const scored_match& b) { return a.second < b.second; } );
+    scores.sort();
 
-    matchlist matches;
+    scorelist matches;
 
     while( !scores.empty() ) {
 
         auto a = scores.begin();
 
-        match& ma = a->first;
-        matches.emplace_back( ma );
+        matches.emplace_back( *a );
+
+        const scored_match<T1,T2>& tofind = *a;
 
         //remove all matches that include one of the two just matched particles
         while( a!=scores.end() ) {
 
-            if(a->first.first == ma.first || a->first.second == ma.second)
+            if( a->a == tofind.a || a->b == tofind.b)
                 a = scores.erase(a);
             else
                 ++a;

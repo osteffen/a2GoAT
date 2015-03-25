@@ -174,7 +174,8 @@ int main() {
     cout << "matches: " << matched.size() << endl;
 
     for( auto& match : matched) {
-        cout << "\n" << match.first << "\n" << match.second << endl;
+        cout << "\n" << match.a << "\n" << match.b << endl;
+        cout << "E diff="<< abs(match.a->E() - match.b->E()) << " score=" << match.score << endl;
     }
 
     cout << " or with numbers: Only accept if distance < 3:" << endl;
@@ -185,7 +186,7 @@ int main() {
     auto imatched = utils::match1to1(n1, n2, utils::matchDistance<int>, IntervalD(0,3));
 
     for( auto& match : imatched) {
-        cout << "\n" << match.first << " <-> " << match.second << endl;
+        cout << "\n" << match.a << " <-> " << match.b << "  score: " << match.score << endl;
     }
 
     cout << "===========================" << endl;

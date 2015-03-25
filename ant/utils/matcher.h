@@ -56,19 +56,23 @@ struct scored_match {
  * every element of list1,list2 occurs only once in the pair list
  *
  * The Matcher Function can be a lambda function
- *
- * @todo add a cutoff/max score for pairs
  */
 template <class MatchFunction, typename List1, typename List2>
-std::list<scored_match<typename List1::value_type, typename List2::value_type>> match1to1( const List1& list1, const List2& list2, MatchFunction f, const ant::IntervalD& score_window=ant::IntervalD(-std::numeric_limits<double>::infinity(),std::numeric_limits<double>::infinity()) ) {
+std::list< scored_match<typename List1::value_type, typename List2::value_type> >
+    match1to1( const List1& list1,
+               const List2& list2,
+               MatchFunction f,
+               const ant::IntervalD& score_window=ant::IntervalD(-std::numeric_limits<double>::infinity(),std::numeric_limits<double>::infinity()) )
+{
 
     typedef typename List1::value_type T1;
     typedef typename List2::value_type T2;
-    typedef std::list< scored_match<typename List1::value_type, typename List2::value_type> > scorelist;
+    typedef std::list< scored_match<T1, T2> > scorelist;
 
 
     scorelist scores;
 
+    // build pairs and calculate scores
     for( const auto& i : list1 )
         for( const auto& j : list2 ) {
             const double score = f(i,j);
@@ -80,27 +84,26 @@ std::list<scored_match<typename List1::value_type, typename List2::value_type>> 
 
     scores.sort();
 
-    scorelist matches;
+    // find best matching pairs
+    auto i = scores.begin();
+    while(  i != scores.end() ) {
 
-    while( !scores.empty() ) {
-
-        auto a = scores.begin();
-
-        matches.emplace_back( *a );
-
-        const scored_match<T1,T2>& tofind = *a;
+        auto j = i;
+        ++j;
 
         //remove all matches that include one of the two just matched particles
-        while( a!=scores.end() ) {
+        while( j!=scores.end() ) {
 
-            if( a->a == tofind.a || a->b == tofind.b)
-                a = scores.erase(a);
+            if( j->a == i->a || j->b == i->b)
+                j = scores.erase(j);
             else
-                ++a;
+                ++j;
         }
+
+        ++i;
     }
 
-    return std::move(matches);
+    return std::move(scores);
 }
 }
 }

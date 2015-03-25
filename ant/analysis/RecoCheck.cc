@@ -43,7 +43,7 @@ void analysis::RecoCheck::ProcessEvent(const Event &event)
     }
 
     // find mc-reco matches
-    auto matched = Match(mc_in_cb,rec,matchAngle);
+    auto matched = utils::match1to1(mc_in_cb, rec, utils::matchAngle);
 
     // cacluate angles for all matches
     for( auto& match : matched ) {

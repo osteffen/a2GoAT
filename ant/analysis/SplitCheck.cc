@@ -79,7 +79,7 @@ void ant::analysis::SplitCheck::ProcessEvent(const ant::Event &event)
             }
         }
 
-        auto matches = Match(large_gammas, small_gammas, matchAngle);
+        auto matches = utils::match1to1(large_gammas, small_gammas, utils::matchAngle);
 
         for(auto& big_small : matches) {
             big_small_angle->Fill(big_small.first->Angle(big_small.second->Vect())*TMath::RadToDeg());

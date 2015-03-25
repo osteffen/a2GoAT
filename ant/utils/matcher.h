@@ -5,9 +5,14 @@
 #include <vector>
 #include <algorithm>
 
+#include "base/interval.h"
 #include "TLorentzVector.h"
+#include <limits>
+
+
 
 namespace ant {
+namespace utils {
 
 /**
  * @brief Matcher Function: By Angle
@@ -44,7 +49,7 @@ static double matchDistance( const T& a, const T& b ) {
  * @todo add a cutoff/max score for pairs
  */
 template <class MatchFunction, typename T1, typename T2=T1>
-std::list<std::pair<T1,T2>> Match( const std::vector<T1>& list1, const std::vector<T2>& list2, MatchFunction f) {
+std::list<std::pair<T1,T2>> match1to1( const std::vector<T1>& list1, const std::vector<T2>& list2, MatchFunction f, const ant::IntervalD& score_window=ant::IntervalD(-std::numeric_limits<double>::infinity(),std::numeric_limits<double>::infinity()) ) {
 
     typedef std::pair<T1,T2> match;
     typedef std::list<match> matchlist;
@@ -55,10 +60,12 @@ std::list<std::pair<T1,T2>> Match( const std::vector<T1>& list1, const std::vect
 
     scorelist scores;
 
-    for( auto& i : list1 )
-        for( auto& j : list2 ) {
+    for( const auto& i : list1 )
+        for( const auto& j : list2 ) {
             const double score = f(i,j);
-            scores.emplace_back( scored_match(match(i, j), score ));
+            if( score_window.Contains(score)) {
+                scores.emplace_back( scored_match( match(i, j), score ));
+            }
         }
 
     scores.sort( [] (const scored_match& a, const scored_match& b) { return a.second < b.second; } );
@@ -84,6 +91,7 @@ std::list<std::pair<T1,T2>> Match( const std::vector<T1>& list1, const std::vect
 
     return std::move(matches);
 }
-
 }
+}
+
 #endif

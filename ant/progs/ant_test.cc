@@ -169,7 +169,7 @@ int main() {
     //auto matched = Match(mctrue,rec, matchAngle);
 
     // match by energy using labda function
-    auto matched = Match(mctrue,rec, [] (const TLorentzVector* a, const TLorentzVector* b) {return abs(a->E() - b->E());});
+    auto matched = utils::match1to1(mctrue,rec, [] (const TLorentzVector* a, const TLorentzVector* b) {return abs(a->E() - b->E());});
 
     cout << "matches: " << matched.size() << endl;
 
@@ -177,17 +177,18 @@ int main() {
         cout << "\n" << match.first << "\n" << match.second << endl;
     }
 
-    cout << " or with numbers " << endl;
+    cout << " or with numbers: Only accept if distance < 3:" << endl;
 
-    std::vector<int> n1 = { 1, 10 , 20 };
+    std::vector<int> n1 = { 100,1, 10 , 20 };
     std::vector<int> n2 = { 15, 30 , 8, 5, 99 };
 
-   // auto imatched = Match(n1,n2, [] (int a, int b) {return abs(a - b);});
-     auto imatched = Match(n1,n2, matchDistance<int>);
+    auto imatched = utils::match1to1(n1, n2, utils::matchDistance<int>, IntervalD(0,3));
 
     for( auto& match : imatched) {
-        cout << "\n" << match.first << "\n" << match.second << endl;
+        cout << "\n" << match.first << " <-> " << match.second << endl;
     }
+
+    cout << "===========================" << endl;
 
     return 0;
 

@@ -59,10 +59,12 @@ struct scored_match {
  *
  * @todo add a cutoff/max score for pairs
  */
-template <class MatchFunction, typename T1, typename T2=T1>
-std::list<scored_match<T1,T2>> match1to1( const std::vector<T1>& list1, const std::vector<T2>& list2, MatchFunction f, const ant::IntervalD& score_window=ant::IntervalD(-std::numeric_limits<double>::infinity(),std::numeric_limits<double>::infinity()) ) {
+template <class MatchFunction, typename List1, typename List2>
+std::list<scored_match<typename List1::value_type, typename List2::value_type>> match1to1( const List1& list1, const List2& list2, MatchFunction f, const ant::IntervalD& score_window=ant::IntervalD(-std::numeric_limits<double>::infinity(),std::numeric_limits<double>::infinity()) ) {
 
-    typedef std::list<scored_match<T1,T2>> scorelist;
+    typedef typename List1::value_type T1;
+    typedef typename List2::value_type T2;
+    typedef std::list< scored_match<typename List1::value_type, typename List2::value_type> > scorelist;
 
 
     scorelist scores;

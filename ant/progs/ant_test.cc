@@ -180,7 +180,7 @@ int main() {
 
     cout << " or with numbers: Only accept if distance < 3:" << endl;
 
-    std::vector<int> n1 = { 100,1, 10 , 20 };
+    std::list<int> n1 = { 100,1, 10 , 20 };
     std::vector<int> n2 = { 15, 30 , 8, 5, 99 };
 
     auto imatched = utils::match1to1(n1, n2, utils::matchDistance<int>, IntervalD(0,3));

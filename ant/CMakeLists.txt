@@ -31,6 +31,7 @@ set(ANT_BASE
     TriggerInfo.cc
     A2GeoTools.h
     A2GeoTools.cc
+    plot/Hist.h
     )
 
 set(ANT_PHYSICS

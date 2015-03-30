@@ -3,16 +3,19 @@
 #include "TRint.h"
 #include "EventManager.h"
 #include <time.h>
-#include "AntPhysics.h"
-#include "TestPhysics.h"
-#include "DeltaPlusPhysics.h"
-
-#include "omega.h"
-
 #include "GoatExceptions.h"
 #include "TFile.h"
-#include "GeoAcceptance.h"
-#include "plot/Histogram.h"
+
+#include "analysis/TestPhysics.h"
+#include "analysis/DeltaPlusPhysics.h"
+#include "analysis/MCOverview.h"
+#include "analysis/MCSingleParticles.h"
+#include "analysis/Basic.h"
+#include "analysis/omega.h"
+#include "analysis/RecoCheck.h"
+#include "analysis/SplitCheck.h"
+#include "analysis/GeoAcceptance.h"
+
 using namespace std;
 
 // all of this needs cleaning...

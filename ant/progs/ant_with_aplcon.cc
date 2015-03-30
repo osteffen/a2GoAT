@@ -3,7 +3,8 @@
 #include "TRint.h"
 #include "EventManager.h"
 #include <time.h>
-#include <GoatExceptions.h>
+#include "GoatExceptions.h"
+#include "analysis/TestAPLCON.h"
 
 using namespace std;
 
@@ -71,11 +72,12 @@ int main(int argc, char *argv[])
 
     // Create instance of analysis class
     ant::EventManager analysis;
-    analysis.SetMaxEvents(0);
+    analysis.SetMaxEvents(1000);
 
     TFile* ant_output = OpenAsOutput(argv[3]);
 
-
+    ant::analysis::TestAPLCON aplcon;
+    analysis.AddPhysics(&aplcon);
 
     std::vector<char*> gargs;
     std::string f("-f");

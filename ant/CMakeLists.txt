@@ -47,6 +47,8 @@ set(ANT_PHYSICS
     analysis/omega_bottomup.cc
     analysis/GeoAcceptance.h
     analysis/GeoAcceptance.cc
+    analysis/TestAPLCON.h
+    analysis/TestAPLCON.cc
     )
 
 
@@ -76,6 +78,7 @@ endforeach()
 add_library(goatlib STATIC ${ANT_GOAT_BASE})
 add_library(antlib STATIC ${ANT_BASE} ${ANT_PHYSICS})
 
+include_directories(.)
 include_directories(${APLCON_INCLUDE_DIR})
 
 aux_source_directory("progs" ANT_PROGS)

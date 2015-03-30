@@ -8,11 +8,63 @@
 #include "utils/combinatorics.h"
 #include "TaggerHit.h"
 #include <string>
+#include <iostream>
 
 using namespace std;
 
+template <typename list_of_particles>
+std::list<ant::analysis::Omega::decay> ant::analysis::Omega::FindDecays(const list_of_particles &photons)
+{
+    std::list<decay> decays;
+
+    for( auto comb = makeCombination(photons,3); !comb.Done(); ++comb) {
+
+        refParticleList_t ggg;
+        ggg.assign(comb.begin(),comb.end());
+
+        TLorentzVector omega = *comb.at(0)+*comb.at(1)+*comb.at(2);
+
+        if( omega_im_cut.Contains(omega.M())) {
+
+            for( auto gcomb = makeCombination(ggg,2); !gcomb.Done(); ++gcomb) {
+
+                const TLorentzVector& g1 = *(gcomb.at(0));
+                const TLorentzVector& g2 = *(gcomb.at(1));
+
+                TLorentzVector mesonx = g1 + g2;
+
+                const ParticleTypeDatabase::Type* mesontype = nullptr;
+
+                if(pi0_im_cut.Contains(mesonx.M()))
+                    mesontype = &ParticleTypeDatabase::Pi0;
+                else if(eta_im_cut.Contains(mesonx.M()))
+                    mesontype = &ParticleTypeDatabase::Eta;
+
+                if( mesontype ) {
+
+                    decays.push_back(
+                                decay( {
+                                    Particle(*mesontype, mesonx),
+                                    Particle(ParticleTypeDatabase::Omega, omega) }
+                                    )
+                                );
+
+                }
+            }
+
+        }
+
+    }
+
+    return decays;
+
+}
+
+
+
 ant::analysis::Omega::Omega(const ant::mev_t energy_scale):
     eta_im_cut(   IntervalD::CenterWidth( ParticleTypeDatabase::Eta.Mass(), 50.0)),
+    pi0_im_cut( IntervalD::CenterWidth(ParticleTypeDatabase::Pi0.Mass(),20.0)),
     omega_im_cut( IntervalD::CenterWidth( ParticleTypeDatabase::Omega.Mass(), 80.0)),
     tagger_energy_cut(1420, 1575),
     target(0.0, 0.0, 0.0, ParticleTypeDatabase::Proton.Mass())
@@ -64,6 +116,8 @@ ant::analysis::Omega::Omega(const ant::mev_t energy_scale):
                                    angle_diff_bins,
                                    ParticleTypeDatabase::Eta.Name()+"_mc_rec_angle"
                                    );
+
+    mesons_found = hf.Make1D("Mesons Found", "Meson","", HistogramFactory::BinSettings(3));
 }
 
 template <class InputIterator, class T>
@@ -164,8 +218,23 @@ void ant::analysis::Omega::ProcessEvent(const ant::Event &event)
         }
     }
 
+    auto decays = FindDecays(event.ParticleType(ParticleTypeDatabase::Photon));
 
-
+    refMCParticleList_t mcphotons;
+    std::copy_if (event.MCTrueFinalState().begin(), event.MCTrueFinalState().end(), std::back_inserter(mcphotons),
+                [](refMCParticle p) { return p->Type() == ParticleTypeDatabase::Photon;
+              });
+    auto mc_dacays = FindDecays(mcphotons);
+    cout << "--- Rec ---"  << "\n";
+    for( auto& d : decays) {
+        cout << d.mesonx.Type().Name() << " ";
+        mesons_found->Fill(d.mesonx.Type().PrintName().c_str(),1);
+    }
+    cout << "\n --- MC ---\n";
+    for( auto& d : mc_dacays) {
+        cout << d.mesonx.Type().Name() << " ";
+    }
+    cout << endl;
 }
 
 
@@ -178,6 +247,6 @@ void ant::analysis::Omega::Finish()
 void ant::analysis::Omega::ShowResult()
 {
     canvas("Omega (Reconstructed)") << eta_IM << omega_IM << p_MM << omega_rec_multi << step_levels <<  omega_mc_rec_angle << endc;
-    canvas("Omega (Not Reconstructed)") << nr_ngamma << nr_2gim << nr_3gim << endc;
+    canvas("Omega (Not Reconstructed)") << nr_ngamma << nr_2gim << nr_3gim << mesons_found << endc;
 
 }

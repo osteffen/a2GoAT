@@ -5,7 +5,10 @@
 #include "plot/plotter.h"
 #include "plot/Histogram.h"
 #include "plot/root_draw.h"
+#include "A2GeoTools.h"
 
+class TH3;
+class TH1D;
 
 namespace ant {
 namespace analysis {
@@ -31,9 +34,31 @@ private:
         void Draw(const std::string &option) const;
     };
 
+    class ParticleThetaPhiPlot3D: public ant::root_drawable_traits {
+    public:
+        TH3* hist;
+        unsigned int n;
+
+        ParticleThetaPhiPlot3D(const std::string& title, const std::string& name="");
+        void Fill(refPartcile p);
+
+
+        TObject *GetObject();
+        void Draw(const std::string &option) const;
+    };
+
     ParticleThetaPhiPlot mctrue_pos;
     ParticleThetaPhiPlot matched_pos;
     ParticleThetaPhiPlot lost_pos;
+    ParticleThetaPhiPlot3D lost3d;
+
+    TH2D* angle_regions_protons;
+    TH1D* angle_regions_photons;
+
+    TH1D* n_photons_lost;
+
+    A2SimpleGeometry geo;
+
 
 
 public:

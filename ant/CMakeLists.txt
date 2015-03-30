@@ -29,6 +29,8 @@ set(ANT_BASE
     utils/matcher.h
     TriggerInfo.h
     TriggerInfo.cc
+    A2GeoTools.h
+    A2GeoTools.cc
     )
 
 set(ANT_PHYSICS

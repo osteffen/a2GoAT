@@ -10,11 +10,13 @@
 #include <vector>
 #include <numeric>
 #include <functional>
+#include <APLCON.hpp>
 
 using namespace std;
 using namespace ant;
 
-ant::analysis::TestAPLCON::TestAPLCON(const mev_t energy_scale)
+ant::analysis::TestAPLCON::TestAPLCON(const mev_t energy_scale) :
+    fitter("TestAPLCON")
 {
     HistogramFactory hf("TestAPLCON");
 
@@ -66,22 +68,18 @@ ant::analysis::TestAPLCON::TestAPLCON(const mev_t energy_scale)
                 );
 
 
-    const int max_photons_event = 10;
-
-    for( int photons_per_event=2; photons_per_event <= max_photons_event; ++ photons_per_event) {
-        std::map<int, TH1D*>& im_list = nGammaImEvent[photons_per_event];
-        for( int photons_per_IM=2; photons_per_IM <= photons_per_event; ++photons_per_IM) {
-            im_list[photons_per_IM] = hf.Make1D( to_string(photons_per_IM) + " #gamma IM in " + to_string(photons_per_event) + " #gamma events",
-                                                 "M [MeV]",
-                                                 "#",
-                                                 energy_bins,
-                                                 to_string(photons_per_IM)+"_photon_IM_"+to_string(photons_per_event)+"gevnts");
-        }
-    }
-
     for( auto& t : ParticleTypeDatabase::DetectableTypes() ) {
-        numParticleType[t]= hf.Make1D("Number of "+t->PrintName(),"number of "+t->PrintName()+"/ event","",particlecount_bins);
+        numParticleType[t]= hf.Make1D("Number of "+t->PrintName(),
+                                      "number of "+t->PrintName()+"/ event",
+                                      "",
+                                      particlecount_bins);
     }
+
+    // setup fitter
+
+    fitter.LinkVariable("Photon1",photon1.Link(),vector<double>{1});
+    fitter.LinkVariable("Photon2",photon2.Link(),vector<double>{2});
+    fitter.LinkVariable("Photon3",photon3.Link(),vector<double>{3});
 
 }
 
@@ -96,30 +94,6 @@ void ant::analysis::TestAPLCON::ProcessEvent(const ant::Event &event)
         particles->Fill(particle->Type().PrintName().c_str(), 1);
     }
 
-    const refRecParticleList_t gammas = event.ParticleType(ParticleTypeDatabase::Photon);
-
-    auto entry = nGammaImEvent.find(gammas.size());
-
-    if( entry != nGammaImEvent.end() ) {
-
-        std::map<int, TH1D*>& im_list = entry->second;
-
-        for( auto& im_hist_entry : im_list ) {
-
-            for( auto c = makeCombination(gammas, im_hist_entry.first); !c.Done(); ++c) {
-                TLorentzVector m;
-                for( auto& g : c) {
-                    m+= *g;
-                }
-                im_hist_entry.second->Fill(m.M());
-            };
-        }
-    }
-
-    for( auto& taggerhit : event.TaggerHits()) {
-        tagger->Fill(taggerhit->PhotonEnergy());
-    }
-
     ntagged->Fill(event.TaggerHits().size());
 
     cbesum->Fill(event.Trigger().CBEenergySum());
@@ -130,6 +104,32 @@ void ant::analysis::TestAPLCON::ProcessEvent(const ant::Event &event)
         } catch (...) {}
     }
 
+
+    refRecParticleList_t photons = event.ParticleType(ParticleTypeDatabase::Photon);
+    refRecParticleList_t protons = event.ParticleType(ParticleTypeDatabase::Proton);
+
+
+    if(photons.size() != 3  || protons.size() != 1)
+        return;
+
+    photon1 = *photons[0];
+    photon2 = *photons[1];
+    photon3 = *photons[2];
+
+    proton = *protons[0];
+
+    //cout << proton.Mag() << endl;
+
+    for( auto& taggerhit : event.TaggerHits()) {
+        tagger->Fill(taggerhit->PhotonEnergy());
+
+
+    }
+
+
+
+
+
 }
 
 void ant::analysis::TestAPLCON::Finish()
@@ -139,17 +139,8 @@ void ant::analysis::TestAPLCON::Finish()
 
 void ant::analysis::TestAPLCON::ShowResult()
 {
-    canvas c("TestAPLCON");
+    canvas c("TestAPLCON: Overview");
     c << drawoption("colz") << banana << particles << tagger << ntagged << cbesum << endc;
-
-
-    for( auto& list : nGammaImEvent) {
-        canvas c("TestAPLCON - Inv. Masses " + to_string(list.first)+" #gamma events");
-        for( auto& hist : list.second ) {
-            c << hist.second;
-        }
-        c << endc;
-    }
 
     canvas types("TestAPLCON: Particle Types per Event");
     for( auto& t : numParticleType ) {

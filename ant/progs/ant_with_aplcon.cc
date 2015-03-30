@@ -114,6 +114,7 @@ int main(int argc, char *argv[])
          << (Double_t)(end-start)/CLOCKS_PER_SEC
          << " seconds." << "\n\n";
 
+    aplcon.ShowResult();
 
     ant_output->Write();
 

@@ -64,6 +64,11 @@ set(GOAT_EXTRA
     src/GoAT.cc
     )
 
+# look for APLCON fitter package
+# don't forget to build the library  
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules/" ${CMAKE_MODULE_PATH})
+find_package(APLCON REQUIRED)
+  
 foreach(f ${GOAT_BASE} ${GOAT_EXTRA})
     list(APPEND ANT_GOAT_BASE ../${f})
 endforeach()
@@ -71,18 +76,22 @@ endforeach()
 add_library(goatlib STATIC ${ANT_GOAT_BASE})
 add_library(antlib STATIC ${ANT_BASE} ${ANT_PHYSICS})
 
-aux_source_directory("progs" ANT_PROGS)
+include_directories(${APLCON_INCLUDE_DIR})
 
+aux_source_directory("progs" ANT_PROGS)
 foreach(PROG_SRC ${ANT_PROGS})
 
     get_filename_component(name ${PROG_SRC} NAME_WE)
-
     message(STATUS "Adding ant executable: ${name}")
-
     add_executable(${name}
         ${PROG_SRC}
         )
 
-    target_link_libraries(${name} antlib ${LIBS} ${ROOT_LIBRARIES} goatlib)
-
-endforeach(PROG_SRC)
+    target_link_libraries(${name}
+        antlib
+        ${LIBS}
+        ${ROOT_LIBRARIES}
+        goatlib
+        ${APLCON_LIBRARIES}
+    )
+endforeach()

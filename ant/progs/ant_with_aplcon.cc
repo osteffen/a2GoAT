@@ -3,16 +3,8 @@
 #include "TRint.h"
 #include "EventManager.h"
 #include <time.h>
-#include "AntPhysics.h"
-#include "TestPhysics.h"
-#include "DeltaPlusPhysics.h"
+#include <GoatExceptions.h>
 
-#include "omega.h"
-
-#include "GoatExceptions.h"
-#include "TFile.h"
-#include "GeoAcceptance.h"
-#include "plot/Histogram.h"
 using namespace std;
 
 // all of this needs cleaning...
@@ -79,15 +71,11 @@ int main(int argc, char *argv[])
 
     // Create instance of analysis class
     ant::EventManager analysis;
-    analysis.SetMaxEvents(1000);
+    analysis.SetMaxEvents(0);
 
     TFile* ant_output = OpenAsOutput(argv[3]);
 
-    ant::analysis::Omega omega;
-    analysis.AddPhysics(&omega);
 
-    ant::analysis::GeoAcceptance geo;
-    analysis.AddPhysics(&geo);
 
     std::vector<char*> gargs;
     std::string f("-f");
@@ -124,7 +112,6 @@ int main(int argc, char *argv[])
          << (Double_t)(end-start)/CLOCKS_PER_SEC
          << " seconds." << "\n\n";
 
-    geo.ShowResult();
 
     ant_output->Write();
 

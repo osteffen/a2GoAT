@@ -147,4 +147,6 @@ foreach(f ${CORE_EXTRA_SCRIPTS})
     COMMAND ${CMAKE_COMMAND} -E create_symlink "${f}" "${EXECUTABLE_OUTPUT_PATH}/${f_name}")
 endforeach()
 
-add_subdirectory(ant)
+if(PLUTO_FOUND)
+  add_subdirectory(ant)
+endif()

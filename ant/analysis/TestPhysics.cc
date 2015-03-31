@@ -46,20 +46,15 @@ ParticleCombinatoricsTest::ParticleCombinatoricsTest()
 void ParticleCombinatoricsTest::ProcessEvent(const Event &event)
 
 {
-    refRecParticleList_t photons;
-    refRecParticleList_t protons;
+    const ParticleList& photons = event.Reconstructed().Particles().Get(ParticleTypeDatabase::Photon);
+    const ParticleList& protons = event.Reconstructed().Particles().Get(ParticleTypeDatabase::Proton);
 
-    for( auto& particle : event.Particles() ) {
+    for( auto& particle : event.Reconstructed().Particles().GetAll() ) {
 
         // fill the histogram corresponding to the partice type of the current particle
         try {
             EHists.at( &(particle->Type()) )->Fill(particle->Ek());
         } catch (...) {}
-
-        if( particle->Type() ==  ParticleTypeDatabase::Photon )
-            photons.emplace_back(particle);
-        else if ( particle->Type() == ParticleTypeDatabase::Proton )
-            protons.emplace_back(particle);
     }
 
     nphotons->Fill(photons.size());
@@ -150,12 +145,12 @@ PlotterTest::PlotterTest()
 void PlotterTest::ProcessEvent(const Event &event)
 {
 
-    for (auto& track : event.Tracks() ) {
-        track_plots.Fill(track);
+    for (auto& track : event.Reconstructed().Tracks() ) {
+        track_plots.Fill(track.get());
     }
 
-    for (auto& particle : event.Particles() ) {
-        particle_plots.Fill(particle);
+    for (auto& particle : event.Reconstructed().Particles().GetAll() ) {
+        particle_plots.Fill(particle.get());
     }
 
 }

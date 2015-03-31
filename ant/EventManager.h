@@ -59,16 +59,16 @@ protected:
 
 
     void CopyParticles(GTreeParticle* tree, const ant::ParticleTypeDatabase::Type& type, ant::Event& target);
-    void CopyTracks(GTreeTrack* tree, Event::TrackList_t & container);
+    void CopyTracks(GTreeTrack* tree, Event& event);
     void CopyPlutoParticles(GTreePluto* tree, Event &event);
-    void CopyTaggerHits(ant::Event::TaggerHitList_t& container);
+    void CopyTaggerHits(Event& event);
     void CopyTriggerInfo(GTreeTrigger* tree, Event& event);
 
     void checkMCIDs();
 
     PStaticData* pluto_database;
 
-    ant::MCParticle& GetPlutoParticle(GTreePluto* tree, const UInt_t n);
+    ant::ParticlePtr GetPlutoParticle(GTreePluto* tree, const UInt_t n);
 
 public:
     EventManager();

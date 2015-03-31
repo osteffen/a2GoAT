@@ -33,7 +33,7 @@ int main() {
         }
     }
 
-    Track t(mev_t(100),
+    TrackPtr t(new Track(mev_t(100),
             radian_t(2.0),
             radian_t(1.0),
             time_t(0.324),
@@ -42,10 +42,10 @@ int main() {
             mev_t(0.4),
             mev_t(0.3),
             mev_t(0.2)
-            );
+            ));
     cout << t << endl;
 
-    RecParticle g(ParticleTypeDatabase::Photon, &t);
+    Particle g(ParticleTypeDatabase::Photon, t);
     cout << g << endl;
     g.ChangeType(ParticleTypeDatabase::Proton);
     cout << g << endl;
@@ -121,13 +121,13 @@ int main() {
 
     cout << "---------------------" <<endl;
 
-    std::vector<const MCParticle*> mctrue;
-    mctrue.push_back( new MCParticle( ParticleTypeDatabase::Photon, 100, 1,2));
-    mctrue.push_back( new MCParticle( ParticleTypeDatabase::Photon, 200, .2 ,.4));
+    ParticleList mctrue;
+    mctrue.emplace_back( new Particle( ParticleTypeDatabase::Photon, 100, 1,2));
+    mctrue.emplace_back( new Particle( ParticleTypeDatabase::Photon, 200, .2 ,.4));
 
-    std::vector<const RecParticle*> rec;
+    ParticleList rec;
 
-    Track r1(mev_t(100),
+    TrackPtr r1(new Track(mev_t(100),
             radian_t(1.01),
             radian_t(2.01),
             time_t(0.324),
@@ -136,10 +136,10 @@ int main() {
             mev_t(0.4),
             mev_t(0.3),
             mev_t(0.2)
-            );
-    rec.push_back( new RecParticle(ParticleTypeDatabase::Photon, &r1));
+            ));
+    rec.emplace_back( new Particle(ParticleTypeDatabase::Photon, r1));
 
-    Track r2(mev_t(210),
+    TrackPtr r2(new Track(mev_t(210),
             radian_t(.19),
             radian_t(.41),
             time_t(0.323),
@@ -148,11 +148,11 @@ int main() {
             mev_t(0.4),
             mev_t(0.3),
             mev_t(0.2)
-            );
+            ));
 
-    rec.push_back( new RecParticle(ParticleTypeDatabase::Photon, &r2));
+    rec.emplace_back( new Particle(ParticleTypeDatabase::Photon, r2));
 
-    Track r3(mev_t(210),
+    TrackPtr r3(new Track(mev_t(210),
             radian_t(1.19),
             radian_t(.41),
             time_t(0.323),
@@ -161,15 +161,15 @@ int main() {
             mev_t(0.4),
             mev_t(0.3),
             mev_t(0.2)
-            );
+            ));
 
-    rec.push_back( new RecParticle(ParticleTypeDatabase::Photon, &r3));
+    rec.emplace_back( new Particle(ParticleTypeDatabase::Photon, r3));
 
     // match by angle
     //auto matched = Match(mctrue,rec, matchAngle);
 
     // match by energy using labda function
-    auto matched = utils::match1to1(mctrue,rec, [] (const TLorentzVector* a, const TLorentzVector* b) {return abs(a->E() - b->E());});
+    auto matched = utils::match1to1(mctrue,rec, [] (const ParticlePtr& a, const ParticlePtr& b) {return abs(a->E() - b->E());});
 
     cout << "matches: " << matched.size() << endl;
 

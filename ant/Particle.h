@@ -1,28 +1,33 @@
 #ifndef ANT_PARTICLE_H
 #define ANT_PARTICLE_H
 
+#include "base/printable.h"
 #include "base/types.h"
 #include "ParticleType.h"
 #include "Track.h"
 
 #include "TLorentzVector.h"
+#include <vector>
 #include <list>
 #include <ostream>
-#include "base/printable.h"
+
 
 namespace ant {
+
+class Particle;
+
+using ParticlePtr  = std::shared_ptr<Particle>;
+using ParticleList = std::vector<ParticlePtr>;      //TODO: use list? -> needs change of combinatorics
 
 /**
  * @brief Base particle class
  */
 class Particle: public TLorentzVector, public printable_traits {
-public:
-    typedef std::list<const Particle*> ParticleList_t;
-
 protected:
     const ant::ParticleTypeDatabase::Type* type;
-    const Particle* parent;
-    ParticleList_t daughters;
+    ParticleList parents;
+    ParticleList daughters;
+    TrackList tracks;
 
 public:
 
@@ -32,6 +37,11 @@ public:
         TLorentzVector(_lorentzvector),
         type(&_type)
     {}
+
+    Particle(const ParticleTypeDatabase::Type& _type, ant::TrackPtr track):
+        Particle(_type,track->ClusterEnergy(),track->Theta(), track->Phi()) {
+        tracks.emplace_back(track);
+    }
 
     virtual ~Particle() {}
 
@@ -44,69 +54,18 @@ public:
     void SetLorentzVector( const TLorentzVector& lv ) { *((TLorentzVector*)this) = lv; }
 
 
-    const Particle* Partent()           const { return parent; }
-    const ParticleList_t& Daughters()   const { return daughters; }
+    bool hasParent() const { return daughters.size() != 0; }
+    ParticlePtr Partent() const { return parents.front(); }
+    ParticleList Partents() { return parents; }
+    const ParticleList Partents() const { return parents; }
 
-    bool hasParent() const { return parent != nullptr; }
     bool hasDaughters() const { return daughters.size() != 0; }
+    ParticleList& Daughters() { return daughters; }
+    const ParticleList& Daughters() const { return daughters; }
 
-    void SetParent(const Particle* particle) { parent = particle; }
-    void AddDaughter(const Particle* particle) { daughters.push_back(particle); }
-
-    virtual std::ostream& Print(std::ostream& stream) const;
-
-};
-
-
-/**
- * @brief Particle class for Monte Carlo true data
- *
- * This is the same as Particle for the moment. Can be extended as needed.
- */
-class MCParticle: public Particle {
-protected:
-    bool isfinalstate;
-
-public:
-    MCParticle(const ant::ParticleTypeDatabase::Type& _type, ant::mev_t _Ek, ant::radian_t _theta, ant::radian_t _phi, bool finalstate=true):
-        Particle(_type, _Ek, _theta, _phi ), isfinalstate(finalstate)
-    {}
-
-    MCParticle(const ParticleTypeDatabase::Type& _type, const TLorentzVector& _lorentzvector, bool finalstate=true):
-        Particle(_type, _lorentzvector),isfinalstate(finalstate)
-    {}
-
-    virtual ~MCParticle() {}
-
-    virtual std::ostream& Print(std::ostream& stream) const;
-
-    bool IsFinalState() const { return isfinalstate; }
-};
-
-
-
-/**
- * @brief Particle class for reconstructed particles.
- *
- * Stores additional track and detector inforamtion
- */
-
-class RecParticle: public Particle {
-protected:
-    const ant::Track* track;
-
-public:
-    RecParticle(const ParticleTypeDatabase::Type& _type, const ant::Track* _track):
-        Particle(_type, _track->ClusterEnergy(), _track->Theta(), _track->Phi()),
-        track(_track)
-    {}
-
-    RecParticle(const ant::Particle& _particle, const ant::Track* _track):
-        Particle(_particle),
-        track(_track)
-    {}
-
-    const ant::Track* Track() const { return track; }
+    bool hasTracks() const { return tracks.size() != 0; }
+    TrackList& Tracks() { return tracks; }
+    const TrackList& Tracks() const { return tracks; }
 
     virtual std::ostream& Print(std::ostream& stream) const;
 

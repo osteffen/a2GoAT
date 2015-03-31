@@ -1,6 +1,9 @@
 #ifndef TAGGERHIT_H
 #define TAGGERHIT_H
 
+#include <list>
+#include <memory>
+
 #include "base/types.h"
 #include "base/printable.h"
 #include "TLorentzVector.h"
@@ -35,6 +38,10 @@ public:
 
     std::ostream &Print(std::ostream &stream) const;
 };
+
+using TaggerHitPtr   = std::shared_ptr<TaggerHit>;
+using TaggerHistList = std::list<TaggerHitPtr>;
+
 }
 
 #endif

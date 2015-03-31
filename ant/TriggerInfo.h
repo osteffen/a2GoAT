@@ -3,7 +3,9 @@
 
 #include "base/types.h"
 #include "base/printable.h"
+
 #include <list>
+#include <memory>
 
 namespace ant {
 
@@ -33,7 +35,7 @@ public:
 
 class TriggerInfo: public ant::printable_traits {
 public:
-    typedef std::list<ant::DAQError> ErrorList_t;
+    typedef std::list<ant::DAQError> ErrorList_t;  //TODO: use shared_ptr also for DAQErrors?
 
 protected:
     mev_t           cb_energy_sum;
@@ -61,6 +63,8 @@ public:
 
     std::ostream &Print(std::ostream &stream) const;
 };
+
+using TriggerInfoPtr = std::shared_ptr<TriggerInfo>;
 
 }
 

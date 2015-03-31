@@ -38,29 +38,13 @@ void Particle::ChangeType(const ParticleTypeDatabase::Type &newtype)
 
 std::ostream &Particle::Print(std::ostream &stream) const
 {
-    stream << "Particle " <<Type().Name();
+    stream << "Particle " << Type().Name();
     stream << " IM=" << M();
     stream << " E=" << E();
     stream << " Theta=" << Theta();
     stream << " Phi=" << Phi();
-    return stream;
-}
-
-std::ostream &RecParticle::Print(std::ostream &stream) const
-{
-    stream << "Rec";
-    Particle::Print(stream);
-    if(Track())
-        stream << "\n\t" << Track();
-    else
-        stream << "\n\t" << " - No Tack - ";
-
-    return stream;
-}
-
-std::ostream &MCParticle::Print(std::ostream &stream) const
-{
-    stream << "MC";
-    Particle::Print(stream);
+    for( auto& track : tracks ) {
+        stream << "\t" << track << "\n";
+    }
     return stream;
 }

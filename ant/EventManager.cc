@@ -59,22 +59,18 @@ void EventManager::ProcessEvent()
 
     Event event;
 
-    CopyTracks(GetTracks(), event.TrackStorage());
+    CopyTracks(GetTracks(), event);
 
     CopyParticles(GetPhotons(),         ParticleTypeDatabase::Photon,       event);
     CopyParticles(GetProtons(),         ParticleTypeDatabase::Proton,       event);
     CopyParticles(GetChargedPions(),    ParticleTypeDatabase::PiCharged,    event);
     CopyParticles(GetElectrons(),       ParticleTypeDatabase::eCharged,     event);
 
-    CopyTaggerHits(event.TaggerHitStorage());
+    CopyTaggerHits(event);
 
-#ifdef hasPluto
     CopyPlutoParticles(GetPluto(), event);
-#endif
 
     CopyTriggerInfo(GetTrigger(),    event);
-
-    event.Finalize();
 
     RunPhysics(event);
 }
@@ -101,13 +97,13 @@ void EventManager::CopyParticles(GTreeParticle *tree, const ParticleTypeDatabase
 
         const TLorentzVector& lv = tree->Particle(i);
         const Int_t trackIndex = tree->GetTrackIndex(i);
-        const ant::Track* track = &target.TrackStorage().at(trackIndex);
+        TrackPtr track = target.Reconstructed().Tracks().at(trackIndex);
 
-        target.ParticleStorage().emplace_back(
-                    RecParticle(
-                        Particle(type,lv),
-                        track)
-                    );
+        ParticlePtr p( new Particle(type,lv));
+        p->Tracks().emplace_back(track);
+
+        target.Reconstructed().Particles().AddParticle( std::move(p) );
+
     }
 }
 
@@ -148,11 +144,12 @@ clustersize_t MapClusterSize(const int& size) {
     return size < 0 ? 0 : size;
 }
 
-void EventManager::CopyTracks(GTreeTrack *tree, Event::TrackList_t &container)
+void EventManager::CopyTracks(GTreeTrack *tree, Event &event)
 {
     for(Int_t i=0; i<tree->GetNTracks(); ++i) {
 
-        container.emplace_back(
+        event.Reconstructed().Tracks().emplace_back(
+                    TrackPtr( new Track(
                     tree->GetClusterEnergy(i),
                     tree->GetTheta(i) * TMath::DegToRad(),
                     tree->GetPhi(i) * TMath::DegToRad(),
@@ -162,7 +159,7 @@ void EventManager::CopyTracks(GTreeTrack *tree, Event::TrackList_t &container)
                     tree->GetVetoEnergy(i),
                     tree->GetMWPC0Energy(i),
                     tree->GetMWPC1Energy(i)
-                    );
+                    )));
     }
 }
 
@@ -170,7 +167,6 @@ void EventManager::CopyTracks(GTreeTrack *tree, Event::TrackList_t &container)
 void EventManager::CopyPlutoParticles(GTreePluto *tree, Event& event)
 {
     const GTreePluto::ParticleList particles = tree->GetAllParticles();
-    event.MCTrueStorage().reserve(particles.size());
 
     const ParticleTypeDatabase::Type* type=nullptr;
     for( auto& p : particles ) {
@@ -190,32 +186,35 @@ void EventManager::CopyPlutoParticles(GTreePluto *tree, Event& event)
         TLorentzVector lv = *p;
         lv *= 1000.0;   // convert to MeV
 
-        event.MCTrueStorage().emplace_back( MCParticle(
-                                                *type,
-                                                lv,
-                                                (p->GetDaughterIndex()==-1) )
-                                            );
+        if(p->GetDaughterIndex() == -1) {
+            event.MCTrue().Intermediates().AddParticle(
+                    ParticlePtr(new Particle(*type,lv)));
+        } else {
+            event.MCTrue().Particles().AddParticle(
+                    ParticlePtr(new Particle(*type,lv)));
+        }
+
     }
 }
 #endif
 
-void EventManager::CopyTaggerHits(Event::TaggerHitList_t &container)
+void EventManager::CopyTaggerHits(Event &event)
 {
     const GTreeTagger& tagger = *GetTagger();
 
     for( Int_t i=0; i<tagger.GetNTagged(); ++i) {
-        container.emplace_back(
-                    TaggerHit(
+        event.Reconstructed().TaggerHits().emplace_back(
+                    TaggerHitPtr(new TaggerHit(
                         tagger.GetTaggedChannel(i),
                         tagger.GetTaggedEnergy(i),
                         tagger.GetTaggedTime(i))
-                    );
+                    ));
     }
 }
 
 void EventManager::CopyTriggerInfo(GTreeTrigger *tree, Event &event)
 {
-    TriggerInfo& ti = event.Trigger();
+    TriggerInfo& ti = event.Reconstructed().TriggerInfos();
 
     ti.CBEenergySum() = tree->GetEnergySum();
     ti.Multiplicity() = tree->GetMultiplicity();

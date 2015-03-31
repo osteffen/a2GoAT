@@ -1,11 +1,13 @@
 #ifndef TRACK_H
 #define TRACK_H
 
-#include <ostream>
-#include <memory>
+#include "base/printable.h"
 #include "base/types.h"
 #include "Detector.h"
-#include "base/printable.h"
+
+#include <ostream>
+#include <memory>
+#include <vector>
 
 namespace ant {
 
@@ -62,6 +64,9 @@ public:
     virtual std::ostream &Print(std::ostream &stream) const;
 
 };
+
+using TrackPtr  = std::shared_ptr<Track>;
+using TrackList = std::vector<TrackPtr>;
 
 }
 

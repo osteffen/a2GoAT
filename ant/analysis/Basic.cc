@@ -16,16 +16,16 @@ using namespace ant;
 
 ant::analysis::Basic::Basic(const mev_t energy_scale)
 {
-    HistogramFactory hf("Basic");
+    HistogramFactory::SetName("Basic");
 
-    const HistogramFactory::BinSettings energy_bins(1000,0,energy_scale);
-    const HistogramFactory::BinSettings tagger_bins(2000,0.0,2000);
-    const HistogramFactory::BinSettings ntaggerhits_bins(100);
-    const HistogramFactory::BinSettings veto_bins(1000,0,10.0);
-    const HistogramFactory::BinSettings particle_bins(10,0,10);
-    const HistogramFactory::BinSettings particlecount_bins(16,0,16);
+    const BinSettings energy_bins(1000,0,energy_scale);
+    const BinSettings tagger_bins(2000,0.0,2000);
+    const BinSettings ntaggerhits_bins(100);
+    const BinSettings veto_bins(1000,0,10.0);
+    const BinSettings particle_bins(10,0,10);
+    const BinSettings particlecount_bins(16,0,16);
 
-    banana = hf.Make2D(
+    banana = HistogramFactory::Make2D(
                 "PID Bananas",
                 "Cluster Energy [MeV]",
                 "Veto Energy [MeV]",
@@ -34,14 +34,14 @@ ant::analysis::Basic::Basic(const mev_t energy_scale)
                 "pid"
                 );
 
-    particles = hf.Make1D(
+    particles = HistogramFactory::Make1D(
                 "Identified particles",
                 "Particle Type",
                 "#",
                 particle_bins,
                 "ParticleTypes"
                 );
-    tagger = hf.Make1D(
+    tagger = HistogramFactory::Make1D(
                 "Tagger Spectrum",
                 "Photon Beam Energy",
                 "#",
@@ -49,7 +49,7 @@ ant::analysis::Basic::Basic(const mev_t energy_scale)
                 "TaggerSpectrum"
                 );
 
-    ntagged = hf.Make1D(
+    ntagged = HistogramFactory::Make1D(
                 "Tagger Hits",
                 "Tagger Hits / event",
                 "#",
@@ -57,7 +57,7 @@ ant::analysis::Basic::Basic(const mev_t energy_scale)
                 "nTagged"
                 );
 
-    cbesum = hf.Make1D(
+    cbesum = HistogramFactory::Make1D(
                 "CB Energy Sum",
                 "E [MeV]",
                 "#",
@@ -71,7 +71,7 @@ ant::analysis::Basic::Basic(const mev_t energy_scale)
     for( int photons_per_event=2; photons_per_event <= max_photons_event; ++ photons_per_event) {
         std::map<int, TH1D*>& im_list = nGammaImEvent[photons_per_event];
         for( int photons_per_IM=2; photons_per_IM <= photons_per_event; ++photons_per_IM) {
-            im_list[photons_per_IM] = hf.Make1D( to_string(photons_per_IM) + " #gamma IM in " + to_string(photons_per_event) + " #gamma events",
+            im_list[photons_per_IM] = HistogramFactory::Make1D( to_string(photons_per_IM) + " #gamma IM in " + to_string(photons_per_event) + " #gamma events",
                                                  "M [MeV]",
                                                  "#",
                                                  energy_bins,
@@ -80,7 +80,7 @@ ant::analysis::Basic::Basic(const mev_t energy_scale)
     }
 
     for( auto& t : ParticleTypeDatabase::DetectableTypes() ) {
-        numParticleType[t]= hf.Make1D("Number of "+t->PrintName(),"number of "+t->PrintName()+"/ event","",particlecount_bins);
+        numParticleType[t]= HistogramFactory::Make1D("Number of "+t->PrintName(),"number of "+t->PrintName()+"/ event","",particlecount_bins);
     }
 
 }

@@ -17,25 +17,24 @@
 using namespace std;
 using namespace ant;
 
-ParticleCombinatoricsTest::ParticleCombinatoricsTest():
-    hf("TestPhysics")
+ParticleCombinatoricsTest::ParticleCombinatoricsTest()
 {
+    HistogramFactory::SetName("TestPhysics");
+    const BinSettings im_binning(100,0,250);
+    const BinSettings energy_binning(100,0,250);
+    const BinSettings npart_binning(10,0,10);
 
-    const HistogramFactory::BinSettings im_binning(100,0,250);
-    const HistogramFactory::BinSettings energy_binning(100,0,250);
-    const HistogramFactory::BinSettings npart_binning(10,0,10);
-
-    ggim = hf.Make1D("2 #gamma IM", "M_{#gamma #gamma} [MeV]","#", im_binning);
-    gggim = hf.Make1D("3 #gamma im","M_{#gamma #gamma #gamma} [MeV]","#", im_binning);
-    nphotons = hf.Make1D("Number of photons", "N", "", npart_binning);
-    nprotons = hf.Make1D("Number of protons","N","",npart_binning);
+    ggim = HistogramFactory::Make1D("2 #gamma IM", "M_{#gamma #gamma} [MeV]","#", im_binning);
+    gggim = HistogramFactory::Make1D("3 #gamma im","M_{#gamma #gamma #gamma} [MeV]","#", im_binning);
+    nphotons = HistogramFactory::Make1D("Number of photons", "N", "", npart_binning);
+    nprotons = HistogramFactory::Make1D("Number of protons","N","",npart_binning);
 
     // Build a map of ParticleType -> Histogram, and fill it
     for( auto& type : ParticleTypeDatabase() ) {
         EHists.insert(
                     std::pair<const ParticleTypeDatabase::Type*, TH1*>(
                         &type,
-                        hf.Make1D( type.PrintName()+" Energy", "E_{k} [MeV]", "#", energy_binning )
+                        HistogramFactory::Make1D( type.PrintName()+" Energy", "E_{k} [MeV]", "#", energy_binning )
                         )
                     );
 
@@ -116,36 +115,36 @@ double GetThetaFromTrack(const ant::Track* p ) {
     return p->Theta()*TMath::RadToDeg();
 }
 
-PlotterTest::PlotterTest():
-    hf("PlotterTest")
+PlotterTest::PlotterTest()
 {
-    const HistogramFactory::BinSettings pid_binnning(100,0,25);
-    const HistogramFactory::BinSettings energy_binning(100,0,250);
-    const HistogramFactory::BinSettings theta_binning(180,0,180);
+    HistogramFactory::SetName("PlotterTest");
+    const BinSettings pid_binnning(100,0,25);
+    const BinSettings energy_binning(100,0,250);
+    const BinSettings theta_binning(180,0,180);
 
 
     track_plots.AddHist1D(
                 GetEnergyFromTrack,
-                hf.Make1D("Track Energy (2)","E [MeV]","#", energy_binning));
+                HistogramFactory::Make1D("Track Energy (2)","E [MeV]","#", energy_binning));
 
     auto pid_banana_fuction = [] (const Track* p) { return move( make_tuple(p->ClusterEnergy(), p->VetoEnergy()) );};
 
     track_plots.AddHist2D(
                 pid_banana_fuction,
-                hf.Make2D("plotter test 2d","x","y",energy_binning,pid_binnning));
+                HistogramFactory::Make2D("plotter test 2d","x","y",energy_binning,pid_binnning));
 
     auto list2 = track_plots.AddList();
     list2->AddHist1D(
                 GetEnergyFromTrack,
-                hf.Make1D("Track Energy (2) new list","E [MeV]","#", energy_binning));
+                HistogramFactory::Make1D("Track Energy (2) new list","E [MeV]","#", energy_binning));
 
     auto b = list2->AddBranchNode<detector_t>([] (const Track* t) { return t->Detector(); });
 
     auto b_cb = b->AddBranch(detector_t::NaI);
-    b_cb->AddHist1D(GetEnergyFromTrack, hf.Make1D("CB Theta","#theta [#circ]","",theta_binning));
+    b_cb->AddHist1D(GetEnergyFromTrack, HistogramFactory::Make1D("CB Theta","#theta [#circ]","",theta_binning));
 
     auto b_taps = b->AddBranch(detector_t::PbWO4);
-    b_taps->AddHist1D(GetEnergyFromTrack, hf.Make1D("TAPS Theta","#theta [#circ]","",theta_binning));
+    b_taps->AddHist1D(GetEnergyFromTrack, HistogramFactory::Make1D("TAPS Theta","#theta [#circ]","",theta_binning));
 }
 
 void PlotterTest::ProcessEvent(const Event &event)

@@ -23,19 +23,15 @@ EColor HistogramFactory::GetNextColor()
     return c;
 }
 
-const UInt_t HistogramFactory::GetNextHistnum()
+UInt_t HistogramFactory::GetNextHistnum()
 {
     return histnum++;
 }
 
-HistogramFactory::HistogramFactory(const std::string& prefix):
-    color(colors.begin()),
-    histnum(0),
-    name_prefix(prefix),
-    loopColors(false)
-{
-}
-
+std::vector<EColor>::const_iterator HistogramFactory::color = HistogramFactory::colors.begin();
+unsigned int HistogramFactory::histnum = 0;
+std::string HistogramFactory::name_prefix = "";
+bool HistogramFactory::loopColors(false);
 
 TH1D *HistogramFactory::Make1D(const string &title, const string &xlabel, const string &ylabel, const BinSettings& bins, const string &name)
 {
@@ -87,6 +83,13 @@ string HistogramFactory::GetNextHistName(const std::string& name)
         s << name;
     }
     return s.str();
+}
+
+void HistogramFactory::SetName(const string &name)
+{
+    name_prefix = name;
+    histnum=0;
+    ResetColors();
 }
 
 void HistogramFactory::ResetColors()

@@ -1,4 +1,4 @@
-#include "A2GeoTools.h"
+#include "A2GeoAcceptance.h"
 
 ant::A2SimpleGeometry::A2SimpleGeometry():
     cb_region(21.0*TMath::DegToRad(), 160.0*TMath::RadToDeg()),

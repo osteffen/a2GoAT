@@ -15,12 +15,12 @@ using namespace std;
 using namespace ant;
 
 
-const HistogramFactory::BinSettings analysis::GeoAcceptance::ParticleThetaPhiPlot::theta_bins(180,0.0,180.0);
-const HistogramFactory::BinSettings analysis::GeoAcceptance::ParticleThetaPhiPlot::phi_bins(360,-180.0,180.0);
+const BinSettings analysis::GeoAcceptance::ParticleThetaPhiPlot::theta_bins(180,0.0,180.0);
+const BinSettings analysis::GeoAcceptance::ParticleThetaPhiPlot::phi_bins(360,-180.0,180.0);
 
 analysis::GeoAcceptance::ParticleThetaPhiPlot::ParticleThetaPhiPlot(const string &title, const string &name)
 {
-    hist = hf.Make2D(title,"#theta [#circ]","#phi [#circ]",theta_bins,phi_bins,name);
+    hist = HistogramFactory::Make2D(title,"#theta [#circ]","#phi [#circ]",theta_bins,phi_bins,name);
 }
 
 void analysis::GeoAcceptance::ParticleThetaPhiPlot::Fill(refPartcile p)
@@ -45,17 +45,15 @@ analysis::GeoAcceptance::GeoAcceptance(const mev_t energy_scale):
     lost_pos("Lost","lost"),
     lost3d("Lost 3D","GeoAcceptance_lost3d")
 {
-    angle_regions_protons = hf.Make2D("Angle Regions Protons","Region","Punch",HistogramFactory::BinSettings(3),HistogramFactory::BinSettings(2));
-    angle_regions_photons = hf.Make1D("Angle Regions Photons","Region","",HistogramFactory::BinSettings(3));
-    n_photons_lost = hf.Make1D("# lost photons","# lost","",HistogramFactory::BinSettings(10));
+    angle_regions_protons = HistogramFactory::Make2D("Angle Regions Protons","Region","Punch",BinSettings(3),BinSettings(2));
+    angle_regions_photons = HistogramFactory::Make1D("Angle Regions Photons","Region","",BinSettings(3));
+    n_photons_lost = HistogramFactory::Make1D("# lost photons","# lost","",BinSettings(10));
 }
 
 analysis::GeoAcceptance::~GeoAcceptance()
 {
 
 }
-
-ant::HistogramFactory analysis::GeoAcceptance::hf("GeoAcceptance");
 
 void analysis::GeoAcceptance::ProcessEvent(const Event &event)
 {

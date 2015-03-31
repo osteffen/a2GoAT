@@ -24,16 +24,16 @@ const ant::detector_t GetMCDetecor( const analysis::MCSingleParticles::Track_MC_
 }
 
 
-ant::analysis::MCSingleParticles::MCSingleParticles(const mev_t energy_scale): hf("MCSingleParticles")
+ant::analysis::MCSingleParticles::MCSingleParticles(const mev_t energy_scale)
 {
-    const HistogramFactory::BinSettings energy_bins(100,0,energy_scale);
-    const HistogramFactory::BinSettings veto_bins(100,0,20);
-    const HistogramFactory::BinSettings theta_bins(100,0,180);
-    const HistogramFactory::BinSettings theta_diff_bins(100,-20,20);
-    const HistogramFactory::BinSettings angle_diff_bins(100,0,20);
+    const BinSettings energy_bins(100,0,energy_scale);
+    const BinSettings veto_bins(100,0,20);
+    const BinSettings theta_bins(100,0,180);
+    const BinSettings theta_diff_bins(100,-20,20);
+    const BinSettings angle_diff_bins(100,0,20);
 
-    const HistogramFactory::BinSettings ntrack_bins(10,0,10);
-    const HistogramFactory::BinSettings RecParticleBins(0, 0, 0);
+    const BinSettings ntrack_bins(10,0,10);
+    const BinSettings RecParticleBins(0, 0, 0);
 
 
     //auto ptype = MC_track_pair_stats.AddBranchNode<const ParticleTypeDatabase::Type*>(GetMCType);
@@ -55,7 +55,7 @@ ant::analysis::MCSingleParticles::MCSingleParticles(const mev_t energy_scale): h
 
             branch->AddHist2D(
                         [] ( const Track_MC_pair& pair ) { return  make_tuple( pair.first.ClusterEnergy(), pair.first.VetoEnergy()); },
-            hf.Make2D("PID Banana for true " + pt->PrintName(),
+            HistogramFactory::Make2D("PID Banana for true " + pt->PrintName(),
                       "Cluster Energy [MeV]",
                       "Veto Energy [MeV]",
                       energy_bins,
@@ -66,7 +66,7 @@ ant::analysis::MCSingleParticles::MCSingleParticles(const mev_t energy_scale): h
 
             branch->AddHist2D(
                         [] ( const Track_MC_pair& pair ) { return  make_tuple( pair.second.Ek(), pair.first.ClusterEnergy()); },
-            hf.Make2D("Energy Reconstruction " + pt->PrintName(),
+            HistogramFactory::Make2D("Energy Reconstruction " + pt->PrintName(),
                       "MC true E_{k} [MeV]",
                       "Cluster Energy [MeV]",
                       energy_bins,
@@ -77,7 +77,7 @@ ant::analysis::MCSingleParticles::MCSingleParticles(const mev_t energy_scale): h
 
             branch->AddHist2D(
                         [] ( const Track_MC_pair& pair ) { return  make_tuple( pair.second.Theta()*TMath::RadToDeg(), (pair.first.Theta() - pair.second.Theta())*TMath::RadToDeg()); },
-            hf.Make2D("#theta Difference " + pt->PrintName(),
+            HistogramFactory::Make2D("#theta Difference " + pt->PrintName(),
                       "true #theta [#circ]",
                       "rec #theta [#circ]",
                       theta_bins,
@@ -90,7 +90,7 @@ ant::analysis::MCSingleParticles::MCSingleParticles(const mev_t energy_scale): h
                         [] ( const Track_MC_pair& pair ) {
                 TVector3 v(1,0,0); v.SetPtThetaPhi(1,pair.first.Theta(), pair.first.Phi());
                 return make_tuple( pair.second.Theta()*TMath::RadToDeg(), v.Angle(pair.second.Vect())*TMath::RadToDeg()); },
-            hf.Make2D("Angle between true/rec " + pt->PrintName(),
+            HistogramFactory::Make2D("Angle between true/rec " + pt->PrintName(),
                       "true #theta [#circ]",
                       "angle [#circ]",
                       theta_bins,
@@ -102,7 +102,7 @@ ant::analysis::MCSingleParticles::MCSingleParticles(const mev_t energy_scale): h
             branch->AddHist2D(
                         [] ( const Track_MC_pair& pair ) {
                 return make_tuple( pair.second.Theta()*TMath::RadToDeg(), pair.first.Theta()*TMath::RadToDeg()); },
-            hf.Make2D("rec/true #theta " + pt->PrintName(),
+            HistogramFactory::Make2D("rec/true #theta " + pt->PrintName(),
                       "true #theta [#circ]",
                       "angle [#circ]",
                       theta_bins,
@@ -123,7 +123,7 @@ ant::analysis::MCSingleParticles::MCSingleParticles(const mev_t energy_scale): h
 
         branch->AddHist1D(
                     [] ( const MC_tracklist_pair& pair ) { return  pair.first.size(); },
-                    hf.Make1D("Number of Tracks " + pt->PrintName(),
+                    HistogramFactory::Make1D("Number of Tracks " + pt->PrintName(),
                               "# tracks",
                               "# events",
                               ntrack_bins,
@@ -134,7 +134,7 @@ ant::analysis::MCSingleParticles::MCSingleParticles(const mev_t energy_scale): h
         auto branch2 = b->AddBranch(pt);
         branch2->AddHist1D(
                     [] ( const Rec_MC_pair& pair ) { return  pair.first->Type().PrintName().c_str(); },
-                    hf.Make1D("Reconstruction of " + pt->PrintName(),
+                    HistogramFactory::Make1D("Reconstruction of " + pt->PrintName(),
                               "as patricle type",
                               "#",
                               RecParticleBins,

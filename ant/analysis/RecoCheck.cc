@@ -16,17 +16,17 @@ using namespace ant;
 analysis::RecoCheck::RecoCheck():
     cb_angle(20.0*TMath::DegToRad(), 160.0*TMath::DegToRad())
 {
-    HistogramFactory hf("RecoCheck");
-    const HistogramFactory::BinSettings angle_bins(300,0.0,30.0);
-    const HistogramFactory::BinSettings npart_bins(10);
+    HistogramFactory::SetName("RecoCheck");
+    const BinSettings angle_bins(300,0.0,30.0);
+    const BinSettings npart_bins(10);
 
-    angle_diff = hf.Make1D( "MC/Rec Angle IM",
+    angle_diff = HistogramFactory::Make1D( "MC/Rec Angle IM",
                            "angle [#circ]",
                            "# / " + to_string(angle_bins.BinWidth())+" #circ",
                            angle_bins,
                            "angle_diff"
                             );
-    n_unmatched = hf.Make1D("Unmatched particles / event",
+    n_unmatched = HistogramFactory::Make1D("Unmatched particles / event",
                             "# unmatched / event","",npart_bins,"n_unmatched");
 }
 

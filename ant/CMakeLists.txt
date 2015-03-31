@@ -29,9 +29,10 @@ set(ANT_BASE
     utils/matcher.h
     TriggerInfo.h
     TriggerInfo.cc
-    A2GeoTools.h
-    A2GeoTools.cc
+    A2GeoAcceptance.h
+    A2GeoAcceptance.cc
     plot/Hist.h
+    plot/Hist.cc
     )
 
 set(ANT_PHYSICS

@@ -18,7 +18,6 @@ protected:
 
     std::map<const ant::ParticleTypeDatabase::Type*, TH1*> EHists;
 
-    ant::HistogramFactory hf;
 
 public:
     ParticleCombinatoricsTest();
@@ -31,7 +30,6 @@ public:
 
 class PlotterTest: public ant::Physics {
 protected:
-    ant::HistogramFactory hf;
     ant::PlotList<const ant::Track*> track_plots;
     ant::PlotList<const ant::Particle*> particle_plots;
 

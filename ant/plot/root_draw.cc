@@ -58,13 +58,19 @@ void canvas::cd()
 
 canvas &canvas::operator<<(root_drawable_traits &drawable)
 {
-    this->operator <<(drawable.GetObject());
+    std::unique_ptr<root_drawable_traits> c(new drawable_container<root_drawable_traits*>(&drawable)) ;
+
+    objs.emplace_back( move(c), current_option);
+
     return *this;
 }
 
 canvas &canvas::operator<<(TObject *hist)
 {
-    objs.emplace_back(hist, current_option);
+    std::unique_ptr<root_drawable_traits> c(new drawable_container<TObject*>(hist)) ;
+
+    objs.emplace_back( move(c), current_option);
+
     return *this;
 }
 
@@ -86,9 +92,7 @@ canvas &canvas::operator<<(const endcanvas&)
 
                 o.first->Draw(o.second.c_str());
 
-                if( dynamic_cast<THStack*>(o.first) ) {
-                    vpad->BuildLegend();
-                }
+                vpad->BuildLegend();
             }
 
         }

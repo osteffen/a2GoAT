@@ -127,11 +127,11 @@ void DeltaPlusPhysics::Histogm::AddHistogram(const string &name, const string &t
     // setup one dimensional histogram TH1D
     h_title[name] = title;
 
-    h[name] = hf.Make1D(
+    h[name] = HistogramFactory::Make1D(
                 title,
                 x_label,
                 y_label,
-                HistogramFactory::BinSettings(x_bins_n, x_bins_low, x_bins_up));
+                BinSettings(x_bins_n, x_bins_low, x_bins_up));
 
 }
 
@@ -140,17 +140,17 @@ void DeltaPlusPhysics::Histogm::AddHistogram(const string &name, const string &t
 
     // setup two dimensional histogram TH2D
     h_title[name] = title;
-    h[name] = hf.Make2D(
+    h[name] = HistogramFactory::Make2D(
                 title,
                 x_label,
                 y_label,
-                HistogramFactory::BinSettings(x_bins_n, x_bins_low, x_bins_up),
-                HistogramFactory::BinSettings(y_bins_n, y_bins_low, y_bins_up));
+                BinSettings(x_bins_n, x_bins_low, x_bins_up),
+                BinSettings(y_bins_n, y_bins_low, y_bins_up));
 }
 
-DeltaPlusPhysics::Histogm::Histogm(const string &prefix):
-    hf(prefix)
+DeltaPlusPhysics::Histogm::Histogm(const string &prefix)
 {
+    HistogramFactory::SetName(prefix);
     AddHistogram("nPart", "number of particles",
                    "number of particles / event", "",
                    10, 0, 10); // 10 bins from 0 to 10

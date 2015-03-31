@@ -3,6 +3,7 @@
 
 #include "AntPhysics.h"
 #include "base/interval.h"
+#include "plot/Hist.h"
 
 class TH1D;
 class TH2D;
@@ -18,15 +19,16 @@ protected:
         Particle omega;
     };
 
-    TH1D* omega_IM;
-    TH1D* eta_IM;
-    TH1D* p_MM;
-    TH1D* omega_rec_multi;
+    HistWrap<const TLorentzVector&> omega_IM;
+    HistWrap<const TLorentzVector&> eta_IM;
+    HistWrap<const TLorentzVector&> p_MM;
 
-    TH1D* nr_ngamma;
-    TH1D* nr_3gim;
-    TH1D* nr_2gim;
-    TH1D* mesons_found;
+    HistWrap<int> omega_rec_multi;
+
+    HistWrap<int> nr_ngamma;
+    HistWrap<const TLorentzVector&> nr_3gim;
+    HistWrap<const TLorentzVector&> nr_2gim;
+    HistWrap<const std::string&> mesons_found;
 
     IntervalD eta_im_cut;
     IntervalD pi0_im_cut;
@@ -35,12 +37,15 @@ protected:
 
     TLorentzVector target;
 
-    TH1D* step_levels;
+    HistWrap<const std::string&> step_levels;
 
-    TH1D* omega_mc_rec_angle;
+    HistWrap< std::pair<const TLorentzVector&,const TLorentzVector&> > omega_mc_rec_angle;
 
     template <typename list_of_particles>
     std::list<decay> FindDecays(const list_of_particles &photons);
+
+    HistWrap<const TLorentzVector&> makeInvMassPlot(const std::string& title, const std::string& xlabel, const std::string& ylabel, ant::BinSettings bins, const std::string& name="");
+    HistWrap< std::pair<const TLorentzVector&, const TLorentzVector&> > makeAngleDiffPlot(const std::string& title, const std::string& xlabel, const std::string& ylabel, BinSettings bins, const std::string& name);
 
 public:
     Omega(const mev_t energy_scale=1000.0);

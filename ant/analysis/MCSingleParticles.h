@@ -21,9 +21,6 @@ private:
     PlotList<MC_tracklist_pair> MC_tracklist_pair_stats;
     PlotList<Rec_MC_pair> Rec_MC_stats;
 
-    HistogramFactory hf;
-
-
     // Physics interface
 public:
     MCSingleParticles(const mev_t energy_scale=1000.0);

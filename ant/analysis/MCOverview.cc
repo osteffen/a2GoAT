@@ -18,21 +18,21 @@ const ant::ParticleTypeDatabase::Type* GetParticleType(refPartcile p )
 
 ant::analysis::MCOverview::MCOverview(const mev_t energy_scale)
 {
-    HistogramFactory hf("MCOverview");
+    HistogramFactory::SetName("MCOverview");
 
-    const HistogramFactory::BinSettings energy_bins(100,0,energy_scale);
-    const HistogramFactory::BinSettings theta_bins(100,0,180);
-    const HistogramFactory::BinSettings theta_proton_bins(100,0,60.0);
-    const HistogramFactory::BinSettings particle_type_bins(10,0,10);
+    const BinSettings energy_bins(100,0,energy_scale);
+    const BinSettings theta_bins(100,0,180);
+    const BinSettings theta_proton_bins(100,0,60.0);
+    const BinSettings particle_type_bins(10,0,10);
 
     mc_particle_stats.AddHist1D(
                 [] (refPartcile p) { return p->Ek();},
-                hf.Make1D("MC Energy","E [MeV]","", energy_bins)
+                HistogramFactory::Make1D("MC Energy","E [MeV]","", energy_bins)
     );
 
     mc_particle_stats.AddHist1D(
                 [] (refPartcile p) { return p->Type().PrintName().c_str();},
-                hf.Make1D(
+                HistogramFactory::Make1D(
                     "Generated Particles",
                     "Particle Type",
                     "#",
@@ -43,7 +43,7 @@ ant::analysis::MCOverview::MCOverview(const mev_t energy_scale)
 
     mc_particle_stats.AddHist2D(
                 [] (refPartcile p) { return make_tuple(p->Ek(), p->Theta()*TMath::RadToDeg());},
-                hf.Make2D(
+                HistogramFactory::Make2D(
             "MC Energy",
             "E [MeV]",
             "#theta [#circ]",
@@ -57,11 +57,11 @@ ant::analysis::MCOverview::MCOverview(const mev_t energy_scale)
         auto branch = ptype->AddBranch(pt);
         branch->AddHist1D(
                     [] (refPartcile p) { return p->Ek();},
-                    hf.Make1D("MC Energy " + pt->PrintName(),"E_{k} [MeV]","", energy_bins)
+                    HistogramFactory::Make1D("MC Energy " + pt->PrintName(),"E_{k} [MeV]","", energy_bins)
         );
         branch->AddHist2D(
                     [] (refPartcile p) { return make_tuple(p->Ek(), p->Theta()*TMath::RadToDeg());},
-                    hf.Make2D(
+                    HistogramFactory::Make2D(
                 "MC Energy " + pt->PrintName(),
                 "E_{k} [MeV]",
                 "#theta [#circ]",

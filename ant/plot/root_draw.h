@@ -3,6 +3,7 @@
 
 #include <string>
 #include <list>
+#include <memory>
 
 class THStack;
 class TH1D;
@@ -12,9 +13,11 @@ class TObject;
 
 namespace ant {
 
+class canvas;
+
 class root_drawable_traits {
+    friend class ant::canvas;
 public:
-    virtual TObject* GetObject() =0;
     virtual void Draw(const std::string& option) const =0;
 };
 
@@ -58,7 +61,18 @@ protected:
     TCanvas* create(const std::string& title="");
     TCanvas* find();
 
-    typedef std::pair<TObject*, std::string> ObjectOption;
+    template<typename T>
+    class drawable_container: public ant::root_drawable_traits {
+        public:
+            T obj;
+
+            drawable_container(T o): obj(o) {}
+            void Draw(const std::string &option) const {
+                obj->Draw(option.c_str());
+            }
+    };
+
+    typedef std::pair< std::unique_ptr<root_drawable_traits>, std::string> ObjectOption;
     std::list<ObjectOption> objs;
 
     std::string current_option;

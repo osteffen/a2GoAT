@@ -1,7 +1,7 @@
 #ifndef A2GEOACCEPTANCE_H
-#define A2GEOTOOLS_H
+#define A2GEOACCEPTANCE_H
 
-#include "interval.h"
+#include "base/interval.h"
 #include "TMath.h"
 #include "Detector.h"
 

@@ -12,21 +12,21 @@ using namespace ant;
 
 ant::analysis::SplitCheck::SplitCheck()
 {
-    HistogramFactory hf("SplitCheck");
-    hf.SetLoopColors(true);
+    HistogramFactory::SetName("SplitCheck");
+    HistogramFactory::SetLoopColors(true);
 
-    const HistogramFactory::BinSettings gamma_energy(1000, 0.0, 1000.0);
-    const HistogramFactory::BinSettings angle_bins(180, 0.0, 90.0);
-    const HistogramFactory::BinSettings theta_bins(180, 0.0, 180.0);
-    const HistogramFactory::BinSettings phi_bins(360, -180.0, 180.0);
+    const BinSettings gamma_energy(1000, 0.0, 1000.0);
+    const BinSettings angle_bins(180, 0.0, 90.0);
+    const BinSettings theta_bins(180, 0.0, 180.0);
+    const BinSettings phi_bins(360, -180.0, 180.0);
 
     const int max=5;
     for(int gammas_event=2; gammas_event<=max; ++gammas_event) {
         gamma_rank[gammas_event].reserve(gammas_event);
-        hf.ResetColors();
+        HistogramFactory::ResetColors();
         for(int gamma=0; gamma<gammas_event; ++gamma) {
             gamma_rank[gammas_event].push_back(
-                        hf.Make1D(to_string(gammas_event)+" gamma event: energy of gamma "+to_string(gamma),
+                        HistogramFactory::Make1D(to_string(gammas_event)+" gamma event: energy of gamma "+to_string(gamma),
                                   "E [MeV]",
                                   "",
                                   gamma_energy)
@@ -34,23 +34,23 @@ ant::analysis::SplitCheck::SplitCheck()
         }
     }
 
-    big_small_angle = hf.Make1D("Big Cluster/Small Cluster angle",
+    big_small_angle = HistogramFactory::Make1D("Big Cluster/Small Cluster angle",
                                 "angle [#circ]",
                                 "",
                                 angle_bins,
                                 "big_small_angle");
 
-    small_theta_phi = hf.Make2D("Position of small clusters",
+    small_theta_phi = HistogramFactory::Make2D("Position of small clusters",
                                 "#theta [#circ]",
                                 "#phi [#circ]",theta_bins,phi_bins,"small_theta_phi");
-    big_theta_phi = hf.Make2D("Position of big clusters",
+    big_theta_phi = HistogramFactory::Make2D("Position of big clusters",
                                 "#theta [#circ]",
                                 "#phi [#circ]",theta_bins,phi_bins,"big_theta_phi");
 
-    IMsmall_theta_phi = hf.Make2D("Position of small clusters (IM selected)",
+    IMsmall_theta_phi = HistogramFactory::Make2D("Position of small clusters (IM selected)",
                                 "#theta [#circ]",
                                 "#phi [#circ]",theta_bins,phi_bins,"IMsmall_theta_phi");
-    IMbig_theta_phi = hf.Make2D("Position of big clusters (IM selected)",
+    IMbig_theta_phi = HistogramFactory::Make2D("Position of big clusters (IM selected)",
                                 "#theta [#circ]",
                                 "#phi [#circ]",theta_bins,phi_bins,"IMbig_theta_phi");
 }

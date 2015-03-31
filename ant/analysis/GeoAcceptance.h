@@ -5,7 +5,7 @@
 #include "plot/plotter.h"
 #include "plot/Histogram.h"
 #include "plot/root_draw.h"
-#include "A2GeoTools.h"
+#include "A2GeoAcceptance.h"
 
 class TH3;
 class TH1D;
@@ -18,13 +18,12 @@ namespace analysis {
 class GeoAcceptance: public ant::Physics {
 
 private:
-    static HistogramFactory hf;
 
     class ParticleThetaPhiPlot: public ant::root_drawable_traits {
     public:
         TH2D* hist;
-        const static HistogramFactory::BinSettings theta_bins;
-        const static HistogramFactory::BinSettings phi_bins;
+        const static BinSettings theta_bins;
+        const static BinSettings phi_bins;
 
         ParticleThetaPhiPlot(const std::string& title, const std::string& name="");
         void Fill(refPartcile p);

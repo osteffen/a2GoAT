@@ -20,7 +20,6 @@ protected:
     class Histogm {
 
     public:
-        ant::HistogramFactory hf;
         std::string  pref;  // prefix to label whole group of histograms
         mutable std::map<std::string, TH1* > h; // container for histograms by name (without prefix)
         std::map<std::string, std::string> h_title; // container for histogram titles by name (without prefix)

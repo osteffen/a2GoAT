@@ -11,12 +11,13 @@
 #include <numeric>
 #include <functional>
 #include <APLCON.hpp>
+#include <iomanip>
 
 using namespace std;
 using namespace ant;
 
 ant::analysis::TestAPLCON::TestAPLCON(const mev_t energy_scale) :
-    fitter("TestAPLCON")
+    fitter("TestAPLCON"), photons(2)
 {
     HistogramFactory hf("TestAPLCON");
 
@@ -77,10 +78,34 @@ ant::analysis::TestAPLCON::TestAPLCON(const mev_t energy_scale) :
 
     // setup fitter
 
-    fitter.LinkVariable("Photon1",photon1.Link(),vector<double>{1});
-    fitter.LinkVariable("Photon2",photon2.Link(),vector<double>{2});
-    fitter.LinkVariable("Photon3",photon3.Link(),vector<double>{3});
+    fitter.LinkVariable("Beam",    beam.Link(),       vector<double>{1});
+    fitter.LinkVariable("Photon1", photons[0].Link(), vector<double>{1});
+    fitter.LinkVariable("Photon2", photons[1].Link(), vector<double>{2});
+    fitter.LinkVariable("Proton",  proton.Link(),     vector<double>{3});
 
+    auto constraint = [] (
+            vector<double> beam,
+            vector<double> photon1,
+            vector<double> photon2,
+            vector<double> proton) -> vector<double>
+    {
+
+        const TLorentzVector target(0,0,0, ParticleTypeDatabase::Proton.Mass());
+        const TLorentzVector diff =
+                FitParticle::Make(beam, ParticleTypeDatabase::Photon.Mass())
+                + target
+                - FitParticle::Make(photon1, ParticleTypeDatabase::Photon.Mass())
+                - FitParticle::Make(photon2, ParticleTypeDatabase::Photon.Mass())
+                - FitParticle::Make(proton, ParticleTypeDatabase::Proton.Mass());
+
+        return {diff.X(), diff.Y(), diff.Z(), diff.T()};
+
+    };
+
+    APLCON::PrintFormatting::Width = 13;
+    cout.precision(3);
+
+    fitter.AddConstraint("EnergyMomentumBalance",{"Beam", "Photon1", "Photon2", "Proton"}, constraint);
 }
 
 
@@ -104,31 +129,25 @@ void ant::analysis::TestAPLCON::ProcessEvent(const ant::Event &event)
         } catch (...) {}
     }
 
-
-    refRecParticleList_t photons = event.ParticleType(ParticleTypeDatabase::Photon);
-    refRecParticleList_t protons = event.ParticleType(ParticleTypeDatabase::Proton);
-
-
-    if(photons.size() != 3  || protons.size() != 1)
-        return;
-
-    photon1 = *photons[0];
-    photon2 = *photons[1];
-    photon3 = *photons[2];
-
-    proton = *protons[0];
-
-    //cout << proton.Mag() << endl;
-
-    for( auto& taggerhit : event.TaggerHits()) {
+    for(const auto& taggerhit : event.TaggerHits()) {
         tagger->Fill(taggerhit->PhotonEnergy());
 
+        size_t foundPhotons = 0;
+        for(const refMCParticle & p : event.MCTrue()) {
+            //cout << p->Type() << endl;
+            if(p->Type() == ParticleTypeDatabase::Proton)
+                proton.SetFromVector(*p);
+            else if(foundPhotons<2 && p->Type() == ParticleTypeDatabase::Photon) {
+                photons[foundPhotons].SetFromVector(*p);
+                foundPhotons++;
+           }
+        }
+        if(foundPhotons != 2)
+            continue;
+        beam.SetFromVector(taggerhit->PhotonBeam());
 
+        cout << fitter.DoFit() << endl;
     }
-
-
-
-
 
 }
 

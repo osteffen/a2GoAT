@@ -2,9 +2,12 @@
 #define APLCON_H
 
 #include "AntPhysics.h"
+
+#include <APLCON.hpp>
+
 #include <vector>
 #include <map>
-#include <APLCON.hpp>
+
 
 class TH1D;
 class TH2D;
@@ -25,28 +28,37 @@ protected:
 
     // lightweight structure for linking to fitter
     struct FitParticle {
-    private:
-        const ant::Particle* p;
     public:
-        FitParticle(const ant::Particle& p_) :
-            p(&p_), E(p_.E()), Theta(p_.Theta()), Phi(p_.Phi())  {}
-        FitParticle() {}
+        void SetFromVector(const TLorentzVector& p_) {
+            Ek = p_.E()-p_.M();
+            Theta = p_.Theta();
+            Phi = p_.Phi();
+        }
+
+        static TLorentzVector Make(const std::vector<double>& EkThetaPhi,
+                                           const Double_t m) {
+            const double E = EkThetaPhi[0] + m;
+            const Double_t p = sqrt( E*E - m*m );
+            TVector3 pv(1,0,0);
+            pv.SetMagThetaPhi(p, EkThetaPhi[1], EkThetaPhi[2]);
+            TLorentzVector l(pv, E);
+            return l;
+        }
 
         std::vector<double*> Link() {
-            return {std::addressof(E),
+            return {std::addressof(Ek),
                     std::addressof(Theta),
                     std::addressof(Phi)};
         }
 
-        double E;
+        double Ek;
         double Theta;
         double Phi;
     };
 
     APLCON fitter;
-    FitParticle photon1;
-    FitParticle photon2;
-    FitParticle photon3;
+    FitParticle beam;
+    std::vector<FitParticle> photons;
     FitParticle proton;
 
 

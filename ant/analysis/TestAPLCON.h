@@ -7,7 +7,7 @@
 
 #include <vector>
 #include <map>
-
+#include <random>
 
 class TH1D;
 class TH2D;
@@ -23,11 +23,15 @@ protected:
     TH1D* tagger;
     TH1D* ntagged;
     TH1D* cbesum;
+    TH1D* pull;
+
 
     std::map<const ParticleTypeDatabase::Type*, TH1D*> numParticleType;
 
     // lightweight structure for linking to fitter
     struct FitParticle {
+    private:
+        static std::default_random_engine generator;
     public:
         void SetFromVector(const TLorentzVector& p_) {
             Ek = p_.E()-p_.M();
@@ -51,6 +55,13 @@ protected:
                     std::addressof(Phi)};
         }
 
+        void Smear(const double sigma) {
+            std::normal_distribution<double> gaussian(0, sigma);
+            Ek += gaussian(generator);
+            Theta += gaussian(generator);
+            Phi += gaussian(generator);
+        }
+
         double Ek;
         double Theta;
         double Phi;
@@ -61,6 +72,9 @@ protected:
     std::vector<FitParticle> photons;
     FitParticle proton;
 
+    double sigma_beam;
+    std::vector<double> sigma_photons;
+    double sigma_proton;
 
 
 public:

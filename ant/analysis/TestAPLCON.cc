@@ -16,6 +16,8 @@
 using namespace std;
 using namespace ant;
 
+std::default_random_engine ant::analysis::TestAPLCON::FitParticle::generator;
+
 ant::analysis::TestAPLCON::TestAPLCON(const mev_t energy_scale) :
     fitter("TestAPLCON"), photons(2)
 {
@@ -27,6 +29,8 @@ ant::analysis::TestAPLCON::TestAPLCON(const mev_t energy_scale) :
     const HistogramFactory::BinSettings veto_bins(1000,0,10.0);
     const HistogramFactory::BinSettings particle_bins(10,0,10);
     const HistogramFactory::BinSettings particlecount_bins(16,0,16);
+    const HistogramFactory::BinSettings pull_bins(50,-3,3);
+
 
     banana = hf.Make2D(
                 "PID Bananas",
@@ -68,6 +72,14 @@ ant::analysis::TestAPLCON::TestAPLCON(const mev_t energy_scale) :
                 "esum"
                 );
 
+    pull = hf.Make1D(
+                "Pull",
+                "Pull",
+                "#",
+                pull_bins,
+                "pull"
+                );
+
 
     for( auto& t : ParticleTypeDatabase::DetectableTypes() ) {
         numParticleType[t]= hf.Make1D("Number of "+t->PrintName(),
@@ -78,10 +90,14 @@ ant::analysis::TestAPLCON::TestAPLCON(const mev_t energy_scale) :
 
     // setup fitter
 
-    fitter.LinkVariable("Beam",    beam.Link(),       vector<double>{1});
-    fitter.LinkVariable("Photon1", photons[0].Link(), vector<double>{1});
-    fitter.LinkVariable("Photon2", photons[1].Link(), vector<double>{2});
-    fitter.LinkVariable("Proton",  proton.Link(),     vector<double>{3});
+    sigma_beam = 10;
+    sigma_photons = {20, 30};
+    sigma_proton = 40;
+
+    fitter.LinkVariable("Beam",    beam.Link(),       vector<double>{sigma_beam});
+    fitter.LinkVariable("Photon1", photons[0].Link(), vector<double>{sigma_photons[0]});
+    fitter.LinkVariable("Photon2", photons[1].Link(), vector<double>{sigma_photons[1]});
+    fitter.LinkVariable("Proton",  proton.Link(),     vector<double>{sigma_proton});
 
     auto constraint = [] (
             vector<double> beam,
@@ -135,18 +151,24 @@ void ant::analysis::TestAPLCON::ProcessEvent(const ant::Event &event)
         size_t foundPhotons = 0;
         for(const refMCParticle & p : event.MCTrue()) {
             //cout << p->Type() << endl;
-            if(p->Type() == ParticleTypeDatabase::Proton)
+            if(p->Type() == ParticleTypeDatabase::Proton) {
                 proton.SetFromVector(*p);
+                proton.Smear(sigma_proton);
+            }
             else if(foundPhotons<2 && p->Type() == ParticleTypeDatabase::Photon) {
                 photons[foundPhotons].SetFromVector(*p);
+                photons[foundPhotons].Smear(sigma_photons[foundPhotons]);
                 foundPhotons++;
            }
         }
         if(foundPhotons != 2)
             continue;
         beam.SetFromVector(taggerhit->PhotonBeam());
+        beam.Smear(sigma_beam);
 
-        cout << fitter.DoFit() << endl;
+        APLCON::Result_t result = fitter.DoFit();
+        //cout << result.Variables["Beam[0]"].Pull << endl;
+        pull->Fill(result.Variables["Proton[0]"].Pull);
     }
 
 }
@@ -159,13 +181,14 @@ void ant::analysis::TestAPLCON::Finish()
 void ant::analysis::TestAPLCON::ShowResult()
 {
     canvas c("TestAPLCON: Overview");
-    c << drawoption("colz") << banana << particles << tagger << ntagged << cbesum << endc;
+    c << drawoption("colz") << banana << particles << tagger << ntagged << cbesum
+      << pull << endc;
 
-    canvas types("TestAPLCON: Particle Types per Event");
-    for( auto& t : numParticleType ) {
-        types << t.second;
-    }
-    types << endc;
+//    canvas types("TestAPLCON: Particle Types per Event");
+//    for( auto& t : numParticleType ) {
+//        types << t.second;
+//    }
+//    types << endc;
 
 
 }

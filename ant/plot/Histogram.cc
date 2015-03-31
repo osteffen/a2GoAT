@@ -3,6 +3,8 @@
 #include "TH1D.h"
 #include "TH2D.h"
 
+#include "TDirectory.h"
+
 #include <sstream>
 #include <iomanip>
 
@@ -33,8 +35,14 @@ unsigned int HistogramFactory::histnum = 0;
 std::string HistogramFactory::name_prefix = "";
 bool HistogramFactory::loopColors(false);
 
+TDirectory* ant::HistogramFactory::root_directory = gDirectory;
+TDirectory* ant::HistogramFactory::current_directory = gDirectory;
+
 TH1D *HistogramFactory::Make1D(const string &title, const string &xlabel, const string &ylabel, const BinSettings& bins, const string &name)
 {
+    if(current_directory)
+        current_directory->cd();
+
     TH1D* h = new TH1D( GetNextHistName(name).c_str(), title.c_str(), bins.Bins(), bins.Start(), bins.Stop());
     h->SetXTitle(xlabel.c_str());
     h->SetYTitle(ylabel.c_str());
@@ -44,6 +52,9 @@ TH1D *HistogramFactory::Make1D(const string &title, const string &xlabel, const 
 
 TH2D *HistogramFactory::Make2D(const std::string& title, const std::string& xlabel, const std::string& ylabel, const BinSettings& xbins, const BinSettings& ybins, const string &name)
 {
+    if(current_directory)
+        current_directory->cd();
+
     TH2D* h = new TH2D( GetNextHistName(name).c_str(), title.c_str(), xbins.Bins(), xbins.Start(), xbins.Stop(), ybins.Bins(), ybins.Start(), ybins.Stop());
     h->SetXTitle(xlabel.c_str());
     h->SetYTitle(ylabel.c_str());
@@ -75,8 +86,6 @@ string HistogramFactory::GetNextHistName(const std::string& name)
 {
     stringstream s;
 
-    s << name_prefix << "_";
-
     if(name.empty()) {
         s << setfill('0') << setw(3) << GetNextHistnum();
     } else {
@@ -90,11 +99,18 @@ void HistogramFactory::SetName(const string &name)
     name_prefix = name;
     histnum=0;
     ResetColors();
+    root_directory->cd();
+    current_directory = root_directory->mkdir(name_prefix.c_str());
 }
 
 void HistogramFactory::ResetColors()
 {
     color=colors.begin();
+}
+
+void HistogramFactory::SetOutputRoot(TDirectory *dir)
+{
+    root_directory = dir;
 }
 
 // Color set for 1D histogram lines.

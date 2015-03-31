@@ -9,6 +9,7 @@
 
 class TH1D;
 class TH2D;
+class TDirectory;
 
 namespace ant {
 
@@ -45,6 +46,9 @@ private:
     static unsigned int GetNextHistnum();
     static std::string GetNextHistName(const std::string &name="");
 
+    static TDirectory* root_directory;
+    static TDirectory* current_directory;
+
 public:
 
     static void SetName(const std::string& name);
@@ -79,6 +83,7 @@ public:
     static bool GetLoopColors() { return loopColors; }
 
     static void ResetColors();
+    static void SetOutputRoot(TDirectory* dir);
 
 };
 

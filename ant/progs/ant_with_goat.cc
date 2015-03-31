@@ -15,6 +15,7 @@
 #include "GoatExceptions.h"
 #include "TFile.h"
 #include "GeoAcceptance.h"
+#include "plot/Histogram.h"
 using namespace std;
 
 // all of this needs cleaning...
@@ -81,9 +82,10 @@ int main(int argc, char *argv[])
 
     // Create instance of analysis class
     ant::EventManager analysis;
-    analysis.SetMaxEvents(0);
+    analysis.SetMaxEvents(1000);
 
     TFile* ant_output = OpenAsOutput(argv[3]);
+    ant::HistogramFactory::SetOutputRoot(ant_output);
 
     ant::analysis::MCOverview mcoverview;
     analysis.AddPhysics(&mcoverview);

@@ -28,7 +28,6 @@ protected:
     HistWrap<int> nr_ngamma;
     HistWrap<const TLorentzVector&> nr_3gim;
     HistWrap<const TLorentzVector&> nr_2gim;
-    HistWrap<const std::string&> mesons_found;
 
     IntervalD eta_im_cut;
     IntervalD pi0_im_cut;

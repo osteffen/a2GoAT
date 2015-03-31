@@ -13,54 +13,6 @@
 
 using namespace std;
 
-template <typename list_of_particles>
-std::list<ant::analysis::Omega::decay> ant::analysis::Omega::FindDecays(const list_of_particles &photons)
-{
-    std::list<decay> decays;
-
-    for( auto comb = makeCombination(photons,3); !comb.Done(); ++comb) {
-
-        refParticleList_t ggg;
-        ggg.assign(comb.begin(),comb.end());
-
-        TLorentzVector omega = *comb.at(0)+*comb.at(1)+*comb.at(2);
-
-        if( omega_im_cut.Contains(omega.M())) {
-
-            for( auto gcomb = makeCombination(ggg,2); !gcomb.Done(); ++gcomb) {
-
-                const TLorentzVector& g1 = *(gcomb.at(0));
-                const TLorentzVector& g2 = *(gcomb.at(1));
-
-                TLorentzVector mesonx = g1 + g2;
-
-                const ParticleTypeDatabase::Type* mesontype = nullptr;
-
-                if(pi0_im_cut.Contains(mesonx.M()))
-                    mesontype = &ParticleTypeDatabase::Pi0;
-                else if(eta_im_cut.Contains(mesonx.M()))
-                    mesontype = &ParticleTypeDatabase::Eta;
-
-                if( mesontype ) {
-
-                    decays.push_back(
-                                decay( {
-                                    Particle(*mesontype, mesonx),
-                                    Particle(ParticleTypeDatabase::Omega, omega) }
-                                    )
-                                );
-
-                }
-            }
-
-        }
-
-    }
-
-    return decays;
-
-}
-
 ant::HistWrap<const TLorentzVector&> ant::analysis::Omega::makeInvMassPlot(const std::string& title, const std::string& xlabel, const std::string& ylabel, BinSettings bins, const std::string& name) {
     return ant::HistWrap<const TLorentzVector&>::makeHist(
                 [] (const TLorentzVector& p) { return p.M();},
@@ -131,8 +83,6 @@ ant::analysis::Omega::Omega(const ant::mev_t energy_scale):
                 angle_diff_bins,
                 ParticleTypeDatabase::Eta.Name()+"_mc_rec_angle"
                 );
-
-    mesons_found = HistWrap<const std::string&>::makeHist("Mesons Found", "Meson","", BinSettings(3));
 }
 
 template <class InputIterator, class T>
@@ -232,17 +182,6 @@ void ant::analysis::Omega::ProcessEvent(const ant::Event &event)
         }
     }
 
-    auto decays = FindDecays(event.ParticleType(ParticleTypeDatabase::Photon));
-
-    refMCParticleList_t mcphotons;
-    std::copy_if (event.MCTrueFinalState().begin(), event.MCTrueFinalState().end(), std::back_inserter(mcphotons),
-                [](refMCParticle p) { return p->Type() == ParticleTypeDatabase::Photon;
-              });
-//    auto mc_dacays = FindDecays(mcphotons);
-
-    for( auto& d : decays) {
-        mesons_found.Fill(d.mesonx.Type().PrintName());
-    }
 }
 
 
@@ -255,6 +194,6 @@ void ant::analysis::Omega::Finish()
 void ant::analysis::Omega::ShowResult()
 {
     canvas("Omega (Reconstructed)") << omega_IM << eta_IM << p_MM << step_levels << omega_rec_multi << omega_mc_rec_angle << endc;
-    canvas("Omega (Not Reconstructed)") << nr_ngamma << nr_2gim << nr_3gim << mesons_found << endc;
+    canvas("Omega (Not Reconstructed)") << nr_ngamma << nr_2gim << nr_3gim << endc;
 
 }

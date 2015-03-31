@@ -48,6 +48,8 @@ set(ANT_PHYSICS
     analysis/Basic.cc
     analysis/omega.h
     analysis/omega.cc
+    analysis/omega_bottomup.h
+    analysis/omega_bottomup.cc
     analysis/RecoCheck.h
     analysis/RecoCheck.cc
     analysis/SplitCheck.h

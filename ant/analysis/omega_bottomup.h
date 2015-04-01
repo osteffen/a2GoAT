@@ -27,7 +27,7 @@ protected:
 
     using decaylist_t = std::list<omega_decay>;
 
-    void findPossibleDecays(const refRecParticle gamma1, const refRecParticle meson_gamma_1, const refRecParticle meson_gamma_2, decaylist_t &decays);
+    void findPossibleDecays(const ParticlePtr gamma1, const ParticlePtr meson_gamma_1, const ParticlePtr meson_gamma_2, decaylist_t &decays);
 
     HistWrap<int> omega_eta_found;
     HistWrap<int> omega_pi0_found;

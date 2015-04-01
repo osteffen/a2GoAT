@@ -88,15 +88,15 @@ ant::analysis::Basic::Basic(const mev_t energy_scale)
 
 void ant::analysis::Basic::ProcessEvent(const ant::Event &event)
 {
-    for(auto& track : event.Tracks()) {
+    for(auto& track : event.Reconstructed().Tracks()) {
         banana->Fill(track->ClusterEnergy(), track->VetoEnergy());
     }
 
-    for(auto& particle : event.Particles()) {
+    for(auto& particle : event.Reconstructed().Particles().GetAll()) {
         particles->Fill(particle->Type().PrintName().c_str(), 1);
     }
 
-    const refRecParticleList_t gammas = event.ParticleType(ParticleTypeDatabase::Photon);
+    const ParticleList& gammas = event.Reconstructed().Particles().Get(ParticleTypeDatabase::Photon);
 
     auto entry = nGammaImEvent.find(gammas.size());
 
@@ -116,17 +116,17 @@ void ant::analysis::Basic::ProcessEvent(const ant::Event &event)
         }
     }
 
-    for( auto& taggerhit : event.TaggerHits()) {
+    for( auto& taggerhit : event.Reconstructed().TaggerHits()) {
         tagger->Fill(taggerhit->PhotonEnergy());
     }
 
-    ntagged->Fill(event.TaggerHits().size());
+    ntagged->Fill(event.Reconstructed().TaggerHits().size());
 
-    cbesum->Fill(event.Trigger().CBEenergySum());
+    cbesum->Fill(event.Reconstructed().TriggerInfos().CBEenergySum());
 
     for( auto& t : ParticleTypeDatabase::DetectableTypes() ) {
         try {
-            numParticleType.at(t)->Fill(event.ParticleType(*t).size());
+            numParticleType.at(t)->Fill(event.Reconstructed().Particles().Get(*t).size());
         } catch (...) {}
     }
 

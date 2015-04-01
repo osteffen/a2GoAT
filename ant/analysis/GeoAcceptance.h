@@ -26,7 +26,7 @@ private:
         const static BinSettings phi_bins;
 
         ParticleThetaPhiPlot(const std::string& title, const std::string& name="");
-        void Fill(refPartcile p);
+        void Fill(const ParticlePtr& p);
 
 
         TObject *GetObject();
@@ -39,7 +39,7 @@ private:
         unsigned int n;
 
         ParticleThetaPhiPlot3D(const std::string& title, const std::string& name="");
-        void Fill(refPartcile p);
+        void Fill(const ParticlePtr& p);
 
 
         TObject *GetObject();

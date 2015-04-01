@@ -15,12 +15,12 @@ using namespace ant;
 
 const ant::ParticleTypeDatabase::Type* GetMCType( const analysis::MCSingleParticles::Track_MC_pair& p )
 {
-    return &(p.second.Type());
+    return &(p.second->Type());
 }
 
 const ant::detector_t GetMCDetecor( const analysis::MCSingleParticles::Track_MC_pair& p )
 {
-    return (p.second.Theta() > 21*TMath::DegToRad()) ? detector_t::anyCB : detector_t::anyTAPS;
+    return (p.second->Theta() > 21*TMath::DegToRad()) ? detector_t::anyCB : detector_t::anyTAPS;
 }
 
 
@@ -54,7 +54,7 @@ ant::analysis::MCSingleParticles::MCSingleParticles(const mev_t energy_scale)
             auto branch = ptype->AddBranch(pt);
 
             branch->AddHist2D(
-                        [] ( const Track_MC_pair& pair ) { return  make_tuple( pair.first.ClusterEnergy(), pair.first.VetoEnergy()); },
+                        [] ( const Track_MC_pair& pair ) { return  make_tuple( pair.first->ClusterEnergy(), pair.first->VetoEnergy()); },
             HistogramFactory::Make2D("PID Banana for true " + pt->PrintName(),
                       "Cluster Energy [MeV]",
                       "Veto Energy [MeV]",
@@ -65,7 +65,7 @@ ant::analysis::MCSingleParticles::MCSingleParticles(const mev_t energy_scale)
             );
 
             branch->AddHist2D(
-                        [] ( const Track_MC_pair& pair ) { return  make_tuple( pair.second.Ek(), pair.first.ClusterEnergy()); },
+                        [] ( const Track_MC_pair& pair ) { return  make_tuple( pair.second->Ek(), pair.first->ClusterEnergy()); },
             HistogramFactory::Make2D("Energy Reconstruction " + pt->PrintName(),
                       "MC true E_{k} [MeV]",
                       "Cluster Energy [MeV]",
@@ -76,7 +76,7 @@ ant::analysis::MCSingleParticles::MCSingleParticles(const mev_t energy_scale)
             );
 
             branch->AddHist2D(
-                        [] ( const Track_MC_pair& pair ) { return  make_tuple( pair.second.Theta()*TMath::RadToDeg(), (pair.first.Theta() - pair.second.Theta())*TMath::RadToDeg()); },
+                        [] ( const Track_MC_pair& pair ) { return  make_tuple( pair.second->Theta()*TMath::RadToDeg(), (pair.first->Theta() - pair.second->Theta())*TMath::RadToDeg()); },
             HistogramFactory::Make2D("#theta Difference " + pt->PrintName(),
                       "true #theta [#circ]",
                       "rec #theta [#circ]",
@@ -88,8 +88,8 @@ ant::analysis::MCSingleParticles::MCSingleParticles(const mev_t energy_scale)
 
             branch->AddHist2D(
                         [] ( const Track_MC_pair& pair ) {
-                TVector3 v(1,0,0); v.SetPtThetaPhi(1,pair.first.Theta(), pair.first.Phi());
-                return make_tuple( pair.second.Theta()*TMath::RadToDeg(), v.Angle(pair.second.Vect())*TMath::RadToDeg()); },
+                TVector3 v(1,0,0); v.SetPtThetaPhi(1,pair.first->Theta(), pair.first->Phi());
+                return make_tuple( pair.second->Theta()*TMath::RadToDeg(), v.Angle(pair.second->Vect())*TMath::RadToDeg()); },
             HistogramFactory::Make2D("Angle between true/rec " + pt->PrintName(),
                       "true #theta [#circ]",
                       "angle [#circ]",
@@ -101,7 +101,7 @@ ant::analysis::MCSingleParticles::MCSingleParticles(const mev_t energy_scale)
 
             branch->AddHist2D(
                         [] ( const Track_MC_pair& pair ) {
-                return make_tuple( pair.second.Theta()*TMath::RadToDeg(), pair.first.Theta()*TMath::RadToDeg()); },
+                return make_tuple( pair.second->Theta()*TMath::RadToDeg(), pair.first->Theta()*TMath::RadToDeg()); },
             HistogramFactory::Make2D("rec/true #theta " + pt->PrintName(),
                       "true #theta [#circ]",
                       "angle [#circ]",
@@ -114,8 +114,8 @@ ant::analysis::MCSingleParticles::MCSingleParticles(const mev_t energy_scale)
         }
     }
 
-    auto ptype2 = MC_tracklist_pair_stats.AddBranchNode<const ParticleTypeDatabase::Type*>( [] (const MC_tracklist_pair& p) { return &p.second.Type();});
-    auto b = Rec_MC_stats.AddBranchNode<const ParticleTypeDatabase::Type*>( [] (const Rec_MC_pair& p) { return &p.second.Type();});
+    auto ptype2 = MC_tracklist_pair_stats.AddBranchNode<const ParticleTypeDatabase::Type*>( [] (const MC_tracklist_pair& p) { return &p.second->Type();});
+    auto b = Rec_MC_stats.AddBranchNode<const ParticleTypeDatabase::Type*>( [] (const Rec_MC_pair& p) { return &p.second->Type();});
 
     for( auto& pt : ParticleTypeDatabase::MCFinalStateTypes() ) {
 
@@ -152,22 +152,22 @@ ant::analysis::MCSingleParticles::~MCSingleParticles()
 
 void ant::analysis::MCSingleParticles::ProcessEvent(const ant::Event &event)
 {
-    const refMCParticleList_t& mc_particles = event.MCTrue();
-    const refTrackList_t& tracks = event.Tracks();
-    const refRecParticleList_t& rec_particles = event.Particles();
+    const ParticleList& mc_particles = event.MCTrue().Particles().GetAll();
+    const TrackList& tracks = event.Reconstructed().Tracks();
+    const ParticleList& rec_particles = event.Reconstructed().Particles().GetAll();
 
     if( mc_particles.size() ==1 ) {
 
-        const MCParticle* mc = mc_particles.front();
+        const ParticlePtr& mc = mc_particles.front();
 
-        MC_tracklist_pair_stats.Fill( make_pair(tracks, *mc));
+        MC_tracklist_pair_stats.Fill( make_pair(tracks, mc));
 
         for( auto& track : tracks ) {
-            MC_track_pair_stats.Fill( make_pair(*track, *mc) );
+            MC_track_pair_stats.Fill( make_pair(track, mc) );
         }
 
         for( auto& rp : rec_particles ) {
-            Rec_MC_stats.Fill( make_pair( rp, *mc));
+            Rec_MC_stats.Fill( make_pair( rp, mc));
         }
     }
 }

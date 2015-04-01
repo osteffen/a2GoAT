@@ -32,10 +32,10 @@ analysis::RecoCheck::RecoCheck():
 
 void analysis::RecoCheck::ProcessEvent(const Event &event)
 {
-    const refMCParticleList_t& mc = event.MCTrueFinalState();
-    const refRecParticleList_t& rec = event.Particles();
+    const ParticleList& mc = event.MCTrue().Particles().GetAll();
+    const ParticleList& rec = event.Reconstructed().Particles().GetAll();
 
-    refMCParticleList_t mc_in_cb;
+    ParticleList mc_in_cb;
 
     for( auto& p : mc ) {
         if( cb_angle.Contains(p->Theta()))
@@ -43,7 +43,9 @@ void analysis::RecoCheck::ProcessEvent(const Event &event)
     }
 
     // find mc-reco matches
-    auto matched = utils::match1to1(mc_in_cb, rec, utils::matchAngle);
+    auto matched = utils::match1to1(mc_in_cb, rec, [] ( const ParticlePtr& p1, const ParticlePtr& p2 ) {
+                                        return p1->Angle(p2->Vect());
+                                    });
 
     // cacluate angles for all matches
     for( auto& match : matched ) {

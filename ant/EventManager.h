@@ -1,9 +1,7 @@
 #ifndef EVENTMANAGER_H
 #define EVENTMANAGER_H
 
-#include <memory>
-#include <stdexcept>
-
+// GoAT headers
 #include "GTreeManager.h"
 #include "GTree.h"
 #include "GTreeTrack.h"
@@ -14,17 +12,25 @@
 #include "GTreeA2Geant.h"
 #include "GTreePluto.h"
 
+// Ant
 #include "ParticleType.h"
 #include "Particle.h"
 #include "Event.h"
-
 #include "AntPhysics.h"
+
+// std
 #include <stdexcept>
+#include <memory>
+#include <stdexcept>
+
 
 class PStaticData;
 
 namespace ant {
 
+/**
+ * @brief data_check_exception is thrown if a data input quality check fails
+ */
 class data_check_exception : public std::exception {
 protected:
     std::string msg;
@@ -35,12 +41,12 @@ public:
 };
 
 
+/**
+ * @brief The EventManager class
+ */
 class EventManager: public GTreeManager {
 public:
-    typedef std::unique_ptr<const ant::Particle>    uParticlePtr;
-    typedef std::unique_ptr<const ant::Track>       uTrackPtr;
-
-    typedef std::list<ant::Physics*>                PhysicsList;
+    using PhysicsList = std::list<ant::Physics*>;
 
 protected:
 
@@ -51,14 +57,12 @@ protected:
     virtual void	ProcessScalerRead();
     virtual Bool_t    Write();
 
-    typedef std::list<Particle> ParticleList_t;
-    typedef std::list<Track> TrackList_t;
-
     PhysicsList physics;
+
     void RunPhysics(const ant::Event& event);
 
 
-    void CopyParticles(GTreeParticle* tree, const ant::ParticleTypeDatabase::Type& type, ant::Event& target);
+    void CopyParticles(GTreeParticle* tree, const ant::ParticleTypeDatabase::Type& type, ant::Event& event);
     void CopyTracks(GTreeTrack* tree, Event& event);
     void CopyPlutoParticles(GTreePluto* tree, Event &event);
     void CopyTaggerHits(Event& event);
@@ -67,8 +71,6 @@ protected:
     void checkMCIDs();
 
     PStaticData* pluto_database;
-
-    ant::ParticlePtr GetPlutoParticle(GTreePluto* tree, const UInt_t n);
 
 public:
     EventManager();

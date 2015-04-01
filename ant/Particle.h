@@ -17,7 +17,7 @@ namespace ant {
 class Particle;
 
 using ParticlePtr  = std::shared_ptr<Particle>;
-using ParticleList = std::vector<ParticlePtr>;      //TODO: use list? -> needs change of combinatorics
+using ParticleList = std::vector<ParticlePtr>;
 
 /**
  * @brief Base particle class
@@ -68,6 +68,12 @@ public:
     const TrackList& Tracks() const { return tracks; }
 
     virtual std::ostream& Print(std::ostream& stream) const;
+
+    using TLorentzVector::Angle;
+
+    static double Angle( const ParticlePtr& p1, const ParticlePtr& p2 ) {
+        return p1->Angle(p2->Vect());
+    }
 
 };
 

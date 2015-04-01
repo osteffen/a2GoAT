@@ -12,9 +12,9 @@ namespace analysis {
 class MCSingleParticles: public ant::Physics {
 
 public:
-    typedef std::pair<const ant::Track&, const ant::MCParticle&> Track_MC_pair;
-    typedef std::pair<const refTrackList_t&, const ant::MCParticle&> MC_tracklist_pair;
-    typedef std::pair<const refRecParticle&, const ant::MCParticle&> Rec_MC_pair;
+    typedef std::pair<const TrackPtr&, const ParticlePtr&> Track_MC_pair;
+    typedef std::pair<const TrackList&, const ParticlePtr&> MC_tracklist_pair;
+    typedef std::pair<const ParticlePtr&, const ParticlePtr&> Rec_MC_pair;
 private:
 
     PlotList<Track_MC_pair> MC_track_pair_stats;

@@ -23,7 +23,7 @@ analysis::GeoAcceptance::ParticleThetaPhiPlot::ParticleThetaPhiPlot(const string
     hist = HistogramFactory::Make2D(title,"#theta [#circ]","#phi [#circ]",theta_bins,phi_bins,name);
 }
 
-void analysis::GeoAcceptance::ParticleThetaPhiPlot::Fill(refPartcile p)
+void analysis::GeoAcceptance::ParticleThetaPhiPlot::Fill(const ParticlePtr &p)
 {
     hist->Fill(p->Theta()*TMath::RadToDeg(), p->Phi()*TMath::RadToDeg());
 }
@@ -57,18 +57,18 @@ analysis::GeoAcceptance::~GeoAcceptance()
 
 void analysis::GeoAcceptance::ProcessEvent(const Event &event)
 {
-    if( event.MCTrue().size() == 1 ) {
+    if( event.MCTrue().Particles().Get(ParticleTypeDatabase::Photon).size() == 1 ) {
 
-        refPartcile input = event.MCTrue().at(0);
+        ParticlePtr input = event.MCTrue().Particles().Get(ParticleTypeDatabase::Photon).at(0);
 
         mctrue_pos.Fill(input);
 
-        if( event.Particles().size() == 0) {
+        if( event.Reconstructed().Particles().GetAll().size() == 0) {
             lost_pos.Fill(input);
             lost3d.Fill(input);
         }
-        else if (event.Particles().size() == 1) {
-            refPartcile output = event.Particles().at(0);
+        else if (event.Reconstructed().Particles().GetAll().size() == 1) {
+            ParticlePtr output = event.Reconstructed().Particles().GetAll().at(0);
             const double angle = output->Angle(input->Vect()) * TMath::RadToDeg();
             if(angle < 30.0)
                 matched_pos.Fill(input);
@@ -87,11 +87,9 @@ void analysis::GeoAcceptance::ProcessEvent(const Event &event)
     }
 
     int nphotonslost=0;
-    for(auto& p : event.MCTrueFinalState()) {
-        if(p->Type() == ParticleTypeDatabase::Photon) {
+    for(auto& p : event.MCTrue().Particles().Get(ParticleTypeDatabase::Photon)) {
             if(geo.DetectorFromAngles(*p) == detector_t::None)
                 nphotonslost++;
-        }
     }
     n_photons_lost->Fill(nphotonslost);
 
@@ -118,7 +116,7 @@ analysis::GeoAcceptance::ParticleThetaPhiPlot3D::ParticleThetaPhiPlot3D(const st
 {
 }
 
-void analysis::GeoAcceptance::ParticleThetaPhiPlot3D::Fill(refPartcile p)
+void analysis::GeoAcceptance::ParticleThetaPhiPlot3D::Fill(const ParticlePtr& p)
 {
         TVector3 v(p->Vect().Unit());
         hist->Fill(v.X(),v.Y(),v.Z());

@@ -103,20 +103,21 @@ void ant::analysis::Omega::ProcessEvent(const ant::Event &event)
 {
     step_levels.Fill("0 Events Seen");
 
-    if(event.Trigger().CBEenergySum()<550.0)
+    if(event.Reconstructed().TriggerInfos().CBEenergySum()<550.0)
         return;
 
     step_levels.Fill("1 ESum Cut passed");
 
-    const refRecParticleList_t photons = event.ParticleType(ParticleTypeDatabase::Photon);
+    const ParticleList& photons = event.Reconstructed().Particles().Get(ParticleTypeDatabase::Photon);
 
     if(photons.size()<3)
         return;
 
     step_levels.Fill("2 NPhotons 3+");
 
-    const MCParticle* mc_omega=nullptr;
-    for( auto& mcp : event.MCTrue() ) {
+    //TODO const ptr?
+    ParticlePtr mc_omega;
+    for( const ParticlePtr& mcp : event.MCTrue().Intermediates().GetAll() ) {
         if(mcp->Type() == ParticleTypeDatabase::Omega) {
             if(mc_omega!=nullptr)
                 throw string("Multiple omegas found in MC True");
@@ -128,7 +129,7 @@ void ant::analysis::Omega::ProcessEvent(const ant::Event &event)
 
     for( auto comb = makeCombination(photons,3); !comb.Done(); ++comb) {
 
-        refRecParticleList_t ggg;
+        ParticleList ggg;
         ggg.assign(comb.begin(),comb.end());
 
         TLorentzVector omega = *comb.at(0)+*comb.at(1)+*comb.at(2);
@@ -150,7 +151,7 @@ void ant::analysis::Omega::ProcessEvent(const ant::Event &event)
                     omega_IM.Fill(omega);
                     n_omega_found++;
 
-                    for( auto& taggerhit : event.TaggerHits() ) {
+                    for( auto& taggerhit : event.Reconstructed().TaggerHits() ) {
                         if( tagger_energy_cut.Contains(taggerhit->PhotonEnergy())) {
                             TLorentzVector p = taggerhit->PhotonBeam() + target - omega;
                             p_MM.Fill(p);

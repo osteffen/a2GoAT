@@ -19,9 +19,7 @@ using namespace ant;
 
 EventManager::EventManager(): maxevents(0), pluto_database(nullptr)
 {
-#ifdef hasPluto
     pluto_database = makeStaticData();
-#endif
 }
 
 EventManager::~EventManager()
@@ -91,18 +89,19 @@ void EventManager::RunPhysics(const Event &event)
     }
 }
 
-void EventManager::CopyParticles(GTreeParticle *tree, const ParticleTypeDatabase::Type &type, Event &target)
+void EventManager::CopyParticles(GTreeParticle *tree, const ParticleTypeDatabase::Type &type, Event &event)
 {
     for(Int_t i=0; i<tree->GetNParticles(); ++i) {
 
         const TLorentzVector& lv = tree->Particle(i);
         const Int_t trackIndex = tree->GetTrackIndex(i);
-        TrackPtr track = target.Reconstructed().Tracks().at(trackIndex);
+
+        TrackPtr track = event.Reconstructed().Tracks().at(trackIndex);
 
         ParticlePtr p( new Particle(type,lv));
         p->Tracks().emplace_back(track);
 
-        target.Reconstructed().Particles().AddParticle( std::move(p) );
+        event.Reconstructed().Particles().AddParticle( std::move(p) );
 
     }
 }
@@ -163,15 +162,16 @@ void EventManager::CopyTracks(GTreeTrack *tree, Event &event)
     }
 }
 
-#ifdef hasPluto
 void EventManager::CopyPlutoParticles(GTreePluto *tree, Event& event)
 {
     const GTreePluto::ParticleList particles = tree->GetAllParticles();
 
-    const ParticleTypeDatabase::Type* type=nullptr;
     for( auto& p : particles ) {
-        type = ParticleTypeDatabase::GetTypeOfPlutoID(p->ID());
+
+        const ParticleTypeDatabase::Type* type= ParticleTypeDatabase::GetTypeOfPlutoID( p->ID() );
+
         if(!type) {
+
             type = ParticleTypeDatabase::AddTempPlutoType(
                         p->ID(),
                         "Pluto_"+to_string(p->ID()),
@@ -179,7 +179,9 @@ void EventManager::CopyPlutoParticles(GTreePluto *tree, Event& event)
                         pluto_database->GetParticleMass(p->ID())*1000.0,
                         pluto_database->GetParticleCharge(p->ID()) != 0
                     );
+
             if(!type)
+                // TODO: Change this so that it does not stop the whole process and can be caught for each particle
                 throw std::out_of_range("Could not create dynamic mapping for Pluto Particle ID "+to_string(p->ID()));
         }
 
@@ -188,15 +190,25 @@ void EventManager::CopyPlutoParticles(GTreePluto *tree, Event& event)
 
         if(p->GetDaughterIndex() == -1) {
             event.MCTrue().Intermediates().AddParticle(
-                    ParticlePtr(new Particle(*type,lv)));
+                        ParticlePtr(new Particle(*type,lv)));
         } else {
             event.MCTrue().Particles().AddParticle(
-                    ParticlePtr(new Particle(*type,lv)));
+                        ParticlePtr(new Particle(*type,lv)));
+        }
+    }
+
+    for(auto& beam_target : tree->GetBeamParticles()) {
+        if(beam_target->ID()/100 == 14 ) {
+            const double energy = (beam_target->E()*1000.0) - ParticleTypeDatabase::Proton.Mass();
+            const int channel = 0; //TODO: Get tagger channel from energy -> Tagger cfg
+            const double time = 0.0;
+            event.MCTrue().TaggerHits().emplace_back( TaggerHitPtr( new TaggerHit(channel, energy, time) ) );
         }
 
     }
+
+    //TODO: CBEsum/Multiplicity into TriggerInfo
 }
-#endif
 
 void EventManager::CopyTaggerHits(Event &event)
 {
@@ -221,14 +233,15 @@ void EventManager::CopyTriggerInfo(GTreeTrigger *tree, Event &event)
 
     for( int err=0; err < tree->GetNErrors(); ++err) {
         ti.Errors().emplace_back(
+                    DAQError(
                     tree->GetErrorModuleID()[err],
                     tree->GetErrorModuleIndex()[err],
-                    tree->GetErrorCode()[err]);
+                    tree->GetErrorCode()[err]));
     }
 }
 
 void EventManager::checkMCIDs() {
-#ifdef hasPluto
+
     const bool eventIDmatch = ( GetTrigger()->GetMCTrueEventID() == GetPluto()->GetPlutoID()) || (GetPluto()->GetPlutoID() == -1);
     const bool randomIDmatch = ( GetTrigger()->GetMCRandomID() == GetPluto()->GetPlutoRandomID()) || (GetPluto()->GetPlutoRandomID() == -1);
 
@@ -238,7 +251,4 @@ void EventManager::checkMCIDs() {
                 to_string(GetTrigger()->GetMCTrueEventID()) + "/" + to_string(GetTrigger()->GetMCRandomID())
                 + "vs Pluto:"
                 + to_string(GetPluto()->GetPlutoID()) + "/" + to_string(GetPluto()->GetPlutoRandomID()));
-#else
-    return;
-#endif
 }

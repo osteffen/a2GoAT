@@ -6,7 +6,7 @@
 using namespace ant;
 using namespace std;
 
-void ant::analysis::OmegaBottomUp::findPossibleDecays(const refRecParticle gamma, const refRecParticle meson_gamma_1, const refRecParticle meson_gamma_2, decaylist_t& decays)
+void ant::analysis::OmegaBottomUp::findPossibleDecays(const ParticlePtr gamma, const ParticlePtr meson_gamma_1, const ParticlePtr meson_gamma_2, decaylist_t& decays)
 {
 
     TLorentzVector meson_cand = TLorentzVector(*meson_gamma_1) + TLorentzVector(*meson_gamma_2);
@@ -56,9 +56,9 @@ void ant::analysis::OmegaBottomUp::ProcessEvent(const ant::Event &event)
 
     decaylist_t decays;
 
-    refRecParticleList_t photons = event.ParticleType(ParticleTypeDatabase::Photon);
+    ParticleList photons = event.Reconstructed().Particles().Get(ParticleTypeDatabase::Photon);
 
-    sort(photons.begin(),photons.end(),[] (refRecParticle a, refRecParticle b) { return a->E() > b->E();});
+    sort(photons.begin(),photons.end(),[] (const ParticlePtr& a, const ParticlePtr& b) { return a->E() > b->E();});
 
     if(photons.size() < 3) return;
 

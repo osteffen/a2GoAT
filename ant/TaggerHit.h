@@ -40,7 +40,7 @@ public:
 };
 
 using TaggerHitPtr   = std::shared_ptr<TaggerHit>;
-using TaggerHistList = std::list<TaggerHitPtr>;
+using TaggerHistList = std::vector<TaggerHitPtr>;
 
 }
 

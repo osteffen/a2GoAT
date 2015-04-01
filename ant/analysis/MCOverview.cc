@@ -11,7 +11,7 @@
 using namespace std;
 using namespace ant;
 
-const ant::ParticleTypeDatabase::Type* GetParticleType(refPartcile p )
+const ant::ParticleTypeDatabase::Type* GetParticleType(const ParticlePtr& p )
 {
     return &p->Type();
 }
@@ -26,12 +26,12 @@ ant::analysis::MCOverview::MCOverview(const mev_t energy_scale)
     const BinSettings particle_type_bins(10,0,10);
 
     mc_particle_stats.AddHist1D(
-                [] (refPartcile p) { return p->Ek();},
+                [] (const ParticlePtr& p) { return p->Ek();},
                 HistogramFactory::Make1D("MC Energy","E [MeV]","", energy_bins)
     );
 
     mc_particle_stats.AddHist1D(
-                [] (refPartcile p) { return p->Type().PrintName().c_str();},
+                [] (const ParticlePtr& p) { return p->Type().PrintName().c_str();},
                 HistogramFactory::Make1D(
                     "Generated Particles",
                     "Particle Type",
@@ -42,7 +42,7 @@ ant::analysis::MCOverview::MCOverview(const mev_t energy_scale)
     );
 
     mc_particle_stats.AddHist2D(
-                [] (refPartcile p) { return make_tuple(p->Ek(), p->Theta()*TMath::RadToDeg());},
+                [] (const ParticlePtr& p) { return make_tuple(p->Ek(), p->Theta()*TMath::RadToDeg());},
                 HistogramFactory::Make2D(
             "MC Energy",
             "E [MeV]",
@@ -56,11 +56,11 @@ ant::analysis::MCOverview::MCOverview(const mev_t energy_scale)
     for( auto& pt : ParticleTypeDatabase::DetectableTypes() ) {
         auto branch = ptype->AddBranch(pt);
         branch->AddHist1D(
-                    [] (refPartcile p) { return p->Ek();},
+                    [] (const ParticlePtr& p) { return p->Ek();},
                     HistogramFactory::Make1D("MC Energy " + pt->PrintName(),"E_{k} [MeV]","", energy_bins)
         );
         branch->AddHist2D(
-                    [] (refPartcile p) { return make_tuple(p->Ek(), p->Theta()*TMath::RadToDeg());},
+                    [] (const ParticlePtr& p) { return make_tuple(p->Ek(), p->Theta()*TMath::RadToDeg());},
                     HistogramFactory::Make2D(
                 "MC Energy " + pt->PrintName(),
                 "E_{k} [MeV]",
@@ -78,7 +78,7 @@ ant::analysis::MCOverview::~MCOverview()
 
 void ant::analysis::MCOverview::ProcessEvent(const ant::Event &event)
 {
-    const refMCParticleList_t& mc_particles = event.MCTrueFinalState();
+    const ParticleList& mc_particles = event.MCTrue().Particles().GetAll();
   //  cout << mc_particles.size() << endl;
     for( auto& mcp : mc_particles ) {
         mc_particle_stats.Fill(mcp);

@@ -13,7 +13,7 @@ namespace analysis {
 
 class MCOverview: public ant::Physics {
 
-    PlotList<refPartcile> mc_particle_stats;
+    PlotList<ParticlePtr> mc_particle_stats;
 
     // Physics interface
 public:

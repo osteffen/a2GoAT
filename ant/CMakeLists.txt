@@ -33,6 +33,8 @@ set(ANT_BASE
     A2GeoAcceptance.cc
     plot/Hist.h
     plot/Hist.cc
+    plot/HistogramFactories.h
+    plot/HistogramFactories.cc
     )
 
 set(ANT_PHYSICS

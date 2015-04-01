@@ -20,9 +20,9 @@ protected:
     IntervalD omega_mass_cut;
 
     struct omega_decay {
-        omega_decay(Particle omega_, Particle meson2_): omega(omega_), meson2(meson2_) {}
-        Particle omega;
-        Particle meson2;
+        omega_decay(ParticlePtr omega_, ParticlePtr meson2_): omega(omega_), meson2(meson2_) {}
+        ParticlePtr omega;
+        ParticlePtr meson2;
     };
 
     using decaylist_t = std::list<omega_decay>;
@@ -31,6 +31,10 @@ protected:
 
     HistWrap<int> omega_eta_found;
     HistWrap<int> omega_pi0_found;
+
+    HistWrap<const ParticlePtr&> omega_IM;
+    HistWrap<const ParticlePtr&> eta_IM;
+    HistWrap<const ParticlePtr&> pi0_IM;
 
 public:
     OmegaBottomUp();

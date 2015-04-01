@@ -1,5 +1,8 @@
 #include "omega_bottomup.h"
+
 #include "plot/root_draw.h"
+#include "plot/HistogramFactories.h"
+
 #include <algorithm>
 #include <iostream>
 
@@ -23,9 +26,8 @@ void ant::analysis::OmegaBottomUp::findPossibleDecays(const ParticlePtr gamma, c
 
         if(omega_mass_cut.Contains(omega_cand.M())) {
             decays.emplace_back( omega_decay(
-                Particle(ParticleTypeDatabase::Omega, omega_cand),
-                Particle(*t, meson_cand))
-                                 );
+                ParticlePtr(new Particle(ParticleTypeDatabase::Omega, omega_cand)),
+                ParticlePtr(new Particle(*t, meson_cand))));
         }
     }
 }
@@ -49,6 +51,9 @@ ant::analysis::OmegaBottomUp::OmegaBottomUp():
                 BinSettings(10),
                 "omega_pi0_per_event");
 
+    omega_IM = HistFactory::InvariantMass("#omega IM");
+    eta_IM   = HistFactory::InvariantMass("eta IM");
+
 }
 
 void ant::analysis::OmegaBottomUp::ProcessEvent(const ant::Event &event)
@@ -71,9 +76,12 @@ void ant::analysis::OmegaBottomUp::ProcessEvent(const ant::Event &event)
     int n_omega_eta =0;
     int n_omega_pi0 =0;
     for(auto& d : decays) {
-        if(d.meson2.Type() == ParticleTypeDatabase::Eta) {
+        omega_IM.Fill(d.omega);
+        if(d.meson2->Type() == ParticleTypeDatabase::Eta) {
+            eta_IM.Fill(d.meson2);
             n_omega_eta++;
-        } else if(d.meson2.Type() == ParticleTypeDatabase::Pi0) {
+        } else if(d.meson2->Type() == ParticleTypeDatabase::Pi0) {
+            pi0_IM.Fill(d.meson2);
             n_omega_pi0++;
         }
     }

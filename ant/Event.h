@@ -31,6 +31,7 @@ public:
         public:
             void AddParticle(ParticlePtr&& particle) {
                 lists[&particle->Type()].emplace_back(particle);
+                particles.emplace_back(particle);
             }
 
 

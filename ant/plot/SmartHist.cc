@@ -1,7 +1,7 @@
-#include "plot/Hist.h"
+#include "plot/SmartHist.h"
 
 template<>
-ant::HistWrap<const std::string&> ant::HistWrap<const std::string&>::makeHist(
+ant::SmartHist<const std::string&> ant::SmartHist<const std::string&>::makeHist(
     const std::string& title,
     const std::string& xlabel,
     const std::string& ylabel,

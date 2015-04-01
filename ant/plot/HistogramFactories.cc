@@ -1,15 +1,15 @@
 #include "plot/HistogramFactories.h"
 
-#include "plot/Hist.h"
+#include "plot/SmartHist.h"
 
 #include "TMath.h"
 
 using namespace ant;
 using namespace std;
 
-HistWrap<const ParticlePtr &> HistFactory::InvariantMass(const string &title, const string &xlabel, const string &ylabel, BinSettings bins, const string &name)
+SmartHist<const ParticlePtr &> SmartHistFactory::InvariantMass(const string &title, const string &xlabel, const string &ylabel, BinSettings bins, const string &name)
 {
-    return HistWrap<const ParticlePtr&>::makeHist(
+    return SmartHist<const ParticlePtr&>::makeHist(
                 [] (const ParticlePtr& p) { return p->M();},
             title,
             xlabel,
@@ -19,9 +19,9 @@ HistWrap<const ParticlePtr &> HistFactory::InvariantMass(const string &title, co
 }
 
 
-ant::HistWrap<const ParticlePtr &> ThetaAngle(const string &title, const string &xlabel, const string &ylabel, BinSettings bins, const string &name)
+ant::SmartHist<const ParticlePtr &> ThetaAngle(const string &title, const string &xlabel, const string &ylabel, BinSettings bins, const string &name)
 {
-    return HistWrap<const ParticlePtr&>::makeHist(
+    return SmartHist<const ParticlePtr&>::makeHist(
                 [] (const ParticlePtr& p) { return p->Theta() * TMath::DegToRad();},
             title,
             xlabel,
@@ -31,9 +31,9 @@ ant::HistWrap<const ParticlePtr &> ThetaAngle(const string &title, const string 
 }
 
 
-ant::HistWrap<const ParticlePtr &> HistFactory::KinEnergy(const string &title, const string &xlabel, const string &ylabel, BinSettings bins, const string &name)
+ant::SmartHist<const ParticlePtr &> SmartHistFactory::KinEnergy(const string &title, const string &xlabel, const string &ylabel, BinSettings bins, const string &name)
 {
-    return HistWrap<const ParticlePtr&>::makeHist(
+    return SmartHist<const ParticlePtr&>::makeHist(
                 [] (const ParticlePtr& p) { return p->Ek();},
             title,
             xlabel,

@@ -9,19 +9,19 @@
 #include "TaggerHit.h"
 #include <string>
 #include <iostream>
-#include "plot/Hist.h"
+#include "plot/SmartHist.h"
 
 using namespace std;
 
-ant::HistWrap<const TLorentzVector&> ant::analysis::Omega::makeInvMassPlot(const std::string& title, const std::string& xlabel, const std::string& ylabel, BinSettings bins, const std::string& name) {
-    return ant::HistWrap<const TLorentzVector&>::makeHist(
+ant::SmartHist<const TLorentzVector&> ant::analysis::Omega::makeInvMassPlot(const std::string& title, const std::string& xlabel, const std::string& ylabel, BinSettings bins, const std::string& name) {
+    return ant::SmartHist<const TLorentzVector&>::makeHist(
                 [] (const TLorentzVector& p) { return p.M();},
                 title,
                 xlabel, ylabel, bins, name);
 }
 
-ant::HistWrap< std::pair<const TLorentzVector&, const TLorentzVector&> > ant::analysis::Omega::makeAngleDiffPlot(const std::string& title, const std::string& xlabel, const std::string& ylabel, BinSettings bins, const std::string& name) {
-    return ant::HistWrap<std::pair<const TLorentzVector&, const TLorentzVector&>>::makeHist(
+ant::SmartHist< std::pair<const TLorentzVector&, const TLorentzVector&> > ant::analysis::Omega::makeAngleDiffPlot(const std::string& title, const std::string& xlabel, const std::string& ylabel, BinSettings bins, const std::string& name) {
+    return ant::SmartHist<std::pair<const TLorentzVector&, const TLorentzVector&>>::makeHist(
                                                                                      [] (std::pair<const TLorentzVector&, const TLorentzVector&> particles) {
                                                                                  return particles.first.Angle(particles.second.Vect())* TMath::RadToDeg();},
             title,
@@ -46,13 +46,13 @@ ant::analysis::Omega::Omega(const ant::mev_t energy_scale):
     omega_IM    = makeInvMassPlot("3 #gamma IM (->#omega)",         "M_{3#gamma}", "", energy_bins, "omega_IM");
     p_MM        = makeInvMassPlot("MM",                             "MM [MeV]",    "", p_MM_bins,   "omega_MM");
 
-    omega_rec_multi = HistWrap<int>::makeHist(
+    omega_rec_multi = SmartHist<int>::makeHist(
                 ParticleTypeDatabase::Omega.PrintName() + " Reconstruction Multiplicity",
                 "n",
                 "",
                 BinSettings(5));
 
-    nr_ngamma = HistWrap<int>::makeHist(
+    nr_ngamma = SmartHist<int>::makeHist(
                 "Not reconstructed: number of photons",
                 "number of photons/event",
                 "",
@@ -70,7 +70,7 @@ ant::analysis::Omega::Omega(const ant::mev_t energy_scale):
                 "",
                 energy_bins);
 
-    step_levels = HistWrap<const std::string&>::makeHist(
+    step_levels = SmartHist<const std::string&>::makeHist(
                 "Check pass count",
                 "Check",
                 "# passed",

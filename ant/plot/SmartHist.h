@@ -64,22 +64,22 @@ public:
  * shared ptrs are always a little weird to use.
  */
 template <typename T>
-class HistWrap: public ant::root_drawable_traits {
+class SmartHist: public ant::root_drawable_traits {
 protected:
     using hist_ptr = std::shared_ptr< Histogram<T> >;
-    HistWrap(hist_ptr hp): ptr(move(hp)) {}
+    SmartHist(hist_ptr hp): ptr(move(hp)) {}
 
 public:
     hist_ptr ptr;
 
-    HistWrap(): ptr(nullptr) {}
+    SmartHist(): ptr(nullptr) {}
 
     //HistWrap(HistWrap&& hist): ptr(move(hist.ptr)) {}
 
-    HistWrap(const HistWrap& other, const std::string& newname) { this->Copy(other, newname); }
+    SmartHist(const SmartHist& other, const std::string& newname) { this->Copy(other, newname); }
 
     template<typename FunctionType>
-    static HistWrap<T> makeHist(FunctionType func,
+    static SmartHist<T> makeHist(FunctionType func,
         const std::string& title,
         const std::string& xlabel,
         const std::string& ylabel,
@@ -93,10 +93,10 @@ public:
             bins,
             name
             );
-        return move(HistWrap<T>( move(hist_ptr(new Hist1<T, FunctionType>(hist, func))) ));
+        return move(SmartHist<T>( move(hist_ptr(new Hist1<T, FunctionType>(hist, func))) ));
     }
 
-    static HistWrap<T> makeHist(
+    static SmartHist<T> makeHist(
         const std::string& title,
         const std::string& xlabel,
         const std::string& ylabel,
@@ -116,7 +116,7 @@ public:
             ptr->Draw(option);
     }
 
-    void Copy( const HistWrap& rhs, const std::string& newname) {
+    void Copy( const SmartHist& rhs, const std::string& newname) {
         ptr = move(hist_ptr(rhs.ptr->MakeCopy(newname)));
     }
 
@@ -124,7 +124,7 @@ public:
 
 // specialization for strings
 template<>
-HistWrap<const std::string&> HistWrap<const std::string&>::makeHist(
+SmartHist<const std::string&> SmartHist<const std::string&>::makeHist(
     const std::string& title,
     const std::string& xlabel,
     const std::string& ylabel,

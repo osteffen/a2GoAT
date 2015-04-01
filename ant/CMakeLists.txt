@@ -31,8 +31,8 @@ set(ANT_BASE
     TriggerInfo.cc
     A2GeoAcceptance.h
     A2GeoAcceptance.cc
-    plot/Hist.h
-    plot/Hist.cc
+    plot/SmartHist.h
+    plot/SmartHist.cc
     plot/HistogramFactories.h
     plot/HistogramFactories.cc
     )

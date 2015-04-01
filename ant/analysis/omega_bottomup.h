@@ -2,7 +2,7 @@
 #define OMEGA_BOTTOMUP_H
 
 #include "AntPhysics.h"
-#include "plot/Hist.h"
+#include "plot/SmartHist.h"
 #include "base/interval.h"
 #include "Particle.h"
 
@@ -29,12 +29,12 @@ protected:
 
     void findPossibleDecays(const ParticlePtr gamma1, const ParticlePtr meson_gamma_1, const ParticlePtr meson_gamma_2, decaylist_t &decays);
 
-    HistWrap<int> omega_eta_found;
-    HistWrap<int> omega_pi0_found;
+    SmartHist<int> omega_eta_found;
+    SmartHist<int> omega_pi0_found;
 
-    HistWrap<const ParticlePtr&> omega_IM;
-    HistWrap<const ParticlePtr&> eta_IM;
-    HistWrap<const ParticlePtr&> pi0_IM;
+    SmartHist<const ParticlePtr&> omega_IM;
+    SmartHist<const ParticlePtr&> eta_IM;
+    SmartHist<const ParticlePtr&> pi0_IM;
 
 public:
     OmegaBottomUp();

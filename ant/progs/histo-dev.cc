@@ -34,5 +34,13 @@ int main(int argc, char** argv) {
 
     SmartHist<double> f = SmartHist<double>::makeHist("Direct double","x","y",BinSettings(10));
 
+    std::list<SmartHist<double>> liste;
+    liste.emplace_back(SmartHist<double>::makeHist("Direct double list1","x","y",BinSettings(10)));
+    liste.push_back(   SmartHist<double>::makeHist("Direct double list2","x","y",BinSettings(10)));
+
+    for( auto& h : liste ) {
+        h.Fill(1);
+    }
+
     app.Run();
 }

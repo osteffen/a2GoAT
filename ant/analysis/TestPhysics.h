@@ -2,21 +2,20 @@
 #define TESTPHYSICS_H
 
 #include "AntPhysics.h"
-#include <map>
-#include "plot/plotter.h"
 #include "plot/Histogram.h"
+#include "plot/SmartHist.h"
 
-class TH1;
+#include <map>
 
 namespace ant {
 class ParticleCombinatoricsTest: public ant::Physics {
 protected:
-    TH1*    ggim;
-    TH1*    gggim;
-    TH1*    nphotons;
-    TH1*    nprotons;
+    SmartHist<double> ggim;
+    SmartHist<double> gggim;
+    SmartHist<int>    nphotons;
+    SmartHist<int>    nprotons;
 
-    std::map<const ant::ParticleTypeDatabase::Type*, TH1*> EHists;
+    std::map<const ant::ParticleTypeDatabase::Type*, SmartHist<const ParticlePtr&>> EHists;
 
 
 public:
@@ -28,19 +27,5 @@ public:
     virtual void ShowResult();
 };
 
-class PlotterTest: public ant::Physics {
-protected:
-    ant::PlotList<const ant::Track*> track_plots;
-    ant::PlotList<const ant::Particle*> particle_plots;
-
-    // Physics interface
-public:
-    PlotterTest();
-    virtual ~PlotterTest() {}
-
-    void ProcessEvent(const Event &event);
-    void Finish();
-    void ShowResult();
-};
 }
 #endif

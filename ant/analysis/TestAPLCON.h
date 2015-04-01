@@ -14,6 +14,12 @@
 #include "TH1D.h"
 #include "TH2D.h"
 
+template<typename T>
+std::vector<T> operator+(const std::vector<T>& v1, const std::vector<T>& v2) {
+    std::vector<T> v = v1;
+    v.insert(v.end(),v2.begin(),v2.end());
+    return v;
+}
 
 namespace ant {
 namespace analysis {
@@ -22,8 +28,12 @@ class TestAPLCON: public Physics {
 
 protected:
 
-    const bool includeIMconstraint = false;
-    const size_t nPhotons = 6;
+
+    // choose here what you want to do
+    // please also provide GoAT trees with matching MC true information...
+    static constexpr bool includeIMconstraint = false;
+    static constexpr bool includeVertexFit = true;
+    static constexpr size_t nPhotons = 6;
 //    const double IM = ParticleTypeDatabase::Pi0.Mass();
     const double IM = ParticleTypeDatabase::EtaPrime.Mass();
 
@@ -35,23 +45,25 @@ protected:
     TH1D* ntagged;
     TH1D* cbesum;
 
-    TH1D* im_true;
-    TH1D* im_smeared;
-    TH1D* im_fit;
-
-
-
     std::map<const ParticleTypeDatabase::Type*, TH1D*> numParticleType;
 
     TH1D* chisquare;
     TH1D* probability;
+    TH1D* iterations;
     std::map<std::string, TH1D*> pulls;
+
+
+    TH1D* im_true;
+    TH1D* im_smeared;
+    TH1D* im_fit;
+
+    TH1D* vertex_z_after;
+    TH1D* vertex_z_before;
+
+
 
     // lightweight structure for linking to fitter
     struct FitParticle {
-    private:
-        static std::default_random_engine generator;
-    public:
         void SetFromVector(const TLorentzVector& p_) {
             Ek = p_.E()-p_.M();
             Theta = p_.Theta();
@@ -59,14 +71,7 @@ protected:
         }
 
         static TLorentzVector Make(const std::vector<double>& EkThetaPhi,
-                                           const Double_t m) {
-            const double E = EkThetaPhi[0] + m;
-            const Double_t p = sqrt( E*E - m*m );
-            TVector3 pv(1,0,0);
-            pv.SetMagThetaPhi(p, EkThetaPhi[1], EkThetaPhi[2]);
-            TLorentzVector l(pv, E);
-            return l;
-        }
+                                           const Double_t m);
         static TLorentzVector Make(const FitParticle& p,
                                    const Double_t m) {
             return Make(std::vector<double>{p.Ek, p.Theta, p.Phi}, m);
@@ -83,36 +88,7 @@ protected:
                     std::addressof(Phi_Sigma)};
         }
 
-        void Smear() {
-            // set the sigmas here,
-            // then the fitter knows them as well
-            Ek_Sigma = 0.02*Ek*pow(Ek,-0.36);
-            Theta_Sigma = 2.5*TMath::DegToRad();
-            if(Theta>20*TMath::DegToRad() && Theta<160*TMath::DegToRad()) {
-                Phi_Sigma = Theta_Sigma/sin(Theta);
-            }
-            else {
-                Phi_Sigma = 1*TMath::DegToRad();
-            }
-
-            //Phi_Sigma = Theta_Sigma/sin(Theta);
-            //if(!std::isfinite(Phi_Sigma))
-            //    Phi_Sigma = Theta_Sigma;
-            //if(!std::isfinite(Phi_Sigma) || Phi_Sigma>10*TMath::DegToRad())
-            //    Phi_Sigma = 10*TMath::DegToRad();
-            //if(Theta>0 && Theta<10*TMath::DegToRad())
-            //   Phi_Sigma += Theta_Sigma/sin(Theta);
-
-
-            // then artificially smear the values with gaussians
-            using gauss_t = std::normal_distribution<double>;
-            gauss_t gauss_Ek(0, Ek_Sigma);
-            Ek += gauss_Ek(generator);
-            gauss_t gauss_Theta(0, Theta_Sigma);
-            Theta += gauss_Theta(generator);
-            gauss_t gauss_Phi(0, Phi_Sigma);
-            Phi += gauss_Phi(generator);
-        }
+        void Smear();
 
         double Ek;
         double Ek_Sigma;
@@ -120,15 +96,11 @@ protected:
         double Theta_Sigma;
         double Phi;
         double Phi_Sigma;
+    private:
+        static std::default_random_engine generator;
     };
 
-    void FillIM(TH1D* h, const std::vector<FitParticle>& photons) {
-        TLorentzVector sum(0,0,0,0);
-        for(const auto& p : photons) {
-            sum += FitParticle::Make(p, ParticleTypeDatabase::Photon.Mass());
-        }
-        h->Fill(sum.M());
-    }
+    void FillIM(TH1D* h, const std::vector<FitParticle>& photons);
 
     APLCON fitter;
     FitParticle beam;

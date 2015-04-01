@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
 
     // Create instance of analysis class
     ant::EventManager analysis;
-    analysis.SetMaxEvents(1000);
+    analysis.SetMaxEvents(10000);
 
     TFile* ant_output = OpenAsOutput(argv[3]);
 

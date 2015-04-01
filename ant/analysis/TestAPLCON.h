@@ -21,6 +21,13 @@ namespace analysis {
 class TestAPLCON: public Physics {
 
 protected:
+
+    const bool includeIMconstraint = false;
+    const size_t nPhotons = 2;
+//    const double IM = ParticleTypeDatabase::Pi0.Mass();
+    const double IM = ParticleTypeDatabase::EtaPrime.Mass();
+
+
     ant::HistogramFactory hf;
     TH2D* banana;
     TH1D* particles;
@@ -82,7 +89,7 @@ protected:
             Ek_Sigma = 0.02*Ek*pow(Ek,-0.36);
             Theta_Sigma = 2.5*TMath::DegToRad();
             if(Theta>20*TMath::DegToRad() && Theta<160*TMath::DegToRad()) {
-                Phi_Sigma = Theta_Sigma; // /sin(Theta);
+                Phi_Sigma = Theta_Sigma/sin(Theta);
             }
             else {
                 Phi_Sigma = 1*TMath::DegToRad();
@@ -103,7 +110,7 @@ protected:
             Ek += gauss_Ek(generator);
             gauss_t gauss_Theta(0, Theta_Sigma);
             Theta += gauss_Theta(generator);
-            gauss_t gauss_Phi(0, Theta_Sigma);
+            gauss_t gauss_Phi(0, Phi_Sigma);
             Phi += gauss_Phi(generator);
         }
 
@@ -115,11 +122,12 @@ protected:
         double Phi_Sigma;
     };
 
-    void FillIM(TH1D* h, const FitParticle& p1, const FitParticle& p2) {
-        h->Fill(
-                (FitParticle::Make(p1, ParticleTypeDatabase::Photon.Mass())+
-                FitParticle::Make(p2, ParticleTypeDatabase::Photon.Mass())).M()
-               );
+    void FillIM(TH1D* h, const std::vector<FitParticle>& photons) {
+        TLorentzVector sum(0,0,0,0);
+        for(const auto& p : photons) {
+            sum += FitParticle::Make(p, ParticleTypeDatabase::Photon.Mass());
+        }
+        h->Fill(sum.M());
     }
 
     APLCON fitter;

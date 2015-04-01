@@ -2,7 +2,6 @@
 #include "Particle.h"
 #include "Track.h"
 #include "plot/plotter.h"
-#include "plot/Histogram.h"
 #include "Track.h"
 #include "plot/root_draw.h"
 #include <string>
@@ -19,9 +18,11 @@ using namespace ant;
 std::default_random_engine ant::analysis::TestAPLCON::FitParticle::generator;
 
 ant::analysis::TestAPLCON::TestAPLCON(const mev_t energy_scale) :
-    fitter("TestAPLCON"), photons(2)
+    hf("TestAPLCON"),
+    fitter("TestAPLCON"),
+    photons(2)
 {
-    HistogramFactory hf("TestAPLCON");
+
 
     const HistogramFactory::BinSettings energy_bins(1000,0,energy_scale);
     const HistogramFactory::BinSettings tagger_bins(2000,0.0,2000);
@@ -30,6 +31,13 @@ ant::analysis::TestAPLCON::TestAPLCON(const mev_t energy_scale) :
     const HistogramFactory::BinSettings particle_bins(10,0,10);
     const HistogramFactory::BinSettings particlecount_bins(16,0,16);
     const HistogramFactory::BinSettings pull_bins(50,-3,3);
+    const HistogramFactory::BinSettings chisqare_bins(100,0,30);
+    const HistogramFactory::BinSettings probability_bins(100,0,1);
+    const HistogramFactory::BinSettings im_bins(200,50,250);
+
+
+
+
 
 
     banana = hf.Make2D(
@@ -72,15 +80,6 @@ ant::analysis::TestAPLCON::TestAPLCON(const mev_t energy_scale) :
                 "esum"
                 );
 
-    pull = hf.Make1D(
-                "Pull",
-                "Pull",
-                "#",
-                pull_bins,
-                "pull"
-                );
-
-
     for( auto& t : ParticleTypeDatabase::DetectableTypes() ) {
         numParticleType[t]= hf.Make1D("Number of "+t->PrintName(),
                                       "number of "+t->PrintName()+"/ event",
@@ -90,14 +89,12 @@ ant::analysis::TestAPLCON::TestAPLCON(const mev_t energy_scale) :
 
     // setup fitter
 
-    sigma_beam = 10;
-    sigma_photons = {20, 30};
-    sigma_proton = 40;
+    fitter.LinkVariable("Beam",    beam.Link(),       beam.LinkSigma());
+    fitter.LinkVariable("Photon1", photons[0].Link(), photons[0].LinkSigma());
+    fitter.LinkVariable("Photon2", photons[1].Link(), photons[1].LinkSigma());
+    fitter.LinkVariable("Proton",  proton.Link(),     proton.LinkSigma());
 
-    fitter.LinkVariable("Beam",    beam.Link(),       vector<double>{sigma_beam});
-    fitter.LinkVariable("Photon1", photons[0].Link(), vector<double>{sigma_photons[0]});
-    fitter.LinkVariable("Photon2", photons[1].Link(), vector<double>{sigma_photons[1]});
-    fitter.LinkVariable("Proton",  proton.Link(),     vector<double>{sigma_proton});
+    fitter.Settings().MaxIterations = 50;
 
     auto constraint = [] (
             vector<double> beam,
@@ -112,7 +109,7 @@ ant::analysis::TestAPLCON::TestAPLCON(const mev_t energy_scale) :
                 + target
                 - FitParticle::Make(photon1, ParticleTypeDatabase::Photon.Mass())
                 - FitParticle::Make(photon2, ParticleTypeDatabase::Photon.Mass())
-                - FitParticle::Make(proton, ParticleTypeDatabase::Proton.Mass());
+                - FitParticle::Make(proton,  ParticleTypeDatabase::Proton.Mass());
 
         return {diff.X(), diff.Y(), diff.Z(), diff.T()};
 
@@ -122,6 +119,23 @@ ant::analysis::TestAPLCON::TestAPLCON(const mev_t energy_scale) :
     cout.precision(3);
 
     fitter.AddConstraint("EnergyMomentumBalance",{"Beam", "Photon1", "Photon2", "Proton"}, constraint);
+
+
+    // build fitter histograms
+    chisquare   = hf.Make1D("ChiSqare","ChiSquare","#",chisqare_bins,"chisquare");
+    probability = hf.Make1D("Probability","Probability","#",probability_bins,"probability");
+
+
+    for(const auto& varname : fitter.VariableNames()) {
+        pulls[varname] = hf.Make1D("Pull "+varname,
+                                   "Pull", "#",
+                                   pull_bins,
+                                   "pull_"+varname);
+    }
+
+    im_true = hf.Make1D("IM 2g true","IM","#",im_bins,"im_true");
+    im_smeared = hf.Make1D("IM 2g smeared","IM","#",im_bins,"im_smeared");
+    im_fit = hf.Make1D("IM 2g fit","IM","#",im_bins,"im_fit");
 }
 
 
@@ -153,22 +167,40 @@ void ant::analysis::TestAPLCON::ProcessEvent(const ant::Event &event)
             //cout << p->Type() << endl;
             if(p->Type() == ParticleTypeDatabase::Proton) {
                 proton.SetFromVector(*p);
-                proton.Smear(sigma_proton);
             }
             else if(foundPhotons<2 && p->Type() == ParticleTypeDatabase::Photon) {
                 photons[foundPhotons].SetFromVector(*p);
-                photons[foundPhotons].Smear(sigma_photons[foundPhotons]);
                 foundPhotons++;
            }
         }
         if(foundPhotons != 2)
             continue;
         beam.SetFromVector(taggerhit->PhotonBeam());
-        beam.Smear(sigma_beam);
+
+        FillIM(im_true, photons[0], photons[1]);
+
+
+        proton.Smear();
+        photons[0].Smear();
+        photons[1].Smear();
+        beam.Smear();
+
+        FillIM(im_smeared, photons[0], photons[1]);
 
         APLCON::Result_t result = fitter.DoFit();
-        //cout << result.Variables["Beam[0]"].Pull << endl;
-        pull->Fill(result.Variables["Proton[0]"].Pull);
+
+        if(result.Status != APLCON::Result_Status_t::Success)
+            continue;
+
+        for(const auto& it_map : result.Variables) {
+            const string& varname = it_map.first;
+            const APLCON::Result_Variable_t& var = it_map.second;
+            pulls.at(varname)->Fill(var.Pull);
+        }
+        chisquare->Fill(result.ChiSquare);
+        probability->Fill(result.Probability);
+
+        FillIM(im_fit, photons[0], photons[1]);
     }
 
 }
@@ -180,15 +212,16 @@ void ant::analysis::TestAPLCON::Finish()
 
 void ant::analysis::TestAPLCON::ShowResult()
 {
-    canvas c("TestAPLCON: Overview");
-    c << drawoption("colz") << banana << particles << tagger << ntagged << cbesum
-      << pull << endc;
+    //canvas c("TestAPLCON: Overview");
+    //c << drawoption("colz") << banana << particles << tagger << ntagged << cbesum << endc;
 
-//    canvas types("TestAPLCON: Particle Types per Event");
-//    for( auto& t : numParticleType ) {
-//        types << t.second;
-//    }
-//    types << endc;
+    canvas c_fitter("TestAPLCON: Pulls");
+    c_fitter << chisquare << probability;
+    for( auto& p : pulls ) {
+        c_fitter << p.second;
+    }
+    c_fitter << im_true << im_smeared << im_fit;
+    c_fitter << endc;
 
 
 }

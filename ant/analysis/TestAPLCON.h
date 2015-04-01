@@ -4,13 +4,16 @@
 #include "AntPhysics.h"
 
 #include <APLCON.hpp>
+#include "plot/Histogram.h"
+
 
 #include <vector>
 #include <map>
 #include <random>
 
-class TH1D;
-class TH2D;
+#include "TH1D.h"
+#include "TH2D.h"
+
 
 namespace ant {
 namespace analysis {
@@ -18,15 +21,24 @@ namespace analysis {
 class TestAPLCON: public Physics {
 
 protected:
+    ant::HistogramFactory hf;
     TH2D* banana;
     TH1D* particles;
     TH1D* tagger;
     TH1D* ntagged;
     TH1D* cbesum;
-    TH1D* pull;
+
+    TH1D* im_true;
+    TH1D* im_smeared;
+    TH1D* im_fit;
+
 
 
     std::map<const ParticleTypeDatabase::Type*, TH1D*> numParticleType;
+
+    TH1D* chisquare;
+    TH1D* probability;
+    std::map<std::string, TH1D*> pulls;
 
     // lightweight structure for linking to fitter
     struct FitParticle {
@@ -48,33 +60,72 @@ protected:
             TLorentzVector l(pv, E);
             return l;
         }
+        static TLorentzVector Make(const FitParticle& p,
+                                   const Double_t m) {
+            return Make(std::vector<double>{p.Ek, p.Theta, p.Phi}, m);
+        }
 
         std::vector<double*> Link() {
             return {std::addressof(Ek),
                     std::addressof(Theta),
                     std::addressof(Phi)};
         }
+        std::vector<double*> LinkSigma() {
+            return {std::addressof(Ek_Sigma),
+                    std::addressof(Theta_Sigma),
+                    std::addressof(Phi_Sigma)};
+        }
 
-        void Smear(const double sigma) {
-            std::normal_distribution<double> gaussian(0, sigma);
-            Ek += gaussian(generator);
-            Theta += gaussian(generator);
-            Phi += gaussian(generator);
+        void Smear() {
+            // set the sigmas here,
+            // then the fitter knows them as well
+            Ek_Sigma = 0.02*Ek*pow(Ek,-0.36);
+            Theta_Sigma = 2.5*TMath::DegToRad();
+            if(Theta>20*TMath::DegToRad() && Theta<160*TMath::DegToRad()) {
+                Phi_Sigma = Theta_Sigma; // /sin(Theta);
+            }
+            else {
+                Phi_Sigma = 1*TMath::DegToRad();
+            }
+
+            //Phi_Sigma = Theta_Sigma/sin(Theta);
+            //if(!std::isfinite(Phi_Sigma))
+            //    Phi_Sigma = Theta_Sigma;
+            //if(!std::isfinite(Phi_Sigma) || Phi_Sigma>10*TMath::DegToRad())
+            //    Phi_Sigma = 10*TMath::DegToRad();
+            //if(Theta>0 && Theta<10*TMath::DegToRad())
+            //   Phi_Sigma += Theta_Sigma/sin(Theta);
+
+
+            // then artificially smear the values with gaussians
+            using gauss_t = std::normal_distribution<double>;
+            gauss_t gauss_Ek(0, Ek_Sigma);
+            Ek += gauss_Ek(generator);
+            gauss_t gauss_Theta(0, Theta_Sigma);
+            Theta += gauss_Theta(generator);
+            gauss_t gauss_Phi(0, Theta_Sigma);
+            Phi += gauss_Phi(generator);
         }
 
         double Ek;
+        double Ek_Sigma;
         double Theta;
+        double Theta_Sigma;
         double Phi;
+        double Phi_Sigma;
     };
+
+    void FillIM(TH1D* h, const FitParticle& p1, const FitParticle& p2) {
+        h->Fill(
+                (FitParticle::Make(p1, ParticleTypeDatabase::Photon.Mass())+
+                FitParticle::Make(p2, ParticleTypeDatabase::Photon.Mass())).M()
+               );
+    }
 
     APLCON fitter;
     FitParticle beam;
     std::vector<FitParticle> photons;
     FitParticle proton;
-
-    double sigma_beam;
-    std::vector<double> sigma_photons;
-    double sigma_proton;
 
 
 public:

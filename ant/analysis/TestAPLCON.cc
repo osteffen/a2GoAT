@@ -132,6 +132,8 @@ ant::analysis::TestAPLCON::TestAPLCON(const mev_t energy_scale) :
         return sum.M() - IM;
     };
 
+
+
     if(includeIMconstraint)
         fitter.AddConstraint("RequireIM",photon_names, RequireIM);
 
@@ -148,12 +150,15 @@ ant::analysis::TestAPLCON::TestAPLCON(const mev_t energy_scale) :
                                    "pull_"+varname);
     }
 
-    im_true = hf.Make1D("IM 2g true","IM","#",im_bins,"im_true");
-    im_smeared = hf.Make1D("IM 2g smeared","IM","#",im_bins,"im_smeared");
-    im_fit = hf.Make1D("IM 2g fit","IM","#",im_bins,"im_fit");
+    stringstream ng;
+    ng << nPhotons << "g";
+    im_true = hf.Make1D("IM "+ng.str()+" true","IM","#",im_bins,"im_true");
+    im_smeared = hf.Make1D("IM "+ng.str()+" smeared","IM","#",im_bins,"im_smeared");
+    im_fit = hf.Make1D("IM "+ng.str()+" fit","IM","#",im_bins,"im_fit");
 
     cout.precision(3);
 
+    APLCON::PrintFormatting::Width = 11;
 }
 
 
@@ -185,7 +190,7 @@ void ant::analysis::TestAPLCON::ProcessEvent(const ant::Event &event)
             if(p->Type() == ParticleTypeDatabase::Proton) {
                 proton.SetFromVector(*p);
             }
-            else if(foundPhotons<2 && p->Type() == ParticleTypeDatabase::Photon) {
+            else if(foundPhotons<nPhotons && p->Type() == ParticleTypeDatabase::Photon) {
                 photons[foundPhotons].SetFromVector(*p);
                 foundPhotons++;
            }
@@ -206,6 +211,8 @@ void ant::analysis::TestAPLCON::ProcessEvent(const ant::Event &event)
         FillIM(im_smeared, photons);
 
         APLCON::Result_t result = fitter.DoFit();
+
+        //cout << result << endl;
 
         if(result.Status != APLCON::Result_Status_t::Success) {
             //cout << result << endl;

@@ -23,7 +23,7 @@ class TestAPLCON: public Physics {
 protected:
 
     const bool includeIMconstraint = false;
-    const size_t nPhotons = 2;
+    const size_t nPhotons = 6;
 //    const double IM = ParticleTypeDatabase::Pi0.Mass();
     const double IM = ParticleTypeDatabase::EtaPrime.Mass();
 

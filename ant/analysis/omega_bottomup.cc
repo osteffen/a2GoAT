@@ -38,12 +38,14 @@ ant::analysis::OmegaBottomUp::OmegaBottomUp():
     omega_mass_cut(IntervalD::CenterWidth(ParticleTypeDatabase::Omega.Mass(), 80.0))
 {
     HistogramFactory::SetName("Omega_ButtomUp");
+
     omega_eta_found = SmartHist<int>::makeHist(
                 "#omega #rightarrow #eta #gamma #rightarrow (#gamma #gamma) #gamma per event",
                 "number of decays / event",
                 "",
                 BinSettings(10),
                 "omega_eta_per_event");
+
     omega_pi0_found = SmartHist<int>::makeHist(
                 "#omega #rightarrow #pi^{0} #gamma #rightarrow (#gamma #gamma) #gamma per event",
                 "number of decays / event",
@@ -53,6 +55,7 @@ ant::analysis::OmegaBottomUp::OmegaBottomUp():
 
     omega_IM = SmartHistFactory::InvariantMass("#omega IM");
     eta_IM   = SmartHistFactory::InvariantMass("eta IM");
+    pi0_IM   = SmartHistFactory::InvariantMass(ParticleTypeDatabase::Pi0.PrintName()+" IM");
 
 }
 
@@ -96,5 +99,5 @@ void ant::analysis::OmegaBottomUp::Finish()
 
 void ant::analysis::OmegaBottomUp::ShowResult()
 {
-    canvas("Omega Buttom Up") << omega_eta_found << omega_pi0_found << endc;
+    canvas("Omega Buttom Up") << omega_eta_found << omega_pi0_found << omega_IM << eta_IM << pi0_IM << endc;
 }

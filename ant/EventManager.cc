@@ -198,7 +198,7 @@ void EventManager::CopyPlutoParticles(GTreePluto *tree, Event& event)
     }
 
     for(auto& beam_target : tree->GetBeamParticles()) {
-        if(beam_target->ID()/100 == 14 ) {
+        if(beam_target->ID()/1000 == 14 ) {
             const double energy = (beam_target->E()*1000.0) - ParticleTypeDatabase::Proton.Mass();
             const int channel = 0; //TODO: Get tagger channel from energy -> Tagger cfg
             const double time = 0.0;

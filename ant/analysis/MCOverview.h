@@ -2,7 +2,6 @@
 #define MCOVERVIEW_H
 
 #include "AntPhysics.h"
-#include "plot/plotter.h"
 #include "plot/Histogram.h"
 
 class TH1D;

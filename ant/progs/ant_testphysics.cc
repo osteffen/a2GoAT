@@ -3,7 +3,7 @@
 #include "TRint.h"
 #include "EventManager.h"
 #include "AntPhysics.h"
-#include "TestPhysics.h"
+#include "analysis/TestPhysics.h"
 #include "GoatExceptions.h"
 #include "TFile.h"
 #include "plot/Histogram.h"
@@ -77,7 +77,9 @@ int main(int argc, char *argv[])
     analysis.AddPhysics(&test);
 
     std::vector<char*> gargs;
-    char* gf = "-f";
+    std::string f("-f");
+    char *gf = new char[f.length() + 1];
+    strcpy(gf, f.c_str());
 
     gargs.push_back(argv[0]);
     gargs.push_back(argv[1]);

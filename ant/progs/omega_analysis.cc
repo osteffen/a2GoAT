@@ -10,7 +10,7 @@
 
 #include "GoatExceptions.h"
 #include "TFile.h"
-#include "GeoAcceptance.h"
+#include "analysis/GeoAcceptance.h"
 #include "plot/Histogram.h"
 using namespace std;
 
@@ -85,7 +85,9 @@ int main(int argc, char *argv[])
     analysis.AddPhysics(&omega2);
 
     std::vector<char*> gargs;
-    char* gf = "-f";
+    std::string f("-f");
+    char *gf = new char[f.length() + 1];
+    strcpy(gf, f.c_str());
 
     gargs.push_back(argv[0]);
     gargs.push_back(argv[1]);

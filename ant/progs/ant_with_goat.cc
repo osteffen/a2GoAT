@@ -8,12 +8,7 @@
 
 #include "analysis/TestPhysics.h"
 #include "analysis/DeltaPlusPhysics.h"
-#include "analysis/MCOverview.h"
-#include "analysis/MCSingleParticles.h"
-#include "analysis/Basic.h"
 #include "analysis/omega.h"
-#include "analysis/RecoCheck.h"
-#include "analysis/SplitCheck.h"
 #include "analysis/GeoAcceptance.h"
 
 using namespace std;

@@ -11,7 +11,6 @@
 
 #include "base/interval.h"
 
-#include "plot/plotter.h"
 #include "Detector.h"
 #include "utils/matcher.h"
 

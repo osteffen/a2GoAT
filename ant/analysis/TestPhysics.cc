@@ -10,7 +10,6 @@
 #include "plot/HistogramFactories.h"
 #include "TCanvas.h"
 
-#include "plot/plotter.h"
 #include "plot/root_draw.h"
 #include "Detector.h"
 

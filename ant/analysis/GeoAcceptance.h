@@ -2,7 +2,6 @@
 #define GEOACCEPTANCE_H
 
 #include "AntPhysics.h"
-#include "plot/plotter.h"
 #include "plot/Histogram.h"
 #include "plot/root_draw.h"
 #include "A2GeoAcceptance.h"

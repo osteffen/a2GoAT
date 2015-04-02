@@ -21,7 +21,6 @@ set(ANT_BASE
     base/interval.h
     TaggerHit.h
     TaggerHit.cc
-    plot/plotter.h
     plot/root_draw.h
     plot/root_draw.cc
     Detector.h
@@ -42,20 +41,10 @@ set(ANT_PHYSICS
     analysis/TestPhysics.cc
     analysis/DeltaPlusPhysics.h
     analysis/DeltaPlusPhysics.cc
-    analysis/MCOverview.h
-    analysis/MCOverview.cc
-    analysis/MCSingleParticles.h
-    analysis/MCSingleParticles.cc
-    analysis/Basic.h
-    analysis/Basic.cc
     analysis/omega.h
     analysis/omega.cc
     analysis/omega_bottomup.h
     analysis/omega_bottomup.cc
-    analysis/RecoCheck.h
-    analysis/RecoCheck.cc
-    analysis/SplitCheck.h
-    analysis/SplitCheck.cc
     analysis/GeoAcceptance.h
     analysis/GeoAcceptance.cc
     )

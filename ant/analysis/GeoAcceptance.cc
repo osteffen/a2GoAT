@@ -10,6 +10,7 @@
 #include "Detector.h"
 #include <sstream>
 #include "TH3D.h"
+#include "TH2D.h"
 
 using namespace std;
 using namespace ant;

@@ -6,12 +6,9 @@
 #include "AntPhysics.h"
 #include "TestPhysics.h"
 #include "DeltaPlusPhysics.h"
-#include "MCOverview.h"
-#include "MCSingleParticles.h"
-#include "Basic.h"
+
 #include "omega.h"
-#include "RecoCheck.h"
-#include "SplitCheck.h"
+
 #include "GoatExceptions.h"
 #include "TFile.h"
 #include "GeoAcceptance.h"
@@ -87,23 +84,9 @@ int main(int argc, char *argv[])
     TFile* ant_output = OpenAsOutput(argv[3]);
     ant::HistogramFactory::SetOutputRoot(ant_output);
 
-    ant::analysis::MCOverview mcoverview;
-    analysis.AddPhysics(&mcoverview);
-
-    ant::analysis::MCSingleParticles single;
-    analysis.AddPhysics(&single);
-
-    ant::analysis::Basic basic;
-    analysis.AddPhysics(&basic);
 
     ant::analysis::Omega omega;
     analysis.AddPhysics(&omega);
-
-    ant::analysis::RecoCheck recocheck;
-    analysis.AddPhysics(&recocheck);
-
-    ant::analysis::SplitCheck splitcheck;
-    analysis.AddPhysics(&splitcheck);
 
     ant::analysis::GeoAcceptance geo;
     analysis.AddPhysics(&geo);
@@ -142,8 +125,6 @@ int main(int argc, char *argv[])
          << " seconds." << "\n\n";
 
     geo.ShowResult();
-    single.ShowResult();
-
 
     ant_output->Write();
 

@@ -49,6 +49,8 @@ set(ANT_PHYSICS
     analysis/GeoAcceptance.cc
     analysis/TestAPLCON.h
     analysis/TestAPLCON.cc
+    analysis/DataOverview.h
+    analysis/DataOverview.cc
     )
 
 

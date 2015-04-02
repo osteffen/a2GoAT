@@ -18,3 +18,8 @@ void ant::DebugPhysics::ShowResult()
 {
     cout << "DebugPhysics ShowResults." << endl;
 }
+
+
+ant::Physics::Physics(const string &name):
+    HistFac(name)
+{}

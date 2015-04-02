@@ -6,7 +6,8 @@ ant::SmartHist<const std::string&> ant::SmartHist<const std::string&>::makeHist(
     const std::string& xlabel,
     const std::string& ylabel,
     const BinSettings& bins,
-    const std::string& name)
+    const std::string& name,
+    HistogramFactory& factory)
 {
-    return move(makeHist([] (const std::string& data) -> const char* { return data.c_str();}, title, xlabel, ylabel, bins, name));
+    return move(makeHist([] (const std::string& data) -> const char* { return data.c_str();}, title, xlabel, ylabel, bins, name, factory));
 }

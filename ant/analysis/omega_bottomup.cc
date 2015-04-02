@@ -32,30 +32,29 @@ void ant::analysis::OmegaBottomUp::findPossibleDecays(const ParticlePtr gamma, c
     }
 }
 
-ant::analysis::OmegaBottomUp::OmegaBottomUp():
+ant::analysis::OmegaBottomUp::OmegaBottomUp(const std::string& name):
+    Physics(name),
     eta_mass_cut(IntervalD::CenterWidth(ParticleTypeDatabase::Eta.Mass(), 50.0)),
     pi0_mass_cut(IntervalD::CenterWidth(ParticleTypeDatabase::Pi0.Mass(), 20.0)),
     omega_mass_cut(IntervalD::CenterWidth(ParticleTypeDatabase::Omega.Mass(), 80.0))
 {
-    HistogramFactory::SetName("Omega_ButtomUp");
-
-    omega_eta_found = SmartHist<int>::makeHist(
+    omega_eta_found = HistFac.makeHist<int>(
                 "#omega #rightarrow #eta #gamma #rightarrow (#gamma #gamma) #gamma per event",
                 "number of decays / event",
                 "",
                 BinSettings(10),
                 "omega_eta_per_event");
 
-    omega_pi0_found = SmartHist<int>::makeHist(
+    omega_pi0_found = HistFac.makeHist<int>(
                 "#omega #rightarrow #pi^{0} #gamma #rightarrow (#gamma #gamma) #gamma per event",
                 "number of decays / event",
                 "",
                 BinSettings(10),
                 "omega_pi0_per_event");
 
-    omega_IM = SmartHistFactory::InvariantMass("#omega IM");
-    eta_IM   = SmartHistFactory::InvariantMass("eta IM");
-    pi0_IM   = SmartHistFactory::InvariantMass(ParticleTypeDatabase::Pi0.PrintName()+" IM");
+//    omega_IM = HistFac.InvariantMass("#omega IM");
+//    eta_IM   = HistFac.InvariantMass("eta IM");
+//    pi0_IM   = HistFac.InvariantMass(ParticleTypeDatabase::Pi0.PrintName()+" IM");
 
 }
 

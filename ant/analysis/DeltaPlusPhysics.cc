@@ -15,7 +15,8 @@ using namespace ant;
 using namespace ant::analysis;
 using namespace std;
 
-DeltaPlusPhysics::DeltaPlusPhysics():
+DeltaPlusPhysics::DeltaPlusPhysics(const string &name):
+    Physics(name),
     prompt("DeltaPlus_prompt"),
     random("DeltaPlus_random"),
     diff("DeltaPlus_diff"),
@@ -127,7 +128,7 @@ void DeltaPlusPhysics::Histogm::AddHistogram(const string &name, const string &t
     // setup one dimensional histogram TH1D
     h_title[name] = title;
 
-    h[name] = HistogramFactory::Make1D(
+    h[name] = HistogramFactory::Default().Make1D(
                 title,
                 x_label,
                 y_label,
@@ -140,7 +141,7 @@ void DeltaPlusPhysics::Histogm::AddHistogram(const string &name, const string &t
 
     // setup two dimensional histogram TH2D
     h_title[name] = title;
-    h[name] = HistogramFactory::Make2D(
+    h[name] = HistogramFactory::Default().Make2D(
                 title,
                 x_label,
                 y_label,
@@ -150,7 +151,7 @@ void DeltaPlusPhysics::Histogm::AddHistogram(const string &name, const string &t
 
 DeltaPlusPhysics::Histogm::Histogm(const string &prefix)
 {
-    HistogramFactory::SetName(prefix);
+
     AddHistogram("nPart", "number of particles",
                    "number of particles / event", "",
                    10, 0, 10); // 10 bins from 0 to 10

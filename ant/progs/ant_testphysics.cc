@@ -67,15 +67,11 @@ int main(int argc, char *argv[])
 
     TRint* app = LaunchRint("ant_with_goat", argc, argv, 4);
 
-    clock_t start, end;
-    start = clock();
-
     // Create instance of analysis class
     ant::EventManager analysis;
     analysis.SetMaxEvents(1000);
 
     TFile* ant_output = OpenAsOutput(argv[3]);
-    ant::HistogramFactory::SetOutputRoot(ant_output);
 
     ant::ParticleCombinatoricsTest test;
     analysis.AddPhysics(&test);

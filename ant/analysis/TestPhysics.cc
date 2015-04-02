@@ -16,21 +16,21 @@
 using namespace std;
 using namespace ant;
 
-ParticleCombinatoricsTest::ParticleCombinatoricsTest()
+ParticleCombinatoricsTest::ParticleCombinatoricsTest(const string &name):
+    Physics(name)
 {
-    HistogramFactory::SetName("TestPhysics");
     const BinSettings im_binning(100,0,250);
     const BinSettings energy_binning(100,0,250);
     const BinSettings npart_binning(10,0,10);
 
-    ggim     = SmartHist<double>::makeHist("2 #gamma IM", "M_{#gamma #gamma} [MeV]","#", im_binning);
-    gggim    = SmartHist<double>::makeHist("3 #gamma im","M_{#gamma #gamma #gamma} [MeV]","#", im_binning);
-    nphotons = SmartHist<int>::makeHist("Number of photons", "N", "", npart_binning);
-    nprotons = SmartHist<int>::makeHist("Number of protons","N","",npart_binning);
+    ggim     = HistFac.makeHist<double>("2 #gamma IM", "M_{#gamma #gamma} [MeV]","#", im_binning);
+    gggim    = HistFac.makeHist<double>("3 #gamma im","M_{#gamma #gamma #gamma} [MeV]","#", im_binning);
+    nphotons = HistFac.makeHist<int>("Number of photons", "N", "", npart_binning);
+    nprotons = HistFac.makeHist<int>("Number of protons","N","",npart_binning);
 
     // Build a map of ParticleType -> Histogram, and fill it
     for( auto& type : ParticleTypeDatabase() ) {
-        EHists[&type] = SmartHistFactory::KinEnergy(type.PrintName()+" Energy");
+        EHists[&type] = HistFac.KinEnergyPlot(type.PrintName()+" Energy");
     }
 
 }

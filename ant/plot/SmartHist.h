@@ -84,9 +84,10 @@ public:
         const std::string& xlabel,
         const std::string& ylabel,
         const BinSettings& bins,
-        const std::string& name="")
+        const std::string& name="",
+        HistogramFactory& factory=ant::HistogramFactory::Default())
     {
-        TH1D* hist = HistogramFactory::Make1D(
+        TH1D* hist = factory.Make1D(
             title,
             xlabel,
             ylabel,
@@ -101,9 +102,10 @@ public:
         const std::string& xlabel,
         const std::string& ylabel,
         const BinSettings& bins,
-        const std::string& name="")
+        const std::string& name="",
+        HistogramFactory& factory=ant::HistogramFactory::Default())
     {
-        return move(makeHist([] (T data) { return data;},title, xlabel, ylabel, bins, name));
+        return move(makeHist([] (T data) { return data;},title, xlabel, ylabel, bins, name, factory));
     }
 
     void Fill(T data, double weight=1.0) {
@@ -129,7 +131,8 @@ SmartHist<const std::string&> SmartHist<const std::string&>::makeHist(
     const std::string& xlabel,
     const std::string& ylabel,
     const BinSettings& bins,
-    const std::string& name);
+    const std::string& name,
+    HistogramFactory& factory);
 
 }
 

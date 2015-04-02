@@ -9,7 +9,7 @@
 
 class TH1D;
 class TH2D;
-class TDirectory;
+class TH3D;
 
 namespace ant {
 
@@ -36,22 +36,19 @@ class HistogramFactory {
 private:
     static std::vector<EColor> colors;          // list of colors to use for 1D hitofram lines
 
-    static std::vector<EColor>::const_iterator color;  // loops over the colors to assign different ones to histograms
-    static unsigned int histnum;                       // number of unnamed histograms generated
+    std::vector<EColor>::const_iterator color;  // loops over the colors to assign different ones to histograms
+    unsigned int histnum;                       // number of unnamed histograms generated
 
-    static std::string name_prefix;                    // prefix for the histogram names
+    EColor GetNextColor();
+    bool loopColors;
+    unsigned int GetNextHistnum();
+    std::string GetNextHistName(const std::string &name="");
 
-    static EColor GetNextColor();
-    static bool loopColors;
-    static unsigned int GetNextHistnum();
-    static std::string GetNextHistName(const std::string &name="");
-
-    static TDirectory* root_directory;
-    static TDirectory* current_directory;
+    static HistogramFactory* instance;
 
 public:
 
-    static void SetName(const std::string& name);
+    HistogramFactory();
 
     /**
      * @brief Make a new 1D histogram
@@ -62,7 +59,7 @@ public:
      * @param name optional name. If "", a number will be inserted
      * @return A pointer to the new histogram
      */
-    static TH1D* Make1D (const std::string& title, const std::string& xlabel, const std::string& ylabel, const BinSettings& bins=BinSettings(100,0,100), const std::string& name="");
+    TH1D* Make1D (const std::string& title, const std::string& xlabel, const std::string& ylabel, const BinSettings& bins=BinSettings(100,0,100), const std::string& name="");
 
     /**
      * @brief Make a new 2D histogram
@@ -74,16 +71,32 @@ public:
      * @param name optional name. If "", a number will be inserted
      * @return A pointer to the new histogram
      */
-    static TH2D* Make2D (const std::string& title, const std::string& xlabel, const std::string& ylabel, const BinSettings& xbins=BinSettings(100,0,100), const BinSettings& ybins=BinSettings(100,0,100), const std::string& name="");
+    TH2D* Make2D (const std::string& title,
+                  const std::string& xlabel,
+                  const std::string& ylabel,
+                  const BinSettings& xbins=BinSettings(100),
+                  const BinSettings& ybins=BinSettings(100),
+                  const std::string& name="");
 
-    static void ApplySettings(TH1D* hist, const std::string& title="", const std::string& xlabel="", const std::string& ylabel="");
-    static void ApplySettings(TH2D* hist, const std::string& title="", const std::string& xlabel="", const std::string& ylabel="");
+    TH3D* Make3D (const std::string& title,
+                  const std::string& xlabel,
+                  const std::string& ylabel,
+                  const std::string& zlabel,
+                  const BinSettings& xbins=BinSettings(100),
+                  const BinSettings& ybins=BinSettings(100),
+                  const BinSettings& zbins=BinSettings(100),
+                  const std::string& name="");
 
-    static void SetLoopColors( bool onoff ) { loopColors=onoff; }
-    static bool GetLoopColors() { return loopColors; }
+    void ApplySettings(TH1D* hist, const std::string& title="", const std::string& xlabel="", const std::string& ylabel="");
+    void ApplySettings(TH2D* hist, const std::string& title="", const std::string& xlabel="", const std::string& ylabel="");
 
-    static void ResetColors();
-    static void SetOutputRoot(TDirectory* dir);
+    void SetLoopColors( bool onoff ) { loopColors=onoff; }
+    bool GetLoopColors() { return loopColors; }
+
+    void ResetColors();
+    void SetOutputRoot(TDirectory* dir);
+
+    static HistogramFactory& Default() { return *instance; }
 
 };
 

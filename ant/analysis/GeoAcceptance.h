@@ -24,7 +24,7 @@ private:
         const static BinSettings theta_bins;
         const static BinSettings phi_bins;
 
-        ParticleThetaPhiPlot(const std::string& title, const std::string& name="");
+        ParticleThetaPhiPlot(SmartHistFactory& factory, const std::string& title, const std::string& name="");
         void Fill(const ParticlePtr& p);
 
 
@@ -37,7 +37,7 @@ private:
         TH3* hist;
         unsigned int n;
 
-        ParticleThetaPhiPlot3D(const std::string& title, const std::string& name="");
+        ParticleThetaPhiPlot3D(SmartHistFactory& factory, const std::string& title, const std::string& name="");
         void Fill(const ParticlePtr& p);
 
 
@@ -60,7 +60,7 @@ private:
 
 
 public:
-    GeoAcceptance(const mev_t energy_scale=1000.0);
+    GeoAcceptance(const std::string& name="GeoAcceptance", const mev_t energy_scale=1000.0);
     virtual ~GeoAcceptance();
     void ProcessEvent(const Event &event);
     void Finish();

@@ -77,7 +77,7 @@ protected:
     const TLorentzVector target;
 
 public:
-    DeltaPlusPhysics();
+    DeltaPlusPhysics(const std::string& name="DeltaPlusPhysics");
     virtual ~DeltaPlusPhysics() {}
 
 

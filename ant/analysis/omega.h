@@ -24,6 +24,9 @@ protected:
     SmartHist<const TLorentzVector&> nr_3gim;
     SmartHist<const TLorentzVector&> nr_2gim;
 
+    int n=0;
+    SmartHist<const ParticlePtr&> test;
+
     IntervalD eta_im_cut;
     IntervalD pi0_im_cut;
     IntervalD omega_im_cut;
@@ -39,7 +42,7 @@ protected:
     SmartHist< std::pair<const TLorentzVector&, const TLorentzVector&> > makeAngleDiffPlot(const std::string& title, const std::string& xlabel, const std::string& ylabel, BinSettings bins, const std::string& name);
 
 public:
-    Omega(const mev_t energy_scale=1000.0);
+    Omega(const std::string& name="Omega", const mev_t energy_scale=1000.0);
     virtual ~Omega() {}
     void ProcessEvent(const Event &event);
     void Finish();

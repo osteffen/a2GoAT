@@ -82,8 +82,6 @@ int main(int argc, char *argv[])
     analysis.SetMaxEvents(1000);
 
     TFile* ant_output = OpenAsOutput(argv[3]);
-    ant::HistogramFactory::SetOutputRoot(ant_output);
-
 
     ant::analysis::Omega omega;
     analysis.AddPhysics(&omega);

@@ -14,22 +14,23 @@
 using namespace std;
 
 ant::SmartHist<const TLorentzVector&> ant::analysis::Omega::makeInvMassPlot(const std::string& title, const std::string& xlabel, const std::string& ylabel, BinSettings bins, const std::string& name) {
-    return ant::SmartHist<const TLorentzVector&>::makeHist(
+    return HistFac.makeHist<const TLorentzVector&>(
                 [] (const TLorentzVector& p) { return p.M();},
                 title,
                 xlabel, ylabel, bins, name);
 }
 
 ant::SmartHist< std::pair<const TLorentzVector&, const TLorentzVector&> > ant::analysis::Omega::makeAngleDiffPlot(const std::string& title, const std::string& xlabel, const std::string& ylabel, BinSettings bins, const std::string& name) {
-    return ant::SmartHist<std::pair<const TLorentzVector&, const TLorentzVector&>>::makeHist(
-                                                                                     [] (std::pair<const TLorentzVector&, const TLorentzVector&> particles) {
-                                                                                 return particles.first.Angle(particles.second.Vect())* TMath::RadToDeg();},
+    return HistFac.makeHist<std::pair<const TLorentzVector&, const TLorentzVector&>>(
+            [] (std::pair<const TLorentzVector&, const TLorentzVector&> particles) {
+                 return particles.first.Angle(particles.second.Vect())* TMath::RadToDeg();
+            },
             title,
             xlabel, ylabel, bins, name);
 }
 
-ant::analysis::Omega::Omega(const ant::mev_t energy_scale):
-
+ant::analysis::Omega::Omega(const string &name, const ant::mev_t energy_scale):
+    Physics(name),
     eta_im_cut(   IntervalD::CenterWidth( ParticleTypeDatabase::Eta.Mass(), 50.0)),
     pi0_im_cut( IntervalD::CenterWidth(ParticleTypeDatabase::Pi0.Mass(),20.0)),
     omega_im_cut( IntervalD::CenterWidth( ParticleTypeDatabase::Omega.Mass(), 80.0)),
@@ -40,37 +41,35 @@ ant::analysis::Omega::Omega(const ant::mev_t energy_scale):
     const BinSettings p_MM_bins(1000, 500.0, 1500.0);
     const BinSettings angle_diff_bins(200,0.0,20.0);
 
-    HistogramFactory::SetName("Omega");
-
     eta_IM      = makeInvMassPlot("2 #gamma IM (after omega cut)",  "M_{3#gamma}", "", energy_bins, "eta_IM");
     omega_IM    = makeInvMassPlot("3 #gamma IM (->#omega)",         "M_{3#gamma}", "", energy_bins, "omega_IM");
     p_MM        = makeInvMassPlot("MM",                             "MM [MeV]",    "", p_MM_bins,   "omega_MM");
 
-    omega_rec_multi = SmartHist<int>::makeHist(
+    omega_rec_multi = HistFac.makeHist<int>(
                 ParticleTypeDatabase::Omega.PrintName() + " Reconstruction Multiplicity",
                 "n",
                 "",
                 BinSettings(5));
 
-    nr_ngamma = SmartHist<int>::makeHist(
+    nr_ngamma = HistFac.makeHist<int>(
                 "Not reconstructed: number of photons",
                 "number of photons/event",
                 "",
                 BinSettings(16));
 
-    nr_2gim = makeInvMassPlot(
+    nr_2gim = HistFac.makeHist<const TLorentzVector&>([] (const TLorentzVector& v) { return v.M(); },
                 "Not reconstructed: 2#gamma IM",
                 "M_{2#gamma} [MeV]",
                 "",
                 energy_bins);
 
-    nr_3gim = makeInvMassPlot(
+    nr_3gim = HistFac.makeHist<const TLorentzVector&>([] (const TLorentzVector& v) { return v.M(); },
                 "Not reconstructed: 3#gamma IM",
                 "M_{3#gamma} [MeV]",
                 "",
                 energy_bins);
 
-    step_levels = SmartHist<const std::string&>::makeHist(
+    step_levels = HistFac.makeHist<const std::string&>(
                 "Check pass count",
                 "Check",
                 "# passed",
@@ -83,6 +82,7 @@ ant::analysis::Omega::Omega(const ant::mev_t energy_scale):
                 angle_diff_bins,
                 ParticleTypeDatabase::Eta.Name()+"_mc_rec_angle"
                 );
+    n=0;
 }
 
 template <class InputIterator, class T>
@@ -101,6 +101,7 @@ T sum (const C& data, T init) {
 
 void ant::analysis::Omega::ProcessEvent(const ant::Event &event)
 {
+
     step_levels.Fill("0 Events Seen");
 
     if(event.Reconstructed().TriggerInfos().CBEenergySum()<550.0)
@@ -122,7 +123,8 @@ void ant::analysis::Omega::ProcessEvent(const ant::Event &event)
             if(mc_omega!=nullptr)
                 throw string("Multiple omegas found in MC True");
             mc_omega = mcp;
-        }
+
+         }
     }
 
     unsigned int n_omega_found = 0;

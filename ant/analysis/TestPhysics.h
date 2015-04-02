@@ -19,7 +19,7 @@ protected:
 
 
 public:
-    ParticleCombinatoricsTest();
+    ParticleCombinatoricsTest(const std::string& name="ParticleCombinatoricsTest");
     virtual ~ParticleCombinatoricsTest() {}
 
     virtual void ProcessEvent(const ant::Event& event);

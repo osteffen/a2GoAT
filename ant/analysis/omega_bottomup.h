@@ -37,7 +37,7 @@ protected:
     SmartHist<const ParticlePtr&> pi0_IM;
 
 public:
-    OmegaBottomUp();
+    OmegaBottomUp(const std::string& name="OmegaButtomUp");
     virtual ~OmegaBottomUp() {}
 
     virtual void ProcessEvent(const ant::Event& event);

@@ -19,9 +19,9 @@ using namespace ant;
 const BinSettings analysis::GeoAcceptance::ParticleThetaPhiPlot::theta_bins(180,0.0,180.0);
 const BinSettings analysis::GeoAcceptance::ParticleThetaPhiPlot::phi_bins(360,-180.0,180.0);
 
-analysis::GeoAcceptance::ParticleThetaPhiPlot::ParticleThetaPhiPlot(const string &title, const string &name)
+analysis::GeoAcceptance::ParticleThetaPhiPlot::ParticleThetaPhiPlot(SmartHistFactory &factory, const string &title, const string &name)
 {
-    hist = HistogramFactory::Make2D(title,"#theta [#circ]","#phi [#circ]",theta_bins,phi_bins,name);
+    hist = factory.makeTH2D(title,"#theta [#circ]","#phi [#circ]",theta_bins,phi_bins,name);
 }
 
 void analysis::GeoAcceptance::ParticleThetaPhiPlot::Fill(const ParticlePtr &p)
@@ -40,15 +40,16 @@ void analysis::GeoAcceptance::ParticleThetaPhiPlot::Draw(const string &option) c
 }
 
 
-analysis::GeoAcceptance::GeoAcceptance(const mev_t energy_scale):
-    mctrue_pos("True Tracks","true"),
-    matched_pos("Found 1 match","matched1"),
-    lost_pos("Lost","lost"),
-    lost3d("Lost 3D","GeoAcceptance_lost3d")
+analysis::GeoAcceptance::GeoAcceptance(const std::string& name, const mev_t energy_scale):
+    Physics(name),
+    mctrue_pos(HistFac, "True Tracks","true"),
+    matched_pos(HistFac,"Found 1 match","matched1"),
+    lost_pos(HistFac,"Lost","lost"),
+    lost3d(HistFac,"Lost 3D","GeoAcceptance_lost3d")
 {
-    angle_regions_protons = HistogramFactory::Make2D("Angle Regions Protons","Region","Punch",BinSettings(3),BinSettings(2));
-    angle_regions_photons = HistogramFactory::Make1D("Angle Regions Photons","Region","",BinSettings(3));
-    n_photons_lost = HistogramFactory::Make1D("# lost photons","# lost","",BinSettings(10));
+    angle_regions_protons = HistFac.makeTH2D("Angle Regions Protons","Region","Punch",BinSettings(3),BinSettings(2));
+    angle_regions_photons = HistFac.makeTH1D("Angle Regions Photons","Region","",BinSettings(3));
+    n_photons_lost = HistFac.makeTH1D("# lost photons","# lost","",BinSettings(10));
 }
 
 analysis::GeoAcceptance::~GeoAcceptance()
@@ -111,8 +112,8 @@ void analysis::GeoAcceptance::ShowResult()
 }
 
 
-analysis::GeoAcceptance::ParticleThetaPhiPlot3D::ParticleThetaPhiPlot3D(const string &title, const string &name):
-    hist(new TH3D(name.c_str(), title.c_str(),100,-1,1,100,-1,1,100,-1,1)),
+analysis::GeoAcceptance::ParticleThetaPhiPlot3D::ParticleThetaPhiPlot3D(SmartHistFactory& factory, const string &title, const string &name):
+    hist(factory.makeTH3D(title, "x","y","z",BinSettings(100,-1,1),BinSettings(100,-1,1),BinSettings(100,-1,1),name)),
     n(0)
 {
 }

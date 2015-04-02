@@ -6,7 +6,8 @@
 #include <algorithm>
 #include "plot/Histogram.h"
 #include "plot/SmartHist.h"
-
+#include "plot/HistogramFactories.h"
+#include "TH1D.h"
 
 #include "TRint.h"
 
@@ -41,6 +42,20 @@ int main(int argc, char** argv) {
     for( auto& h : liste ) {
         h.Fill(1);
     }
+
+    SmartHistFactory sf("factory");
+
+    auto x = sf.makeHist<int>([] (int a) { return 2*a; },"form factory","","",BinSettings(20),"from factory");
+
+    SmartHistFactory sf2("another_factory");
+    auto x2 = sf2.makeHist<int>([] (int a) { return 3*a; },"form factory","","",BinSettings(20),"from another factory");
+
+    TH1D* roothist = HistogramFactory::Default().Make1D("root","x","y");
+
+    SmartHistFactory sf3("sub_factory", sf2);
+    auto x4 = sf3.makeHist<int>([] (int a) { return 3*a; },"form sub factory","","",BinSettings(20),"from another f");
+
+    auto x5 = sf2.makeHist<int>([] (int a) { return 3*a; },"form factory again","","",BinSettings(20),"from another factory333");
 
     app.Run();
 }

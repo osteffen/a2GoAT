@@ -38,7 +38,6 @@ protected:
     const double IM = ParticleTypeDatabase::EtaPrime.Mass();
 
 
-    ant::HistogramFactory hf;
     TH2D* banana;
     TH1D* particles;
     TH1D* tagger;

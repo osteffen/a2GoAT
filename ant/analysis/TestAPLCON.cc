@@ -1,8 +1,6 @@
 #include "TestAPLCON.h"
 #include "Particle.h"
 #include "Track.h"
-#include "plot/plotter.h"
-#include "Track.h"
 #include "plot/root_draw.h"
 #include <string>
 #include "utils/combinatorics.h"
@@ -58,26 +56,26 @@ void analysis::TestAPLCON::FillIM(TH1D *h, const std::vector<analysis::TestAPLCO
 }
 
 ant::analysis::TestAPLCON::TestAPLCON(const mev_t energy_scale) :
-    hf("TestAPLCON"),
+    Physics("TestAPLCON"),
     fitter("TestAPLCON"),
     photons(nPhotons)
 {
 
 
-    const HistogramFactory::BinSettings energy_bins(1000,0,energy_scale);
-    const HistogramFactory::BinSettings tagger_bins(2000,0.0,2000);
-    const HistogramFactory::BinSettings ntaggerhits_bins(100);
-    const HistogramFactory::BinSettings veto_bins(1000,0,10.0);
-    const HistogramFactory::BinSettings particle_bins(10,0,10);
-    const HistogramFactory::BinSettings particlecount_bins(16,0,16);
-    const HistogramFactory::BinSettings pull_bins(50,-3,3);
-    const HistogramFactory::BinSettings chisqare_bins(100,0,30);
-    const HistogramFactory::BinSettings probability_bins(100,0,1);
-    const HistogramFactory::BinSettings iterations_bins(15,0,15);
-    const HistogramFactory::BinSettings im_bins(200,IM-100,IM+100);
-    const HistogramFactory::BinSettings vertex_bins(200,-10,10);
+    const BinSettings energy_bins(1000,0,energy_scale);
+    const BinSettings tagger_bins(2000,0.0,2000);
+    const BinSettings ntaggerhits_bins(100);
+    const BinSettings veto_bins(1000,0,10.0);
+    const BinSettings particle_bins(10,0,10);
+    const BinSettings particlecount_bins(16,0,16);
+    const BinSettings pull_bins(50,-3,3);
+    const BinSettings chisqare_bins(100,0,30);
+    const BinSettings probability_bins(100,0,1);
+    const BinSettings iterations_bins(15,0,15);
+    const BinSettings im_bins(200,IM-100,IM+100);
+    const BinSettings vertex_bins(200,-10,10);
 
-    banana = hf.Make2D(
+    banana = HistFac.makeTH2D(
                 "PID Bananas",
                 "Cluster Energy [MeV]",
                 "Veto Energy [MeV]",
@@ -86,14 +84,14 @@ ant::analysis::TestAPLCON::TestAPLCON(const mev_t energy_scale) :
                 "pid"
                 );
 
-    particles = hf.Make1D(
+    particles = HistFac.makeTH1D(
                 "Identified particles",
                 "Particle Type",
                 "#",
                 particle_bins,
                 "ParticleTypes"
                 );
-    tagger = hf.Make1D(
+    tagger = HistFac.makeTH1D(
                 "Tagger Spectrum",
                 "Photon Beam Energy",
                 "#",
@@ -101,7 +99,7 @@ ant::analysis::TestAPLCON::TestAPLCON(const mev_t energy_scale) :
                 "TaggerSpectrum"
                 );
 
-    ntagged = hf.Make1D(
+    ntagged = HistFac.makeTH1D(
                 "Tagger Hits",
                 "Tagger Hits / event",
                 "#",
@@ -109,7 +107,7 @@ ant::analysis::TestAPLCON::TestAPLCON(const mev_t energy_scale) :
                 "nTagged"
                 );
 
-    cbesum = hf.Make1D(
+    cbesum = HistFac.makeTH1D(
                 "CB Energy Sum",
                 "E [MeV]",
                 "#",
@@ -118,7 +116,7 @@ ant::analysis::TestAPLCON::TestAPLCON(const mev_t energy_scale) :
                 );
 
     for( auto& t : ParticleTypeDatabase::DetectableTypes() ) {
-        numParticleType[t]= hf.Make1D("Number of "+t->PrintName(),
+        numParticleType[t]= HistFac.makeTH1D("Number of "+t->PrintName(),
                                       "number of "+t->PrintName()+"/ event",
                                       "",
                                       particlecount_bins);
@@ -205,14 +203,14 @@ ant::analysis::TestAPLCON::TestAPLCON(const mev_t energy_scale) :
     static_assert(!(includeIMconstraint && includeVertexFit), "Do not enable Vertex and IM Fit at the same time");
 
     // make fitter histograms
-    chisquare   = hf.Make1D("ChiSqare","ChiSquare","#",chisqare_bins,"chisquare");
-    probability = hf.Make1D("Probability","Probability","#",probability_bins,"probability");
-    iterations = hf.Make1D("Number of iterations","Iterations","#",iterations_bins,"iterations");
+    chisquare   = HistFac.makeTH1D("ChiSqare","ChiSquare","#",chisqare_bins,"chisquare");
+    probability = HistFac.makeTH1D("Probability","Probability","#",probability_bins,"probability");
+    iterations = HistFac.makeTH1D("Number of iterations","Iterations","#",iterations_bins,"iterations");
 
 
 
     for(const auto& varname : fitter.VariableNames()) {
-        pulls[varname] = hf.Make1D("Pull "+varname,
+        pulls[varname] = HistFac.makeTH1D("Pull "+varname,
                                    "Pull", "#",
                                    pull_bins,
                                    "pull_"+varname);
@@ -220,12 +218,12 @@ ant::analysis::TestAPLCON::TestAPLCON(const mev_t energy_scale) :
 
     stringstream ng;
     ng << nPhotons << "g";
-    im_true = hf.Make1D("IM "+ng.str()+" true","IM","#",im_bins,"im_true");
-    im_smeared = hf.Make1D("IM "+ng.str()+" smeared","IM","#",im_bins,"im_smeared");
-    im_fit = hf.Make1D("IM "+ng.str()+" fit","IM","#",im_bins,"im_fit");
+    im_true = HistFac.makeTH1D("IM "+ng.str()+" true","IM","#",im_bins,"im_true");
+    im_smeared = HistFac.makeTH1D("IM "+ng.str()+" smeared","IM","#",im_bins,"im_smeared");
+    im_fit = HistFac.makeTH1D("IM "+ng.str()+" fit","IM","#",im_bins,"im_fit");
 
-    vertex_z_before =  hf.Make1D("Vertex Z Before","v_z / cm","#",vertex_bins,"vertex_z_before");
-    vertex_z_after =  hf.Make1D("Vertex Z After","v_z / cm","#",vertex_bins,"vertex_z_after");
+    vertex_z_before =  HistFac.makeTH1D("Vertex Z Before","v_z / cm","#",vertex_bins,"vertex_z_before");
+    vertex_z_after =  HistFac.makeTH1D("Vertex Z After","v_z / cm","#",vertex_bins,"vertex_z_after");
 
 
     cout.precision(3);
@@ -235,30 +233,32 @@ ant::analysis::TestAPLCON::TestAPLCON(const mev_t energy_scale) :
 
 void ant::analysis::TestAPLCON::ProcessEvent(const ant::Event &event)
 {
-    for(auto& track : event.Tracks()) {
-        banana->Fill(track->ClusterEnergy(), track->VetoEnergy());
-    }
 
-    for(auto& particle : event.Particles()) {
-        particles->Fill(particle->Type().PrintName().c_str(), 1);
-    }
 
-    ntagged->Fill(event.TaggerHits().size());
+//    for(auto& track : event.Reconstructed().Tracks()) {
+//        banana->Fill(track->ClusterEnergy(), track->VetoEnergy());
+//    }
 
-    cbesum->Fill(event.Trigger().CBEenergySum());
+//    for(auto& particle : event.Reconstructed().Particles().GetAll()) {
+//        particles->Fill(particle->Type().PrintName().c_str(), 1);
+//    }
 
-    for( auto& t : ParticleTypeDatabase::DetectableTypes() ) {
-        try {
-            numParticleType.at(t)->Fill(event.ParticleType(*t).size());
-        } catch (...) {}
-    }
+//    ntagged->Fill(event.Reconstructed().TaggerHits().size());
 
-    for(const auto& taggerhit : event.TaggerHits()) {
+//    cbesum->Fill(event.Reconstructed().TriggerInfos().CBEenergySum());
+
+//    for( auto& t : ParticleTypeDatabase::DetectableTypes() ) {
+//        try {
+//            numParticleType.at(t)->Fill(event.Reconstructed().Particles().Get(*t).size());
+//        } catch (...) {}
+//    }
+
+    for(const auto& taggerhit : event.Reconstructed().TaggerHits()) {
         tagger->Fill(taggerhit->PhotonEnergy());
 
         // find the photons and one proton
         size_t foundPhotons = 0;
-        for(const refMCParticle & p : event.MCTrue()) {
+        for(const auto& p : event.MCTrue().Particles().GetAll()) {
             if(p->Type() == ParticleTypeDatabase::Proton) {
                 proton.SetFromVector(*p);
             }

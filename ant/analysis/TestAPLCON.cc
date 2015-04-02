@@ -137,8 +137,6 @@ ant::analysis::TestAPLCON::TestAPLCON(const mev_t energy_scale) :
     vector<string> all_names = {"Beam", "Proton"};
     all_names.insert(all_names.end(),photon_names.begin(),photon_names.end());
 
-    fitter.Settings().MaxIterations = 50;
-
     // Constraint: Incoming 4-vector = Outgoing 4-vector
     auto EnergyMomentumBalance = [] (const vector< vector<double> >& particles) -> vector<double>
     {
@@ -225,6 +223,9 @@ ant::analysis::TestAPLCON::TestAPLCON(const mev_t energy_scale) :
     vertex_z_before =  HistFac.makeTH1D("Vertex Z Before","v_z / cm","#",vertex_bins,"vertex_z_before");
     vertex_z_after =  HistFac.makeTH1D("Vertex Z After","v_z / cm","#",vertex_bins,"vertex_z_after");
 
+    APLCON::Fit_Settings_t settings = fitter.GetSettings();
+    settings.MaxIterations = 50;
+    fitter.SetSettings(settings);
 
     cout.precision(3);
     APLCON::PrintFormatting::Width = 11;

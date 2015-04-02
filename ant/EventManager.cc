@@ -189,10 +189,10 @@ void EventManager::CopyPlutoParticles(GTreePluto *tree, Event& event)
         lv *= 1000.0;   // convert to MeV
 
         if(p->GetDaughterIndex() == -1) {
-            event.MCTrue().Intermediates().AddParticle(
+            event.MCTrue().Particles().AddParticle(
                         ParticlePtr(new Particle(*type,lv)));
         } else {
-            event.MCTrue().Particles().AddParticle(
+            event.MCTrue().Intermediates().AddParticle(
                         ParticlePtr(new Particle(*type,lv)));
         }
     }

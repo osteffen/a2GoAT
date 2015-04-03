@@ -3,7 +3,10 @@
 
 #include "AntPhysics.h"
 #include "plot/Histogram.h"
+#include "plot/SmartHist.h"
+#include "plot/HistogramFactories.h"
 #include "plot/root_draw.h"
+
 #include "A2GeoAcceptance.h"
 
 class TH3;
@@ -24,7 +27,11 @@ private:
         const static BinSettings theta_bins;
         const static BinSettings phi_bins;
 
-        ParticleThetaPhiPlot(SmartHistFactory& factory, const std::string& title, const std::string& name="");
+        ParticleThetaPhiPlot(SmartHistFactory& factory,
+                             const std::string& title,
+                             const std::string& name="",
+                             const BinSettings& thetabins = BinSettings(180),
+                             const BinSettings& phibins = BinSettings(360,-180.0,180.0));
         void Fill(const ParticlePtr& p);
 
 
@@ -45,19 +52,30 @@ private:
         void Draw(const std::string &option) const;
     };
 
-    ParticleThetaPhiPlot mctrue_pos;
-    ParticleThetaPhiPlot matched_pos;
-    ParticleThetaPhiPlot lost_pos;
-    ParticleThetaPhiPlot3D lost3d;
+    class AcceptanceAnalysis {
+    public:
+        std::string name;
+        SmartHistFactory HistFac;
+        const A2SimpleGeometry& geo;
+        ParticleThetaPhiPlot mctrue_pos;
+        ParticleThetaPhiPlot matched_pos;
+        ParticleThetaPhiPlot multimatched_pos;
+        ParticleThetaPhiPlot lost_pos;
+        ParticleThetaPhiPlot lost_pos_zoom;
+        ParticleThetaPhiPlot3D lost3d;
+        TH1D* angle_regions;
+        TH1D* nlost;
+        SmartHist<double> energy_reco;
 
-    TH2D* angle_regions_protons;
-    TH1D* angle_regions_photons;
 
-    TH1D* n_photons_lost;
+        AcceptanceAnalysis(SmartHistFactory& factory, const A2SimpleGeometry& geo_, const std::string& name_);
+        void Fill(const ParticleList& mctrue, const ParticleList& reconstructed);
+        void ShowResult();
+    };
 
     A2SimpleGeometry geo;
 
-
+    AcceptanceAnalysis photon_acceptance;
 
 public:
     GeoAcceptance(const std::string& name="GeoAcceptance", const mev_t energy_scale=1000.0);

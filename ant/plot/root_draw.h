@@ -3,13 +3,15 @@
 
 #include <string>
 #include <list>
+#include <map>
 #include <memory>
+#include <functional>
 
 class THStack;
 class TH1D;
 class TCanvas;
 class TObject;
-
+class TVirtualPad;
 
 namespace ant {
 
@@ -35,6 +37,45 @@ public:
     virtual ~drawoption() {}
     const std::string& Option() const { return option; }
 };
+
+enum class padoption_t {
+    LogX, LogY, LogZ,
+    Legend
+};
+
+class padoption: public modifier {
+
+public:
+
+    using map_options_t = std::map<padoption_t, std::function<void(TVirtualPad*)> >;
+    static const map_options_t map_options;
+
+protected:
+    class base {
+    protected:
+        padoption_t option;
+    public:
+        base(const padoption_t& _option) : option(_option) {}
+
+        const padoption_t& Option() const { return option; }
+    };
+
+public:
+
+    class set : public base {
+    public:
+        set(const padoption_t& option) : base(option) {}
+    };
+
+    class unset : public base {
+    public:
+        unset(const padoption_t& option) : base(option) {}
+    };
+
+    virtual ~padoption() {}
+
+};
+
 
 /**
  * @brief The canvas class
@@ -72,10 +113,17 @@ protected:
             }
     };
 
-    typedef std::pair< std::unique_ptr<root_drawable_traits>, std::string> ObjectOption;
+    using ObjectOption =
+        std::tuple<
+            std::unique_ptr<root_drawable_traits>,
+            std::string,              // draw option
+            std::list<padoption_t>    // pad options
+        >;
+
     std::list<ObjectOption> objs;
 
-    std::string current_option;
+    std::string current_drawoption;
+    std::list<padoption_t> current_padoptions;
 public:
 
     canvas(const std::string& title="");
@@ -90,6 +138,10 @@ public:
     virtual canvas& operator<< (const endcanvas& c);
 
     virtual canvas &operator<< (const drawoption& c);
+
+    virtual canvas &operator<< (const padoption::set& c);
+
+    virtual canvas &operator<< (const padoption::unset& c);
 
     virtual canvas &operator>> (const std::string& filename);
 

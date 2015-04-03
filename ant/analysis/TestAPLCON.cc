@@ -320,9 +320,14 @@ void ant::analysis::TestAPLCON::Finish()
 void ant::analysis::TestAPLCON::ShowResult()
 {
     canvas c("TestAPLCON: Overview");
-    c << drawoption("colz") << banana << particles << tagger << ntagged << cbesum << endc;
+    c << drawoption("colz") << banana
+      << padoption::set(padoption_t::Legend)
+      << particles
+      << padoption::unset(padoption_t::Legend)
+      << tagger << ntagged << cbesum << endc;
 
     canvas c_pulls("TestAPLCON: Pulls");
+    c_pulls << padoption::set(padoption_t::LogY);
     for( auto& p : pulls ) {
         c_pulls << p.second;
     }

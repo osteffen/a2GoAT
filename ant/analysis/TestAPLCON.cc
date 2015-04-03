@@ -236,25 +236,25 @@ void ant::analysis::TestAPLCON::ProcessEvent(const ant::Event &event)
 {
 
 
-//    for(auto& track : event.Reconstructed().Tracks()) {
-//        banana->Fill(track->ClusterEnergy(), track->VetoEnergy());
-//    }
+    for(auto& track : event.Reconstructed().Tracks()) {
+        banana->Fill(track->ClusterEnergy(), track->VetoEnergy());
+    }
 
-//    for(auto& particle : event.Reconstructed().Particles().GetAll()) {
-//        particles->Fill(particle->Type().PrintName().c_str(), 1);
-//    }
+    for(auto& particle : event.Reconstructed().Particles().GetAll()) {
+        particles->Fill(particle->Type().PrintName().c_str(), 1);
+    }
 
-//    ntagged->Fill(event.Reconstructed().TaggerHits().size());
+    ntagged->Fill(event.Reconstructed().TaggerHits().size());
 
-//    cbesum->Fill(event.Reconstructed().TriggerInfos().CBEenergySum());
+    cbesum->Fill(event.Reconstructed().TriggerInfos().CBEenergySum());
 
-//    for( auto& t : ParticleTypeDatabase::DetectableTypes() ) {
-//        try {
-//            numParticleType.at(t)->Fill(event.Reconstructed().Particles().Get(*t).size());
-//        } catch (...) {}
-//    }
+    for( auto& t : ParticleTypeDatabase::DetectableTypes() ) {
+        try {
+            numParticleType.at(t)->Fill(event.Reconstructed().Particles().Get(*t).size());
+        } catch (...) {}
+    }
 
-    for(const auto& taggerhit : event.Reconstructed().TaggerHits()) {
+    for(const auto& taggerhit : event.MCTrue().TaggerHits()) {
         tagger->Fill(taggerhit->PhotonEnergy());
 
         // find the photons and one proton
@@ -319,8 +319,8 @@ void ant::analysis::TestAPLCON::Finish()
 
 void ant::analysis::TestAPLCON::ShowResult()
 {
-    //canvas c("TestAPLCON: Overview");
-    //c << drawoption("colz") << banana << particles << tagger << ntagged << cbesum << endc;
+    canvas c("TestAPLCON: Overview");
+    c << drawoption("colz") << banana << particles << tagger << ntagged << cbesum << endc;
 
     canvas c_pulls("TestAPLCON: Pulls");
     for( auto& p : pulls ) {

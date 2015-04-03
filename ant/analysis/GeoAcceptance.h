@@ -66,6 +66,7 @@ private:
         TH1D* angle_regions;
         TH1D* nlost;
         SmartHist<double> energy_reco;
+        double emin;
 
 
         AcceptanceAnalysis(SmartHistFactory& factory, const A2SimpleGeometry& geo_, const std::string& name_);
@@ -75,7 +76,7 @@ private:
 
     A2SimpleGeometry geo;
 
-    AcceptanceAnalysis photon_acceptance;
+    std::list<AcceptanceAnalysis> analyses;
 
 public:
     GeoAcceptance(const std::string& name="GeoAcceptance", const mev_t energy_scale=1000.0);

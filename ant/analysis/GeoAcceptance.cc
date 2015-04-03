@@ -39,9 +39,14 @@ void analysis::GeoAcceptance::ParticleThetaPhiPlot::Draw(const string &option) c
 
 
 analysis::GeoAcceptance::GeoAcceptance(const std::string& name, const mev_t energy_scale):
-    Physics(name),
-    photon_acceptance(HistFac,geo,"Photons")
-{}
+    Physics(name)
+{
+    for( auto& emin : std::vector<double>({0.95,0.9,0.8,0})) {
+        analyses.emplace_back(
+                    HistFac, geo, string("Photons ")+to_string(emin));
+        analyses.back().emin = emin;
+    }
+}
 
 analysis::GeoAcceptance::~GeoAcceptance()
 {
@@ -49,10 +54,12 @@ analysis::GeoAcceptance::~GeoAcceptance()
 
 void analysis::GeoAcceptance::ProcessEvent(const Event &event)
 {
-    photon_acceptance.Fill(
+    for( auto& a : analyses ) {
+        a.Fill(
                 event.MCTrue().Particles().Get(ParticleTypeDatabase::Photon),
                 event.Reconstructed().Particles().Get(ParticleTypeDatabase::Photon)
                 );
+    }
 }
 
 void analysis::GeoAcceptance::Finish()
@@ -63,7 +70,9 @@ void analysis::GeoAcceptance::Finish()
 
 void analysis::GeoAcceptance::ShowResult()
 {
-    photon_acceptance.ShowResult();
+    for( auto& a : analyses ) {
+        a.ShowResult();
+    }
 }
 
 
@@ -102,7 +111,8 @@ analysis::GeoAcceptance::AcceptanceAnalysis::AcceptanceAnalysis(SmartHistFactory
     lost3d(HistFac,"Not Reconctructed 3D","lost3d"),
     angle_regions(HistFac.makeTH1D("Angle Regions "+name,"Region","",BinSettings(3),"regions")),
     nlost(HistFac.makeTH1D("# lost "+name,"lost","",BinSettings(3),"nlost")),
-    energy_reco(HistFac.makeHist<double>("Energy Reconstrution "+name,"E_{rec}/E_{true}","",BinSettings(100,.5,1),"energy_reco"))
+    energy_reco(HistFac.makeHist<double>("Energy Reconstrution "+name,"E_{rec}/E_{true}","",BinSettings(100,.5,1),"energy_reco")),
+    emin(0)
 {
 }
 
@@ -127,7 +137,7 @@ void analysis::GeoAcceptance::AcceptanceAnalysis::Fill(const ParticleList &mctru
     mctrue_pos.Fill(input);
 
     auto matched = utils::match1to1(mctrue, reconstructed, Particle::calcAngle, IntervalD(0.0, 20.0*TMath::DegToRad()));
-    remove_low_energy(matched, 0.9);
+    remove_low_energy(matched, emin);
 
     if( matched.size() ==0 ) {
         lost_pos.Fill(input);

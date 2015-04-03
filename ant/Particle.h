@@ -71,7 +71,7 @@ public:
 
     using TLorentzVector::Angle;
 
-    static double Angle( const ParticlePtr& p1, const ParticlePtr& p2 ) {
+    static double calcAngle( const ParticlePtr& p1, const ParticlePtr& p2 ) {
         return p1->Angle(p2->Vect());
     }
 

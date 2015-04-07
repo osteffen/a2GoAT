@@ -66,6 +66,7 @@ private:
         TH1D* angle_regions;
         TH1D* nlost;
         SmartHist<double> energy_reco;
+        ParticleThetaPhiPlot matched_pos_after_geo;
         double emin;
 
 

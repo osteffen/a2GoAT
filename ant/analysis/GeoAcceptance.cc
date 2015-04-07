@@ -112,6 +112,7 @@ analysis::GeoAcceptance::AcceptanceAnalysis::AcceptanceAnalysis(SmartHistFactory
     angle_regions(HistFac.makeTH1D("Angle Regions "+name,"Region","",BinSettings(3),"regions")),
     nlost(HistFac.makeTH1D("# lost "+name,"lost","",BinSettings(3),"nlost")),
     energy_reco(HistFac.makeHist<double>("Energy Reconstrution "+name,"E_{rec}/E_{true}","",BinSettings(100,.5,1),"energy_reco")),
+    matched_pos_after_geo(HistFac,"Reconstucted 1, with geo cuts"),
     emin(0)
 {
 }
@@ -132,7 +133,11 @@ void analysis::GeoAcceptance::AcceptanceAnalysis::Fill(const ParticleList &mctru
 
     const auto& input = mctrue.front();
 
+    detector_t region = geo.DetectorFromAngles(*input);
+    stringstream region_name;
+    region.Print(region_name);
 
+    angle_regions->Fill(region_name.str().c_str(),1);
 
     mctrue_pos.Fill(input);
 
@@ -150,13 +155,12 @@ void analysis::GeoAcceptance::AcceptanceAnalysis::Fill(const ParticleList &mctru
 
         if(reconstructed.size()>1)
             multimatched_pos.Fill(input);
+
+        if(region != detector_t::None) {
+            matched_pos_after_geo.Fill(input);
+        }
     }
 
-    detector_t region = geo.DetectorFromAngles(*input);
-    stringstream region_name;
-    region.Print(region_name);
-
-    angle_regions->Fill(region_name.str().c_str(),1);
 
     int nphotonslost=0;
     for(auto& p : mctrue) {
@@ -177,7 +181,7 @@ void analysis::GeoAcceptance::AcceptanceAnalysis::ShowResult()
             << lost_pos
             << lost_pos_zoom
             << lost3d
-            << angle_regions
+            << matched_pos_after_geo
             << nlost
             << energy_reco
             << endc;

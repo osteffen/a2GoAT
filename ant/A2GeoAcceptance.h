@@ -9,8 +9,8 @@ namespace ant {
 
 class A2SimpleGeometry {
 protected:
-    IntervalD cb_region;        // theta
-    IntervalD equator_region;   // phi
+    IntervalD cb_theta_region;  // theta
+    IntervalD cb_phi_hem1;      // phi region for one hemisphere
     IntervalD taps_region;      // theta
 
 public:

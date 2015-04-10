@@ -13,15 +13,15 @@ class DataOverview : public ant::Physics {
 protected:
     class OverviewSet {
     public:
-        SmartHist<int> TaggerChannel;
-        SmartHist<double> PhotonEnergy;
-        SmartHist<double> TaggedTime;
+        SmartHist1<int> TaggerChannel;
+        SmartHist1<double> PhotonEnergy;
+        SmartHist1<double> TaggedTime;
 
-        SmartHist<int> nParticles;
+        SmartHist1<int> nParticles;
 
-        SmartHist<double> CBEnergySum;
+        SmartHist1<double> CBEnergySum;
 
-        SmartHist<const std::string&> ParticleTypes;
+        SmartHist1<const std::string&> ParticleTypes;
 
         OverviewSet(SmartHistFactory& factory, const std::string& title);
 

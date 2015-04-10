@@ -4,6 +4,7 @@
 
 #include "TMath.h"
 #include "TDirectory.h"
+#include "TH1D.h"
 
 using namespace ant;
 using namespace std;
@@ -75,7 +76,7 @@ TH3D *SmartHistFactory::makeTH3D(const string &title,
     return r;
 }
 
-SmartHist<const ParticlePtr &> SmartHistFactory::InvariantMass(const string &title, const string &xlabel, const string &ylabel, BinSettings bins, const string &name)
+SmartHist1<const ParticlePtr &> SmartHistFactory::InvariantMass(const string &title, const string &xlabel, const string &ylabel, BinSettings bins, const string &name)
 {
     return makeHist<const ParticlePtr&>(
                 [] (const ParticlePtr& p) { return p->M();},
@@ -86,7 +87,7 @@ SmartHist<const ParticlePtr &> SmartHistFactory::InvariantMass(const string &tit
     name);
 }
 
-ant::SmartHist<const ParticlePtr &> SmartHistFactory::ThetaAngle(const string &title, const string &xlabel, const string &ylabel, BinSettings bins, const string &name)
+ant::SmartHist1<const ParticlePtr &> SmartHistFactory::ThetaAngle(const string &title, const string &xlabel, const string &ylabel, BinSettings bins, const string &name)
 {
     return makeHist<const ParticlePtr&>(
                 [] (const ParticlePtr& p) { return p->Theta() * TMath::DegToRad();},
@@ -97,7 +98,7 @@ ant::SmartHist<const ParticlePtr &> SmartHistFactory::ThetaAngle(const string &t
             name);
 }
 
-ant::SmartHist<const ParticlePtr &> SmartHistFactory::KinEnergyPlot(const string &title, const string &xlabel, const string &ylabel, BinSettings bins, const string &name)
+ant::SmartHist1<const ParticlePtr &> SmartHistFactory::KinEnergyPlot(const string &title, const string &xlabel, const string &ylabel, BinSettings bins, const string &name)
 {
     return makeHist<const ParticlePtr&>(
                 [] (const ParticlePtr& p) { return p->Ek();},
@@ -107,3 +108,26 @@ ant::SmartHist<const ParticlePtr &> SmartHistFactory::KinEnergyPlot(const string
             bins,
             name);
 }
+
+TH1D *SmartHistFactory::copyTH1D(TH1D *hist, const std::string& newname)
+{
+    TDirectory* old = begin_make_histogram();
+        TH1D* newhist = (TH1D*)hist->Clone(newname.c_str());
+    end_make_histogram(old);
+    return newhist;
+}
+
+//void SmartHistFactory::Add(SmartHist1Base &hist, const std::string& as_name)
+//{
+//    TDirectory* old = begin_make_histogram();
+//        hist.histogram->SetName(as_name.c_str());
+//        dir->Add(hist.histogram, true);
+
+//        hist.cleanup = false;
+//    end_make_histogram(old);
+//}
+
+//void SmartHistFactory::Add(SmartHist1Base &hist)
+//{
+//    Add(hist, base_factory.GetNextHistName());
+//}

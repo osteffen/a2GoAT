@@ -29,12 +29,12 @@ protected:
 
     void findPossibleDecays(const ParticlePtr gamma1, const ParticlePtr meson_gamma_1, const ParticlePtr meson_gamma_2, decaylist_t &decays);
 
-    SmartHist<int> omega_eta_found;
-    SmartHist<int> omega_pi0_found;
+    SmartHist1<int> omega_eta_found;
+    SmartHist1<int> omega_pi0_found;
 
-    SmartHist<const ParticlePtr&> omega_IM;
-    SmartHist<const ParticlePtr&> eta_IM;
-    SmartHist<const ParticlePtr&> pi0_IM;
+    SmartHist1<const ParticlePtr&> omega_IM;
+    SmartHist1<const ParticlePtr&> eta_IM;
+    SmartHist1<const ParticlePtr&> pi0_IM;
 
 public:
     OmegaBottomUp(const std::string& name="OmegaButtomUp");

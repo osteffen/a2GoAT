@@ -42,11 +42,12 @@ private:
     EColor GetNextColor();
     bool loopColors;
     unsigned int GetNextHistnum();
-    std::string GetNextHistName(const std::string &name="");
+
 
     static HistogramFactory* instance;
 
 public:
+    std::string GetNextHistName(const std::string &name="");
 
     HistogramFactory();
 

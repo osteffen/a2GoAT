@@ -10,12 +10,12 @@
 namespace ant {
 class ParticleCombinatoricsTest: public ant::Physics {
 protected:
-    SmartHist<double> ggim;
-    SmartHist<double> gggim;
-    SmartHist<int>    nphotons;
-    SmartHist<int>    nprotons;
+    SmartHist1<double> ggim;
+    SmartHist1<double> gggim;
+    SmartHist1<int>    nphotons;
+    SmartHist1<int>    nprotons;
 
-    std::map<const ant::ParticleTypeDatabase::Type*, SmartHist<const ParticlePtr&>> EHists;
+    std::map<const ant::ParticleTypeDatabase::Type*, SmartHist1<const ParticlePtr&>> EHists;
 
 
 public:

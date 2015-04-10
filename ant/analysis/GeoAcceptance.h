@@ -65,7 +65,7 @@ private:
         ParticleThetaPhiPlot3D lost3d;
         TH1D* angle_regions;
         TH1D* nlost;
-        SmartHist<double> energy_reco;
+        SmartHist1<double> energy_reco;
         ParticleThetaPhiPlot matched_pos_after_geo;
         double emin;
 

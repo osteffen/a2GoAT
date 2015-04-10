@@ -13,14 +13,14 @@
 
 using namespace std;
 
-ant::SmartHist<const TLorentzVector&> ant::analysis::Omega::makeInvMassPlot(const std::string& title, const std::string& xlabel, const std::string& ylabel, BinSettings bins, const std::string& name) {
+ant::SmartHist1<const TLorentzVector&> ant::analysis::Omega::makeInvMassPlot(const std::string& title, const std::string& xlabel, const std::string& ylabel, BinSettings bins, const std::string& name) {
     return HistFac.makeHist<const TLorentzVector&>(
                 [] (const TLorentzVector& p) { return p.M();},
                 title,
                 xlabel, ylabel, bins, name);
 }
 
-ant::SmartHist< std::pair<const TLorentzVector&, const TLorentzVector&> > ant::analysis::Omega::makeAngleDiffPlot(const std::string& title, const std::string& xlabel, const std::string& ylabel, BinSettings bins, const std::string& name) {
+ant::SmartHist1< std::pair<const TLorentzVector&, const TLorentzVector&> > ant::analysis::Omega::makeAngleDiffPlot(const std::string& title, const std::string& xlabel, const std::string& ylabel, BinSettings bins, const std::string& name) {
     return HistFac.makeHist<std::pair<const TLorentzVector&, const TLorentzVector&>>(
             [] (std::pair<const TLorentzVector&, const TLorentzVector&> particles) {
                  return particles.first.Angle(particles.second.Vect())* TMath::RadToDeg();

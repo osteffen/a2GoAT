@@ -52,9 +52,9 @@ ant::analysis::OmegaBottomUp::OmegaBottomUp(const std::string& name):
                 BinSettings(10),
                 "omega_pi0_per_event");
 
-//    omega_IM = HistFac.InvariantMass("#omega IM");
-//    eta_IM   = HistFac.InvariantMass("eta IM");
-//    pi0_IM   = HistFac.InvariantMass(ParticleTypeDatabase::Pi0.PrintName()+" IM");
+    omega_IM = HistFac.InvariantMass("#omega IM");
+    eta_IM   = HistFac.InvariantMass("eta IM");
+    pi0_IM   = HistFac.InvariantMass(ParticleTypeDatabase::Pi0.PrintName()+" IM");
 
 }
 

@@ -23,6 +23,22 @@ void readall( const std::list< shared_ptr<myclass> > li ) {
     readit(q);
 }
 
+class base {
+public:
+    virtual void action() { cout << "base" << endl; }
+    virtual base* Copy() { return new base(); }
+    virtual unique_ptr<base> CopyU() { return unique_ptr<base>(new base()); }
+};
+
+template <typename T>
+class derived: public base {
+public:
+    T data;
+    virtual void action() { cout << __PRETTY_FUNCTION__ << endl; }
+    virtual base* Copy() { return new derived(); }
+    virtual unique_ptr<base> CopyU() { return unique_ptr<base>(new derived()); }
+};
+
 int main() {
 
     shared_ptr<myclass> a = make_shared<myclass>( 5 );
@@ -44,6 +60,21 @@ int main() {
     l.push_back(b);
 
     readall(l);
+    cout << "=============" << endl;
+
+    unique_ptr<base> up1 = unique_ptr<base>( new base() );
+    up1->action();
+
+    unique_ptr<base> up2 = unique_ptr<base>( new derived<int>() );
+    up2->action();
+
+    unique_ptr<base> up1cp = up1->CopyU();
+    up1cp->action();
+
+    unique_ptr<base> up2cp = up2->CopyU();
+    up2cp->action();
+
+
 
     return 0;
 }

@@ -12,74 +12,188 @@
 #include <string>
 
 #include <iostream>
+
+#include <exception>
+
 using namespace std;
 namespace ant {
 
-/**
- *@brief smart histogram abstract base class
- * Used to abstract the different filling function subtypes away.
- */
 template <typename T>
-class Histogram: public ant::root_drawable_traits {
+class BaseFillFunction {
 public:
-    virtual ~Histogram() {}
-    virtual Histogram<T>* MakeCopy(const std::string& newname) const =0;
-    virtual void Fill(T data, double weight=1.0) =0;
-    virtual void Draw(const std::string& option="") const =0;
-
+    virtual ~BaseFillFunction() {}
+    virtual void Fill(TH1D& hist, const T& data, const double weight=1.0)=0;
+    virtual std::unique_ptr<BaseFillFunction<T>> Copy() const =0;
 };
 
-/**
- *@brief 1D smart histogram. Binds a TH1D and a function for filling together
- */
+
 template <typename T, typename FunctionType>
-class Hist1: public Histogram<T> {
-private:
-    mutable TH1D* hist;
-    FunctionType f;
+class FillFunction: public BaseFillFunction<T> {
+protected:
+    FunctionType function;
 
 public:
-    Hist1(TH1D* histogram, FunctionType _f): hist(histogram), f(_f) {}
-
-    virtual ~Hist1() {}
-
-    virtual Histogram<T>* MakeCopy(const std::string& newname) const {
-        TH1D* root_hist = new TH1D(*hist);
-        root_hist->SetName(newname.c_str()); //TODO: let histogram factory handle this
-        return new Hist1<T, FunctionType>(root_hist, f);
+    FillFunction(FunctionType func): function(func) {}
+    virtual ~FillFunction() {}
+    virtual void Fill(TH1D& hist, const T& data, const double weight=1.0) {
+        hist.Fill(function(data),weight);
     }
 
-    virtual void Fill(T data, double weight=1.0) {
-        hist->Fill(f(data), weight);
+    virtual std::unique_ptr<BaseFillFunction<T>> Copy() const {
+        return std::unique_ptr<BaseFillFunction<T>>( new FillFunction<T,FunctionType>(function) );
+    }
+};
+
+template<typename T, typename FunctionType>
+std::unique_ptr<BaseFillFunction<T>> makeFunc(FunctionType f) {
+    return std::unique_ptr<BaseFillFunction<T>>(new FillFunction<T,FunctionType>(f));
+}
+
+class uninitialized_histogram : public std::exception {
+public:
+    const char *what() const throw() { return "Unitialized SmartHist used!"; }
+};
+
+class SmartHist1Base: public ant::root_drawable_traits {
+public:
+    TH1D* histogram;
+    bool cleanup;
+
+    void Normalize(double a=1.0) {
+        if(histogram && histogram->GetEntries() !=0 )
+            histogram->Scale(a / histogram->GetEntries());
     }
 
-    void Draw(const std::string& option="") const {
-        hist->Draw(option.c_str());
+    void Draw(const string &option) const {
+        if(histogram)
+            histogram->Draw(option.c_str());
     }
+
+    SmartHist1Base& operator+= (const SmartHist1Base& rhs) {
+        if(histogram)
+            histogram->Add(rhs.histogram);
+        return *this;
+    }
+
+    SmartHist1Base& operator-= (const SmartHist1Base& rhs) {
+        if(histogram)
+            histogram->Add(rhs.histogram, -1.0);
+        return *this;
+    }
+
+    SmartHist1Base& operator*= (const SmartHist1Base& rhs) {
+        histogram->Multiply(rhs.histogram);
+        return *this;
+    }
+
+    SmartHist1Base& operator/= (const SmartHist1Base& rhs) {
+        if(histogram)
+            histogram->Divide(rhs.histogram);
+        return *this;
+    }
+
+    SmartHist1Base& operator*= (const double& rhs) {
+        if(histogram)
+            histogram->Scale(rhs);
+        return *this;
+    }
+
+    SmartHist1Base& operator/= (const double& rhs) {
+        if(histogram)
+            histogram->Scale(1.0/rhs);
+        return *this;
+    }
+
+    virtual void Fill(const double& data, const double weight=1.0) {
+        if(histogram)
+            histogram->Fill(data, weight);
+    }
+
+    TH1D* GetRootHistogram() { return histogram; }
+
+    virtual ~SmartHist1Base() {
+        if(cleanup)
+            delete histogram;
+    }
+
+//    SmartHist1Base( const SmartHist1Base& other ): histogram(new TH1D(*other.histogram)), cleanup(true) {histogram->SetName("");}
+//    SmartHist1Base operator+ (const SmartHist1Base& rhs ) {
+//        SmartHist1Base result(*this);
+//        result += rhs;
+//        return result;
+//    }
+
+//    SmartHist1Base& operator= (const SmartHist1Base& rhs ) {
+//        if(cleanup)
+//            delete histogram;
+//        histogram = (TH1D*)(rhs.histogram->Clone(""));
+//        cleanup = true;
+//        return *this;
+//    }
+
+protected:
+    SmartHist1Base(TH1D* hist): histogram(hist), cleanup(false) {}
 
 };
 
-/**
- *@wrapper around the shared_ptr of Histograms.
- * shared ptrs are always a little weird to use.
- */
 template <typename T>
-class SmartHist: public ant::root_drawable_traits {
-protected:
-    using hist_ptr = std::shared_ptr< Histogram<T> >;
-    SmartHist(hist_ptr hp): ptr(move(hp)) {}
+class SmartHist1: public SmartHist1Base {
+public:
+    using FillFuncPtr = std::unique_ptr< BaseFillFunction<T> >;
 
 public:
-    hist_ptr ptr;
+    FillFuncPtr fillfunction;
 
-    SmartHist(): ptr(nullptr) {}
+public:
+    SmartHist1(TH1D& _histogram, FillFuncPtr _function):
+        SmartHist1Base(&_histogram),
+        fillfunction(std::move(_function)) {}
 
-    //HistWrap(HistWrap&& hist): ptr(move(hist.ptr)) {}
+    SmartHist1( SmartHist1&& ) = default;
 
-    SmartHist(const SmartHist& other, const std::string& newname) { this->Copy(other, newname); }
+    SmartHist1(): SmartHist1Base(nullptr), fillfunction(makeFunc<T>([] (const T& x) { throw uninitialized_histogram(); return 0;})) {}
+
+    void Fill(const T& data, const double weight=1.0) {
+        fillfunction->Fill(*histogram, data, weight);
+    }
+
+    SmartHist1& operator+= (const SmartHist1Base& rhs) {
+        if(histogram)
+            histogram->Add(rhs.histogram);
+        return *this;
+    }
+
+    SmartHist1& operator-= (const SmartHist1Base& rhs) {
+        if(histogram)
+            histogram->Add(rhs.histogram, -1.0);
+        return *this;
+    }
+
+    SmartHist1& operator*= (const SmartHist1Base& rhs) {
+        histogram->Multiply(rhs.histogram);
+        return *this;
+    }
+
+    SmartHist1& operator/= (const SmartHist1Base& rhs) {
+        if(histogram)
+            histogram->Divide(rhs.histogram);
+        return *this;
+    }
+
+    SmartHist1& operator*= (const double& rhs) {
+        if(histogram)
+            histogram->Scale(rhs);
+        return *this;
+    }
+
+    SmartHist1& operator/= (const double& rhs) {
+        if(histogram)
+            histogram->Scale(1.0/rhs);
+        return *this;
+    }
 
     template<typename FunctionType>
-    static SmartHist<T> makeHist(FunctionType func,
+    static SmartHist1<T> makeHist(FunctionType func,
         const std::string& title,
         const std::string& xlabel,
         const std::string& ylabel,
@@ -94,10 +208,10 @@ public:
             bins,
             name
             );
-        return move(SmartHist<T>( move(hist_ptr(new Hist1<T, FunctionType>(hist, func))) ));
+        return move(SmartHist1<T>(*hist, makeFunc<T>(func)));
     }
 
-    static SmartHist<T> makeHist(
+    static SmartHist1<T> makeHist(
         const std::string& title,
         const std::string& xlabel,
         const std::string& ylabel,
@@ -105,28 +219,27 @@ public:
         const std::string& name="",
         HistogramFactory& factory=ant::HistogramFactory::Default())
     {
-        return move(makeHist([] (T data) { return data;},title, xlabel, ylabel, bins, name, factory));
+        TH1D* hist = factory.Make1D(
+            title,
+            xlabel,
+            ylabel,
+            bins,
+            name
+            );
+        return move(SmartHist1<T>(*hist, makeFunc<T>([] (const T& data) { return data;})));
     }
 
-    void Fill(T data, double weight=1.0) {
-        if(ptr)
-            ptr->Fill(data, weight);
+    SmartHist1& operator= (SmartHist1&& rhs) {
+        histogram = rhs.histogram;
+        fillfunction = std::move(rhs.fillfunction);
+        return *this;
     }
-
-    void Draw(const std::string &option) const {
-        if(ptr)
-            ptr->Draw(option);
-    }
-
-    void Copy( const SmartHist& rhs, const std::string& newname) {
-        ptr = move(hist_ptr(rhs.ptr->MakeCopy(newname)));
-    }
-
 };
+
 
 // specialization for strings
 template<>
-SmartHist<const std::string&> SmartHist<const std::string&>::makeHist(
+SmartHist1<const std::string&> SmartHist1<const std::string&>::makeHist(
     const std::string& title,
     const std::string& xlabel,
     const std::string& ylabel,

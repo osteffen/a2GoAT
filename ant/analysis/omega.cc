@@ -69,7 +69,7 @@ ant::analysis::Omega::Omega(const string &name, const ant::mev_t energy_scale):
                 "",
                 energy_bins);
 
-    step_levels = HistFac.makeHist<const std::string&>(
+    step_levels = HistFac.makeHist<std::string>(
                 "Check pass count",
                 "Check",
                 "# passed",

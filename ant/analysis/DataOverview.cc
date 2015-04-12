@@ -14,7 +14,7 @@ analysis::DataOverview::OverviewSet::OverviewSet(SmartHistFactory &factory, cons
     TaggedTime    = myfac.makeHist<double>("Tagged Time ("+title+")","t [ns]","",BinSettings(1000,-100,100),"taggedtime");
 
     nParticles    = myfac.makeHist<int>("Number of particles/event ("+title+")","Particles/Event","",BinSettings(16),"nParticles");
-    ParticleTypes = myfac.makeHist<const string&>("Particle Types ("+title+")","Particle Type","#",BinSettings(1),"ParticleTypes");
+    ParticleTypes = myfac.makeHist<string>("Particle Types ("+title+")","Particle Type","#",BinSettings(1),"ParticleTypes");
 
     CBEnergySum   = myfac.makeHist<double>("CB Energy Sum ("+title+")","E_{CB} [MeV]","",BinSettings(1600),"CBEsum");
 

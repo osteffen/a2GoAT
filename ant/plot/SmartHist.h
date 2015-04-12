@@ -64,6 +64,11 @@ public:
             histogram->Scale(a / histogram->GetEntries());
     }
 
+    void Scale(double f) {
+        if(histogram)
+            histogram->Scale(f);
+    }
+
     void Draw(const string &option) const {
         if(histogram)
             histogram->Draw(option.c_str());
@@ -239,7 +244,7 @@ public:
 
 // specialization for strings
 template<>
-SmartHist1<const std::string&> SmartHist1<const std::string&>::makeHist(
+SmartHist1<std::string> SmartHist1<std::string>::makeHist(
     const std::string& title,
     const std::string& xlabel,
     const std::string& ylabel,

@@ -21,7 +21,7 @@ protected:
 
         SmartHist1<double> CBEnergySum;
 
-        SmartHist1<const std::string&> ParticleTypes;
+        SmartHist1<std::string> ParticleTypes;
 
         OverviewSet(SmartHistFactory& factory, const std::string& title);
 

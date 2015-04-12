@@ -2,7 +2,7 @@
 #include "TH1D.h"
 
 template<>
-ant::SmartHist1<const std::string&> ant::SmartHist1<const std::string&>::makeHist(
+ant::SmartHist1<std::string> ant::SmartHist1<std::string>::makeHist(
     const std::string& title,
     const std::string& xlabel,
     const std::string& ylabel,

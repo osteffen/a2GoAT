@@ -34,7 +34,7 @@ protected:
 
     TLorentzVector target;
 
-    SmartHist1<const std::string&> step_levels;
+    SmartHist1<std::string> step_levels;
 
     SmartHist1< std::pair<const TLorentzVector&,const TLorentzVector&> > omega_mc_rec_angle;
 

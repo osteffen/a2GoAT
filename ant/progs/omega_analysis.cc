@@ -11,6 +11,7 @@
 #include "GoatExceptions.h"
 #include "TFile.h"
 #include "analysis/GeoAcceptance.h"
+#include "analysis/mctrue_acceptance.h"
 #include "plot/Histogram.h"
 using namespace std;
 
@@ -83,6 +84,8 @@ int main(int argc, char *argv[])
 
     ant::analysis::OmegaBottomUp omega2;
     analysis.AddPhysics(&omega2);
+    ant::analysis::MCTrueAcceptance mctrueacceptance;
+    analysis.AddPhysics(&mctrueacceptance);
 
     std::vector<char*> gargs;
     std::string f("-f");
@@ -115,6 +118,7 @@ int main(int argc, char *argv[])
 
     omega.ShowResult();
     omega2.ShowResult();
+    mctrueacceptance.ShowResult();
 
 
     ant_output->Write();

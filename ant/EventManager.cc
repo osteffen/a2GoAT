@@ -242,8 +242,8 @@ void EventManager::CopyTriggerInfo(GTreeTrigger *tree, Event &event)
 
 void EventManager::checkMCIDs() {
 
-    const bool eventIDmatch = ( GetTrigger()->GetMCTrueEventID() == GetPluto()->GetPlutoID()) || (GetPluto()->GetPlutoID() == -1);
-    const bool randomIDmatch = ( GetTrigger()->GetMCRandomID() == GetPluto()->GetPlutoRandomID()) || (GetPluto()->GetPlutoRandomID() == -1);
+    const bool eventIDmatch = ( GetTrigger()->GetMCTrueEventID() == GetPluto()->GetPlutoID()) || (GetPluto()->GetPlutoID() == -1) || (GetTrigger()->GetMCTrueEventID() == -1);
+    const bool randomIDmatch = ( GetTrigger()->GetMCRandomID() == GetPluto()->GetPlutoRandomID()) || (GetPluto()->GetPlutoRandomID() == -1 || GetTrigger()->GetMCRandomID() == -1);
 
     if(! (eventIDmatch && randomIDmatch) )
         throw data_check_exception(

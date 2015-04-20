@@ -40,9 +40,10 @@ protected:
 
     SmartHist1<const TLorentzVector&> makeInvMassPlot(const std::string& title, const std::string& xlabel, const std::string& ylabel, ant::BinSettings bins, const std::string& name="");
     SmartHist1< std::pair<const TLorentzVector&, const TLorentzVector&> > makeAngleDiffPlot(const std::string& title, const std::string& xlabel, const std::string& ylabel, BinSettings bins, const std::string& name);
+    bool run_on_true;
 
 public:
-    Omega(const std::string& name="Omega", const mev_t energy_scale=1000.0);
+    Omega(const std::string& name, bool mctrue, const mev_t energy_scale=1000.0);
     virtual ~Omega() {}
     void ProcessEvent(const Event &event);
     void Finish();

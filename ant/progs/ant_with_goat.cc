@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
 
     TFile* ant_output = OpenAsOutput(argv[3]);
 
-    ant::analysis::Omega omega;
+    ant::analysis::Omega omega("Omega",false);
     analysis.AddPhysics(&omega);
 
     ant::analysis::GeoAcceptance geo;

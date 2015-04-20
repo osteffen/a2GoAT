@@ -79,8 +79,10 @@ int main(int argc, char *argv[])
 
     TFile* ant_output = OpenAsOutput(argv[3]);
 
-    ant::analysis::Omega omega;
-    analysis.AddPhysics(&omega);
+    ant::analysis::Omega omegaRec("Omega Rec",false);
+    analysis.AddPhysics(&omegaRec);
+    ant::analysis::Omega omegaTrue("Omega True",true);
+    analysis.AddPhysics(&omegaTrue);
 
     ant::analysis::OmegaBottomUp omega2;
     analysis.AddPhysics(&omega2);
@@ -116,7 +118,8 @@ int main(int argc, char *argv[])
 
     analysis.Finish();
 
-    omega.ShowResult();
+    omegaRec.ShowResult();
+    omegaTrue.ShowResult();
     omega2.ShowResult();
     mctrueacceptance.ShowResult();
 

@@ -29,13 +29,14 @@ ant::SmartHist1< std::pair<const TLorentzVector&, const TLorentzVector&> > ant::
             xlabel, ylabel, bins, name);
 }
 
-ant::analysis::Omega::Omega(const string &name, const ant::mev_t energy_scale):
+ant::analysis::Omega::Omega(const string &name, bool mctrue, const ant::mev_t energy_scale):
     Physics(name),
     eta_im_cut(   IntervalD::CenterWidth( ParticleTypeDatabase::Eta.Mass(), 50.0)),
     pi0_im_cut( IntervalD::CenterWidth(ParticleTypeDatabase::Pi0.Mass(),20.0)),
     omega_im_cut( IntervalD::CenterWidth( ParticleTypeDatabase::Omega.Mass(), 80.0)),
     tagger_energy_cut(1420, 1575),
-    target(0.0, 0.0, 0.0, ParticleTypeDatabase::Proton.Mass())
+    target(0.0, 0.0, 0.0, ParticleTypeDatabase::Proton.Mass()),
+    run_on_true(mctrue)
 {
     const BinSettings energy_bins(1000, 0.0, energy_scale);
     const BinSettings p_MM_bins(1000, 500.0, 1500.0);
@@ -102,30 +103,21 @@ T sum (const C& data, T init) {
 void ant::analysis::Omega::ProcessEvent(const ant::Event &event)
 {
 
+    const Event::Data& data = (run_on_true) ? event.MCTrue() : event.Reconstructed();
+
     step_levels.Fill("0 Events Seen");
 
-    if(event.Reconstructed().TriggerInfos().CBEenergySum()<550.0)
-        return;
+ //   if(data.TriggerInfos().CBEenergySum()<550.0)
+ //       return;
 
     step_levels.Fill("1 ESum Cut passed");
 
-    const ParticleList& photons = event.Reconstructed().Particles().Get(ParticleTypeDatabase::Photon);
+    const ParticleList& photons = data.Particles().Get(ParticleTypeDatabase::Photon);
 
     if(photons.size()<3)
         return;
 
     step_levels.Fill("2 NPhotons 3+");
-
-    //TODO const ptr?
-    ParticlePtr mc_omega;
-    for( const ParticlePtr& mcp : event.MCTrue().Intermediates().GetAll() ) {
-        if(mcp->Type() == ParticleTypeDatabase::Omega) {
-            if(mc_omega!=nullptr)
-                throw string("Multiple omegas found in MC True");
-            mc_omega = mcp;
-
-         }
-    }
 
     unsigned int n_omega_found = 0;
 
@@ -153,16 +145,13 @@ void ant::analysis::Omega::ProcessEvent(const ant::Event &event)
                     omega_IM.Fill(omega);
                     n_omega_found++;
 
-                    for( auto& taggerhit : event.Reconstructed().TaggerHits() ) {
+                    for( auto& taggerhit : data.TaggerHits() ) {
                         if( tagger_energy_cut.Contains(taggerhit->PhotonEnergy())) {
                             TLorentzVector p = taggerhit->PhotonBeam() + target - omega;
                             p_MM.Fill(p);
                         }
                     }
 
-                    if(mc_omega) {
-                        omega_mc_rec_angle.Fill( make_pair(*mc_omega,omega) );
-                    }
                 }
             }
 
@@ -196,7 +185,7 @@ void ant::analysis::Omega::Finish()
 
 void ant::analysis::Omega::ShowResult()
 {
-    canvas("Omega (Reconstructed)") << omega_IM << eta_IM << p_MM << step_levels << omega_rec_multi << omega_mc_rec_angle << endc;
-    canvas("Omega (Not Reconstructed)") << nr_ngamma << nr_2gim << nr_3gim << endc;
+    canvas("Omega (Reconstructed)" + string((run_on_true ? " (True)" : "(Rec)"))) << omega_IM << eta_IM << p_MM << step_levels << omega_rec_multi << omega_mc_rec_angle << endc;
+    canvas("Omega (Not Reconstructed)"+ string((run_on_true ? " (True)" : "(Rec)"))) << nr_ngamma << nr_2gim << nr_3gim << endc;
 
 }

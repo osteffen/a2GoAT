@@ -84,8 +84,14 @@ int main(int argc, char *argv[])
     ant::analysis::Omega omegaTrue("Omega True",true);
     analysis.AddPhysics(&omegaTrue);
 
-    ant::analysis::OmegaBottomUp omega2;
-    analysis.AddPhysics(&omega2);
+    ant::analysis::Omega2 omega2True("Omega2 True",true);
+    analysis.AddPhysics(&omega2True);
+
+    ant::analysis::Omega2 omega2Rec("Omega2 Rec",false);
+    analysis.AddPhysics(&omega2Rec);
+
+    //ant::analysis::OmegaBottomUp omega2;
+    //analysis.AddPhysics(&omega2);
     ant::analysis::MCTrueAcceptance mctrueacceptance;
     analysis.AddPhysics(&mctrueacceptance);
 
@@ -118,10 +124,12 @@ int main(int argc, char *argv[])
 
     analysis.Finish();
 
-    omegaRec.ShowResult();
-    omegaTrue.ShowResult();
-    omega2.ShowResult();
+    //omegaRec.ShowResult();
+    //omegaTrue.ShowResult();
+    //omega2.ShowResult();
     mctrueacceptance.ShowResult();
+    omega2True.ShowResult();
+    omega2Rec.ShowResult();
 
 
     ant_output->Write();

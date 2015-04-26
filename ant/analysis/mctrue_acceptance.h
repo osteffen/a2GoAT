@@ -15,7 +15,13 @@ protected:
     A2SimpleGeometry geo;
     unsigned int events_seen;
 
-    bool AllAccepted(const ParticleList& particles);
+    struct det_hit_count_t {
+        det_hit_count_t(unsigned int _cb=0, unsigned int _taps=0): cb(_cb), taps(_taps) {}
+        unsigned int cb;
+        unsigned int taps;
+    };
+
+    det_hit_count_t AllAccepted(const ParticleList& particles);
 
 public:
     MCTrueAcceptance();

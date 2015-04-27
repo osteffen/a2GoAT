@@ -34,6 +34,8 @@ set(ANT_BASE
     plot/SmartHist.cc
     plot/HistogramFactories.h
     plot/HistogramFactories.cc
+    detectors/TAPS.h
+    detectors/TAPS.cc
     )
 
 set(ANT_PHYSICS
@@ -53,6 +55,8 @@ set(ANT_PHYSICS
     analysis/DataOverview.cc
     analysis/mctrue_acceptance.h
     analysis/mctrue_acceptance.cc
+    analysis/calibration_tests.h
+    analysis/calibration_tests.cc
     )
 
 

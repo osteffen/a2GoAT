@@ -13,6 +13,7 @@
 
 #include "Detector.h"
 #include "utils/matcher.h"
+#include "detectors/TAPS.h"
 
 using namespace std;
 using namespace ant;
@@ -189,6 +190,12 @@ int main() {
     }
 
     cout << "===========================" << endl;
+
+    detectors::TAPS::Element e = detectors::TAPS::GetElement(2);
+
+    cout << e.Theta() << endl;
+
+
 
     return 0;
 

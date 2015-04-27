@@ -25,14 +25,14 @@ void SmartHistFactory::end_make_histogram(TDirectory* dir)
         dir->cd();
 }
 
-SmartHistFactory::SmartHistFactory(const string &directory_name, const SmartHistFactory& parent)
+SmartHistFactory::SmartHistFactory(const string &directory_name, const SmartHistFactory& parent):olddir(nullptr)
 {
     dir = parent.dir->mkdir(directory_name.c_str());
     if(!dir)
         dir=gDirectory;
 }
 
-SmartHistFactory::SmartHistFactory(const string &directory_name, TDirectory* root) {
+SmartHistFactory::SmartHistFactory(const string &directory_name, TDirectory* root):olddir(nullptr) {
 
     if(!root)
         root=gDirectory;
@@ -131,3 +131,17 @@ TH1D *SmartHistFactory::copyTH1D(TH1D *hist, const std::string& newname)
 //{
 //    Add(hist, base_factory.GetNextHistName());
 //}
+
+
+void ant::SmartHistFactory::EnterDirectory()
+{
+    olddir = gDirectory;
+    dir->cd();
+}
+
+void SmartHistFactory::LeaveDirectory()
+{
+    if(olddir)
+        olddir->cd();
+    olddir = nullptr;
+}

@@ -18,6 +18,7 @@ class SmartHistFactory {
 private:
 
     TDirectory* dir;
+    TDirectory* olddir;
 
     TDirectory *begin_make_histogram();
     void end_make_histogram(TDirectory* dir);
@@ -32,6 +33,8 @@ public:
     void SetRootDir(TDirectory* root_dir=nullptr);
 
 
+    void EnterDirectory();
+    void LeaveDirectory();
 
     TH1D* makeTH1D(
             const std::string& title,

@@ -36,6 +36,9 @@ set(ANT_BASE
     plot/HistogramFactories.cc
     detectors/TAPS.h
     detectors/TAPS.cc
+    detectors/Crystals.h
+    detectors/CB.h
+    detectors/CB.cc
     )
 
 set(ANT_PHYSICS

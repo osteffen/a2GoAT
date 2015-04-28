@@ -14,12 +14,12 @@ ant::analysis::TAPSCalibrationTest::TAPSCalibrationTest(const string &name):
 
     ggIM_mult = HistFac.makeTH2D("2 #gamma IM (1TAPS) over neutral multiplicity","m_{#gamma #gamma} [MeV]","# neutral particles",BinSettings(1000),BinSettings(8,2,10));
 
-    HistFac.EnterDirectory();
+    //HistFac.EnterDirectory();
     tree = new TTree("imvalues","");
-    HistFac.LeaveDirectory();
+    //HistFac.LeaveDirectory();
 
     tree->Branch("M", &branchM,"Invariant Mass/D");
-//    tree->Branch("element", &branchElement,"Central Element/I");
+    tree->Branch("element", &branchElement,"Central Element/I");
     tree->Branch("theta", &branch_theta,"Theta/D");
     tree->Branch("time", &branch_time,"Time/D");
     tree->Branch("nmult", &branch_nmult,"Neutral Multiplicity/I");
@@ -64,7 +64,8 @@ void ant::analysis::TAPSCalibrationTest::ProcessEvent(const ant::Event &event)
                 branch_theta = tapstrack.Theta()*TMath::RadToDeg();
                 branch_time = tapstrack.Time();
                 branch_nmult = neutrals.size();
-                tree->Fill();
+                branchElement = tapstrack.CentralCrystal();
+                if(branchElement < 30 ) tree->Fill();
 
             }
 

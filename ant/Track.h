@@ -24,6 +24,7 @@ private:
     radian_t phi;
     ns_t time;
     clustersize_t clusterSize;
+    index_t centralCrystal;
     detector_t detector;
     mev_t vetoEnergy;
     mev_t _MWPC0Energy;
@@ -34,6 +35,7 @@ public:
           const radian_t& _phi,
           const ns_t& _time,
           const clustersize_t& _clusterSize,
+          const index_t& _centralCrystal,
           const detector_t& _detector,
           const mev_t& _vetoEnergy,
           const mev_t& _MWPC0Energy,
@@ -44,6 +46,7 @@ public:
         phi(_phi),
         time(_time),
         clusterSize(_clusterSize),
+        centralCrystal(_centralCrystal),
         detector(_detector),
         vetoEnergy(_vetoEnergy),
         _MWPC0Energy(_MWPC0Energy),
@@ -60,6 +63,7 @@ public:
     mev_t VetoEnergy() const { return vetoEnergy; }
     mev_t MWPC0Energy() const { return _MWPC0Energy; }
     mev_t MWPC1Energy() const { return _MWPC1Energy; }
+    index_t CentralCrystal() const { return centralCrystal; }
 
     virtual std::ostream &Print(std::ostream &stream) const;
 

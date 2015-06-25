@@ -26,9 +26,12 @@ struct ValueError {
 
 template <typename T>
 std::ostream& operator<< (std::ostream& stream, const ValueError<T> value) {
-    stream << "(" << value.value << "+/-" << value.error << ")";
+    stream << "(" << value.value << " \u00B1 " << value.error << ")";
     return stream;
 }
+
+template <typename T>
+T sqr(const T& x) { return x*x; }
 
 using value = ValueError<double>;
 
@@ -39,12 +42,19 @@ value integrate(TH1* hist, const ant::IntervalD& interval) {
     //const auto stopbin_center = hist->GetBinCenter(stopbin);
     //const auto binwidth = hist->GetBinWidth();
 
-    value v(0,0);
+    value v;
     v.value = hist->IntegralAndError(startbin, stopbin, v.error);
     // i += hist->GetBinContent(startbin) * (1-(interval.Start()-startbin_center-binwidth/2.0)/binwidth);
 
     return v;
 
+}
+
+value integrate(TF1* fct, const ant::IntervalD& interval) {
+    value v;
+    v.value = fct->Integral(interval.Start(), interval.Stop());
+    v.error = fct->IntegralError(interval.Start(), interval.Stop());
+    return v;
 }
 
 TGraph* ResidaulPlot(TH1* hist, TF1* fct) {
@@ -65,19 +75,25 @@ TGraph* ResidaulPlot(TH1* hist, TF1* fct) {
     return g;
 }
 
-value SignalOverBG(TH1* hist, TF1* bg, const ant::IntervalD& range, TColor color=kBlue) {
+value SignalOverBG(TH1* hist, TF1* bg, const ant::IntervalD& range, Color_t color=kBlue) {
 
     auto f = new TF1(*bg);
     f->SetRange(range.Start(), range.Stop());
     f->SetLineColor(color);
 
-    const auto bg_estimage = bg->Integral(range.Start(), range.Stop());
-    const auto integral = integrate(hist,range);
+    value bg_estimage = integrate(f, range);
+    value integral = integrate(hist,range);
+
+    cout << "BG Estibate = " << bg_estimage << endl;
+    cout << "Integral    = " << integral << endl;
 
     value result;
-    result.value = integral.value - bg_estimage;
+    result.value = integral.value - bg_estimage.value;
+    result.error = sqrt(sqr(integral.error) + sqr(bg_estimage.error));
 
-    f->Draw();
+    cout << "Signal      = " << result << endl;
+
+    f->Draw("same");
 
     return result;
 }
@@ -92,36 +108,13 @@ void analyse(TH1* gg) {
     bg->GetRange(rmin,rmax);
     cout << rmin << " " << rmax << endl;
 
+    cout << "\npi0:" << endl;
+    auto pi0 = SignalOverBG(gg,bg,pi0_range,kRed);
 
-    const double pi0_bg = bg->Integral(pi0_range.Start(), pi0_range.Stop());
-    const double eta_bg = bg->Integral(eta_range.Start(), eta_range.Stop());
+    cout << "\neta:" << endl;
+    auto eta = SignalOverBG(gg,bg,eta_range, kBlue);
 
-    cout << "bg in pi0 range = " << pi0_bg << endl;
-    cout << "bg in eta range = " << eta_bg << endl;
-
-    TF1* pi0_bgf = new TF1(*bg);
-    pi0_bgf->SetRange(pi0_range.Start(), pi0_range.Stop());
-
-    TF1* eta_bgf = new TF1(*bg);
-    eta_bgf->SetRange(eta_range.Start(), eta_range.Stop());
-
-    pi0_bgf->SetLineColor(kGreen);
-    eta_bgf->SetLineColor(kBlue);
-
-    pi0_bgf->Draw("same");
-    eta_bgf->Draw("same");
-
-    auto pi0peak = integrate(gg,pi0_range);
-    auto etapeak = integrate(gg,eta_range);
-
-    cout << "pi0 integral = " << pi0peak << endl;
-    cout << "eta integral = " << etapeak << endl;
-
-    auto pi0s = pi0peak.value - pi0_bg;
-    auto etas = etapeak.value - eta_bg;
-
-    cout << "pi0 singal = " << pi0s << endl;
-    cout << "eta singal = " << etas << endl;
+    cout << "Ratio = " << eta.value / pi0.value << endl;
 
     new TCanvas;
     auto residuals = ResidaulPlot(gg,bg);

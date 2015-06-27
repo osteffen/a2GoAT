@@ -132,7 +132,7 @@ int main(int argc, char** argv) {
 
         TH1* gg = nullptr;
 
-        f->GetObject("Omega2 Rec/gg_IM", gg);
+        f->GetObject("Omega3Rec/gg_IM", gg);
 
         if(gg) {
             gg->Draw();

@@ -79,16 +79,22 @@ int main(int argc, char *argv[])
 
     TFile* ant_output = OpenAsOutput(argv[3]);
 
-    ant::analysis::Omega omegaRec("Omega Rec",false);
-    analysis.AddPhysics(&omegaRec);
-    ant::analysis::Omega omegaTrue("Omega True",true);
-    analysis.AddPhysics(&omegaTrue);
+//    ant::analysis::Omega omegaRec("Omega Rec",false);
+//    analysis.AddPhysics(&omegaRec);
+//    ant::analysis::Omega omegaTrue("Omega True",true);
+//    analysis.AddPhysics(&omegaTrue);
 
-    ant::analysis::Omega2 omega2True("Omega2 True",true);
-    analysis.AddPhysics(&omega2True);
+//    ant::analysis::Omega2 omega2True("Omega2 True",true);
+//    analysis.AddPhysics(&omega2True);
 
-    ant::analysis::Omega2 omega2Rec("Omega2 Rec",false);
-    analysis.AddPhysics(&omega2Rec);
+//    ant::analysis::Omega2 omega2Rec("Omega2 Rec",false);
+//    analysis.AddPhysics(&omega2Rec);
+
+    ant::analysis::Omega3 omega3Rec("Omega3 Rec",false);
+    analysis.AddPhysics(&omega3Rec);
+
+    ant::analysis::Omega3 omega3True("Omega3 True",true);
+    analysis.AddPhysics(&omega3True);
 
     //ant::analysis::OmegaBottomUp omega2;
     //analysis.AddPhysics(&omega2);
@@ -127,9 +133,11 @@ int main(int argc, char *argv[])
     //omegaRec.ShowResult();
     //omegaTrue.ShowResult();
     //omega2.ShowResult();
-    mctrueacceptance.ShowResult();
-    omega2True.ShowResult();
-    omega2Rec.ShowResult();
+    //mctrueacceptance.ShowResult();
+    //omega2True.ShowResult();
+    //omega2Rec.ShowResult();
+
+    //omega3Rec.ShowResult();
 
 
     ant_output->Write();
